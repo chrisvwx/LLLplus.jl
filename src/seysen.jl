@@ -12,7 +12,7 @@ function seysen{Td}(H::Array{Td,2})
 # H_red_dual    ... dual lattice basis, i.e., H_red_dual = pinv(H_red)   
 # num_it        ... number of iterations (number of basis updates)  
 
-# Based on  D. Wuebben, D. Seethaler, J. Jalden, and G. Matz, 
+# See D. Wuebben, D. Seethaler, J. Jalden, and G. Matz, 
 # "Lattice Reduction - A Survey with Applications in Wireless Communications" 
 # IEEE Signal Processing Magazine, March 2011
 
@@ -23,12 +23,15 @@ if isempty(H)
     error("Input basis is empty"); 
 elseif rank(H) < m
     error("Input basis has not full column rank");
-end 
+end
+Ti = Td<:Complex? Complex{Int}: Int; # Integer type: Complex or not
+Tf = Td<:Complex? Complex{FloatingPoint}: FloatingPoint;
+H = convert(Array{Tf,2},H);
 
 # initialization, outputs
-H_red           = H;          # reduced lattice basis 
+H_red           = copy(H);    # reduced lattice basis 
 num_it          = 0;          # number of iterations 
-T = Td<:Complex? eye(Complex{Int},m): eye(Int,m); # unimodular matrix  
+T               = eye(Ti,m);  # unimodular matrix  
 A               = H'*H;       # Gram matrix of H 
 Adual           = inv(A);     # Inverse gram matrix of H 
 H_red_dual      = H*Adual;    # Dual basis 
@@ -36,24 +39,36 @@ H_red_dual      = H*Adual;    # Dual basis
 
 # calculate all possible update values Lambda[s,t) 
 # and their corresponding reduction Delta[s,t) in Seysen's measure 
-Lambda  = zeros(m,m);
-Delta   = zeros(m,m);
+Lambda  = zeros(Ti,m,m);
+Delta   = zeros(Tf,m,m);
+    
 for s = 1:m 
-   for t = 1:m 
-      if s != t
-	 x = 0.5*(Adual[t,s]/Adual[s,s]-A[t,s]/A[t,t]); 
-         Lambda[s,t] = round(x);
-	 AbsLambda   = abs(Lambda[s,t])^2;
-	 if AbsLambda != 0
-	    zw = real(Lambda[s,t])*real(x)+imag(Lambda[s,t])*imag(x);
-	    Delta[s,t]  = Adual[s,s]*A[t,t]*(2*zw-AbsLambda);
-	 end
-      end
-   end
+    for t = 1:m 
+        if s != t
+	    x = 0.5*(Adual[t,s]/Adual[s,s]-A[t,s]/A[t,t]); 
+# println("s = $(s), typeof(s) = $(typeof(s))")
+# println("t = $(t), typeof(t) = $(typeof(t))")
+# println("Lambda = $(Lambda), typeof(Lambda) = $(typeof(Lambda))")
+            Lambda[s,t] = round(real(x))+ im*round(imag(x));
+	    AbsLambda   = abs(Lambda[s,t])^2;
+	    if AbsLambda != 0
+	        zw = real(Lambda[s,t])*real(x)+imag(Lambda[s,t])*imag(x);
+# println("typeof(Adual[s,s]) = $(typeof(Adual[s,s]))")
+# println("typeof(A[t,t]) = $(typeof(A[t,t]))")
+# println("zw = $(zw),  AbsLambda = $(AbsLambda)")
+# println("Delta[s,t] = $(Delta[s,t]), typeof(Delta[s,t]) = $(typeof(Delta[s,t]))")
+# println("expr = $(Adual[s,s]*A[t,t]*(2*zw-AbsLambda))")
+# println("expr = $(typeof(Adual[s,s]*A[t,t]*(2*zw-AbsLambda)))")
+	        Delta[s,t]  = Adual[s,s]*A[t,t]*(2*zw-AbsLambda);
+	    end
+        end
+    end
 end # - end calculation of Lambda and Delta
 
 # find maximum reduction in Seysen's measure (greedy approach)
-(zw, max_ind) = findmax(Delta[:]);
+# println("Delta[:] = $(Delta[:])")
+# println("abs(Delta[:]) = $(abs(Delta[:]))")
+(zw,max_ind) = findmax(abs(Delta[:]));
 (s, t)        = ind2sub((m,m),max_ind);
 
 # init loop
@@ -106,7 +121,8 @@ while do_reduction
       for ind2 = 1:m 
          if ((ind1 == s) | (ind1 == t) | (ind2 == s) | (ind2 == t)) & (ind1 != ind2) 
             x = 0.5*(Adual[ind2,ind1]/Adual[ind1,ind1]-A[ind2,ind1]/A[ind2,ind2]); 
-            Lambda[ind1,ind2] = round(x);
+#            Lambda[ind1,ind2] = round(x);
+            Lambda[ind1,ind2] = round(real(x))+ im*round(imag(x));
             AbsLambda = abs(Lambda[ind1,ind2])^2;
             if AbsLambda != 0
                zw = real(Lambda[ind1,ind2])*real(x)+imag(Lambda[ind1,ind2])*imag(x);
@@ -119,7 +135,7 @@ while do_reduction
    end # - end update Lambda and Delta
     
    # find maximum reduction in Seysen's measure (greedy approach)
-   (zw, max_ind) = findmax(Delta[:]); 
+   (zw, max_ind) = findmax(abs(Delta[:]));
    (s, t)        = ind2sub((m,m),max_ind); 
     
    # if no reduction is possible, exit loop
