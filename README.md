@@ -5,9 +5,7 @@
 
 This package provides the following lattice tools:
 Lenstra-Lenstra-Lovacsz (LLL) lattice reduction, Seysen lattice
-reduction, a sphere decoder, and VBLAST matrix decomposition. We also
-give code examples for efficient decoding of QAM symbols in
-multi-antenna, multi-user wireless systems.
+reduction, a sphere decoder, and VBLAST matrix decomposition. 
 
 [LLL](https://en.wikipedia.org/wiki/Lenstra%E2%80%93Lenstra%E2%80%93Lov%C3%A1sz_lattice_basis_reduction_algorithm) [1]
 lattice reduction is a powerful tool in computer science that is used
@@ -38,7 +36,7 @@ techniques such as the sphere decoder.
 ### Examples
 
 We now give a few examples of how one might use the functions in this
-package. Note that we have not yet released this as a Julia package.
+package.
 
 ```julia
 include("src/LLLplus.jl")
