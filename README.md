@@ -35,6 +35,34 @@ other multi-terminal systems. V-BLAST is not as widely used outside of
 the wireless communication community as lattice reduction and CVP
 techniques such as the sphere decoder.
 
+### Examples
+
+We now give a few examples of how one might use the functions in this
+package. Note that we have not yet released this as a Julia package.
+
+'''julia
+include("src/LLLplus.jl")
+using LLLplus
+
+# Time LLL decomposition of a 1000x1000 real matrix with randn entries 
+N = 1000;
+H = randn(N,N);
+println("Testing LLL on $(N)x$(N) real matrix...")
+@time (B,T,Q,R) = lll(H);
+
+# Time LLL, Seysen, VBLAST decompositions of a 10x10 complex matrix with
+# randn entries
+N = 10;
+H = randn(N,N) + im*randn(N,N);
+println("Testing LLL on $(N)x$(N) complex matrix...")
+@time (B,T,Q,R) = lll(H);
+println("Testing Seysen on $(N)x$(N) complex matrix...")
+@time (T,H_red,H_red_dual) = seysen(H);
+println("Testing VBLAST on $(N)x$(N) complex matrix...")
+@time (W,P,B) = vblast(H);
+
+'''
+
 ### References
 
 [1] Lenstra, A. K.; Lenstra, H. W., Jr.; Lovász, L. (1982). "Factoring
