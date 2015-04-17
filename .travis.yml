@@ -5,4 +5,4 @@ notifications:
     email: false
 script:
   - date
-  - julia -e 'include("juliarc.jl"); include("test/runtests.jl")'
+  - julia -e 'include("test/runtests.jl")'

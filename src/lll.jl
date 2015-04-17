@@ -11,7 +11,7 @@ function lll{Td}(H::Array{Td,2},δ=3/4)
 #   N=2;H = randn(N,N)+im*randn(N,N); include("lll.jl");(B,T,Q,R) = lll(H)
 
 # By Chris Peel  (chris.peel@ieee.org)
-# Last Modified: Tue 14 Apr 15, 9:18pm
+# Last Modified: Thu 16 Apr 15, 5:55pm
 
 # Follows LLL in D. Wueben, et al, MMSE-Based Lattice-Reduction for Near-ML
 # Detection of MIMO Systems International IEEE Workshop on Smart Antennas,
@@ -26,10 +26,10 @@ L = size(B,2);
 (Q,R) = qr(B);
 if Td<:Complex
     T = eye(Complex{Int},L)
-    roundf(r) = round(r);
+    roundf(r) = round(real(r)) + im*round(imag(r));
 else
     T = eye(Int,L);
-    roundf(r) = round(real(r)) + im*round(imag(r));
+    roundf(r) = round(r);
 end
     
 lx  = 2;

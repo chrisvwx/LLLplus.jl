@@ -1,11 +1,9 @@
 # LLLplus
 
 
-Linux:
-[![Build Status](https://api.travis-ci.org/christianpeel/LLLplus.svg?branch=master)](https://travis-ci.org/christianpeel/LLLplus)
+[![Build Status](https://travis-ci.org/christianpeel/LLLplus.jl.svg?branch=master)](https://travis-ci.org/christianpeel/LLLplus)
 
-
-This package provides the followign lattice tools
+This package provides the following lattice tools
 Lenstra-Lenstra-Lovacsz (LLL) lattice reduction, Seysen lattice
 reduction, a sphere decoder, and VBLAST matrix decomposition. We also
 give code examples for efficient decoding of QAM symbols in
@@ -30,12 +28,12 @@ it is referred to as
 
 Finally, we include code to do a
 [V-BLAST](https://en.wikipedia.org/wiki/Bell_Laboratories_Layered_Space-Time)
-(Vertical-Bell Laboratories Layered Space-Time) [3] matrix
-decomposition. This is a detection algorithm for decoding
-spatially-multiplexed streams of data on multiple antennas or other
-multi-terminal systems. V-BLAST is not as widely used outside of the
-wireless communication community as lattice reduction and
-CVP techniques such as the sphere decoder.
+(Vertical-Bell Laboratories Layered Space-Time) matrix
+decomposition. This decompositin is used in a detection algorithm [3] for
+decoding spatially-multiplexed streams of data on multiple antennas or
+other multi-terminal systems. V-BLAST is not as widely used outside of
+the wireless communication community as lattice reduction and CVP
+techniques such as the sphere decoder.
 
 ### References
 
