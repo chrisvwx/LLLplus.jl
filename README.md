@@ -1,7 +1,7 @@
 # LLLplus
 
 
-[![Build Status](https://travis-ci.org/christianpeel/LLLplus.jl.svg?branch=master)](https://travis-ci.org/christianpeel/LLLplus)
+[![Build Status](https://travis-ci.org/christianpeel/LLLplus.jl.svg?branch=master)](https://travis-ci.org/christianpeel/LLLplus.jl)
 
 This package provides the following lattice tools
 Lenstra-Lenstra-Lovacsz (LLL) lattice reduction, Seysen lattice
