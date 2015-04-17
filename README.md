@@ -3,7 +3,7 @@
 
 [![Build Status](https://travis-ci.org/christianpeel/LLLplus.jl.svg?branch=master)](https://travis-ci.org/christianpeel/LLLplus.jl)
 
-This package provides the following lattice tools
+This package provides the following lattice tools:
 Lenstra-Lenstra-Lovacsz (LLL) lattice reduction, Seysen lattice
 reduction, a sphere decoder, and VBLAST matrix decomposition. We also
 give code examples for efficient decoding of QAM symbols in
@@ -40,7 +40,7 @@ techniques such as the sphere decoder.
 We now give a few examples of how one might use the functions in this
 package. Note that we have not yet released this as a Julia package.
 
-'''julia
+```julia
 include("src/LLLplus.jl")
 using LLLplus
 
@@ -60,8 +60,7 @@ println("Testing Seysen on $(N)x$(N) complex matrix...")
 @time (T,H_red,H_red_dual) = seysen(H);
 println("Testing VBLAST on $(N)x$(N) complex matrix...")
 @time (W,P,B) = vblast(H);
-
-'''
+```
 
 ### References
 
