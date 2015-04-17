@@ -7,9 +7,6 @@ function seysen{Td}(H::Array{Td,2})
 # H_red_dual,  dual lattice basis (i.e., H_red_dual = pinv(H_red)); and
 # the number of iterations (the number of basis updates).
 
-# By Chris Peel  (chris.peel@ieee.org)
-# Last Modified: Thu 16 Apr 15, 4:40pm
-
 # Follows LLL in D. Wueben, et al, MMSE-Based Lattice-Reduction for Near-ML
 # Detection of MIMO Systems International IEEE Workshop on Smart Antennas,
 # Munich, March 2004.

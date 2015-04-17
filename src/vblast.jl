@@ -13,9 +13,6 @@ function vblast{T}(H::Array{T,2},mu=Inf)
 # Example: For MMSE decoding with N receivers mu=rho/N 
 #  (W,P,B) = vblast(H,rho/size(H,1)); 
 
-# By Christian Peel  (chris.peel@ieee.org)
-# Last Modified: Sat 4 Apr 15, 6:22pm by peel
-
 (K,N) = size(H);
 
 W = zeros(T,K,K);

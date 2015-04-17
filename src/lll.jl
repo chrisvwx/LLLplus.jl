@@ -10,9 +10,6 @@ function lll{Td}(H::Array{Td,2},δ=3/4)
 # Example with 2x2 complex matrix:
 #   N=2;H = randn(N,N)+im*randn(N,N); include("lll.jl");(B,T,Q,R) = lll(H)
 
-# By Chris Peel  (chris.peel@ieee.org)
-# Last Modified: Thu 16 Apr 15, 5:55pm
-
 # Follows LLL in D. Wueben, et al, MMSE-Based Lattice-Reduction for Near-ML
 # Detection of MIMO Systems International IEEE Workshop on Smart Antennas,
 # Munich, March 2004.
