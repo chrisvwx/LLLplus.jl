@@ -2,6 +2,7 @@
 
 
 [![Build Status](https://travis-ci.org/christianpeel/LLLplus.jl.svg?branch=master)](https://travis-ci.org/christianpeel/LLLplus.jl)
+[![LLLplus](http://pkg.julialang.org/badges/LLLplus_release.svg)](http://pkg.julialang.org/?pkg=LLLplus&ver=release)
 
 This package provides the following lattice tools:
 Lenstra-Lenstra-Lovacsz (LLL) lattice reduction, Seysen lattice
@@ -27,7 +28,7 @@ it is referred to as
 Finally, we include code to do a
 [V-BLAST](https://en.wikipedia.org/wiki/Bell_Laboratories_Layered_Space-Time)
 (Vertical-Bell Laboratories Layered Space-Time) matrix
-decomposition. This decompositin is used in a detection algorithm [3] for
+decomposition. This decomposition is used in a detection algorithm [3] for
 decoding spatially-multiplexed streams of data on multiple antennas or
 other multi-terminal systems. V-BLAST is not as widely used outside of
 the wireless communication community as lattice reduction and CVP
@@ -35,8 +36,8 @@ techniques such as the sphere decoder.
 
 ### Examples
 
-We now give a few examples of how one might use the functions in this
-package.
+Here are a few examples of using the functions in the
+package on random lattices.
 
 ```julia
 include("src/LLLplus.jl")
@@ -59,6 +60,20 @@ println("Testing Seysen on $(N)x$(N) complex matrix...")
 println("Testing VBLAST on $(N)x$(N) complex matrix...")
 @time (W,P,B) = vblast(H);
 ```
+
+### Future work
+
+Additions we would like to make are
+* Block-Korkin-Zolotarev lattice redution
+* Brun lattice reduction
+* Discussion and examples of use with integer and fixed-point lattices
+* Execution times for the algorithms for various dimensions averaged
+  over many random Gaussian-disributed matrices
+* More examples
+
+Comments, feedback, criticism are welcome; contact the author using
+the email [here](https://github.com/christianpeel). 
+
 
 ### References
 
