@@ -1,19 +1,41 @@
-#
-# Include LLLplus code  --------------
-#
+# --------------
+# Initialization
+# --------------
 include("../src/LLLplus.jl")
 
 using LLLplus
+using Base.Test
 
-#
-# Run tests  --------------
-#
+# --------------
+# unit tests
+# --------------
+
+# From http://home.ie.cuhk.edu.hk/~wkshum/wordpress/?p=442
+H =[1     9     1     2;
+    1     8     8     3;
+    7     4     5     1;
+    2     6     7     1];
+B1=[ 2   3  -2  -4
+     3  -1   2   1
+     1   1   6  -4
+     1   3  -1   3];
+T1=[ 0     0     1    -1
+     0     1    -1     0
+     0     0     0     1
+     1    -3     3    -2];
+(B,T) = lll(H);
+@test sum(abs(B-B1))==0
+@test sum(abs(T-T1))==0
+
+
+# --------------
+# Run tests with random matrices
+# --------------
 
 println("In all the following tests, the first time includes the "*
-        "JIT compilation,\n while for the second execution the "*
-        "compilation is done and the time should be faster.")
-println(" ")
-
+        "JIT compilation; \nfor the second execution the "*
+        "compilation is already done and the time\n"*
+        "should be faster.\n")
 
 # Time LLL decomposition of a 1000x1000 real matrix with randn entries 
 N = 1000;
