@@ -28,37 +28,6 @@ T1=[0   0   1  -1
 @test sum(abs(B-B1))==0
 @test sum(abs(T-T1))==0
 
-# --------------
-# test norm for matrix from http://www.latticechallenge.org/
-# --------------
-m=200
-println("Testing now with $(m)x$(m) matrix from latticechallenge.org.")
-println("All the column norms should be 30.")
-mat = readdlm("challenge-$(m).mod",Int64)
-
-nrms = zeros(m,1)
-for ix=1:m
-    nrms[ix] = norm(mat[:,ix])
-end
-println("max col-norm of input is $(maximum(nrms))")
-
-@time (B,T) = lll(mat);
-nrms = zeros(m,1)
-for ix=1:m
-    nrms[ix] = norm(B[:,ix])
-end
-maxlll = maximum(nrms)
-println("max col-norm of lll-reduced basis is $(maxlll)")
-@test maxlll<=30+1e-6
-
-@time (B,T) = seysen(mat);
-nrms = zeros(m,1)
-for ix=1:m
-    nrms[ix] = norm(B[:,ix])
-end
-maxSeysen = maximum(nrms)
-println("max column norm of seysen-reduced basis is $(maxSeysen)")
-@test maxSeysen<=30+1e-6
 
 # --------------
 # Run tests with random matrices
@@ -105,3 +74,35 @@ Y = H*X+NN;
 Zh = Zt+1;
 errRate = sum(abs(Z-Zh))/Ns;
 println("Error Rate is $(errRate). It should be zero or very small.\n")
+
+# --------------
+# test norm for matrix from http://www.latticechallenge.org/
+# --------------
+println("Testing now with 200x200 matrix from latticechallenge.org.")
+println("All the column norms should be 30.")
+mat = readdlm("challenge-200.mod",Int64)
+
+nrms = zeros(200,1)
+for ix=1:200
+    nrms[ix] = norm(mat[:,ix])
+end
+println("max col-norm of input is $(maximum(nrms))")
+
+@time (B,T) = lll(mat);
+nrms = zeros(200,1)
+for ix=1:200
+    nrms[ix] = norm(B[:,ix])
+end
+maxlll = maximum(nrms)
+println("max col-norm of lll-reduced basis is $(maxlll)")
+@test maxlll<=30+1e-6
+
+@time (B,T) = seysen(mat);
+nrms = zeros(200,1)
+for ix=1:200
+    nrms[ix] = norm(B[:,ix])
+end
+maxSeysen = maximum(nrms)
+println("max column norm of seysen-reduced basis is $(maxSeysen)")
+@test maxSeysen<=30+1e-6
+
