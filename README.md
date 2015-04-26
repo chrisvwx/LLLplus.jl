@@ -1,12 +1,12 @@
 # LLLplus
 
-
 [![Build Status](https://travis-ci.org/christianpeel/LLLplus.jl.svg?branch=master)](https://travis-ci.org/christianpeel/LLLplus.jl)
 [![LLLplus](http://pkg.julialang.org/badges/LLLplus_release.svg)](http://pkg.julialang.org/?pkg=LLLplus&ver=release)
 
-This package provides the following lattice tools:
-Lenstra-Lenstra-Lovacsz (LLL) lattice reduction, Seysen lattice
-reduction, a sphere decoder, and VBLAST matrix decomposition. 
+This package provides the following tools, which all operate on
+floating-point lattices: Lenstra-Lenstra-Lovacsz (LLL) lattice
+reduction, Seysen lattice reduction, a sphere decoder, and VBLAST
+matrix decomposition.
 
 [LLL](https://en.wikipedia.org/wiki/Lenstra%E2%80%93Lenstra%E2%80%93Lov%C3%A1sz_lattice_basis_reduction_algorithm) [1]
 lattice reduction is a powerful tool in computer science that is used
@@ -63,8 +63,12 @@ println("Testing VBLAST on $(N)x$(N) complex matrix...")
 
 ### Future work
 
-Additions we would like to make are
-* Block-Korkin-Zolotarev lattice redution
+These tools were developed and tested in the context of multi-antenna
+wireless communication, and do not reflect the state-of-the art
+lattice tools used for cryptography [4]. Adding these tools and the
+following improvements are among changes which can be made:
+* Block-Korkin-Zolotarev lattice redution, with improvements
+  as in [4]
 * Brun lattice reduction
 * Discussion and examples of use with integer and fixed-point lattices
 * Execution times for the algorithms for various dimensions averaged
@@ -91,3 +95,7 @@ Vol 13, no 3, pp 363-376, 1993.
 Data Rates Over the Rich-Scattering Wireless Channel"]
 (http://ieeexplore.ieee.org/xpl/login.jsp?tp=&arnumber=738086). Proc. URSI
 ISSSE: 295–300. 
+
+[4] Y. Chen, P. Q. Nguyen (2011) ["BKZ 2.0: Better Lattice Security Estimates"]
+(http://www.iacr.org/archive/asiacrypt2011/70730001/70730001.pdf).
+Proc. ASIACRYPT 2011.
