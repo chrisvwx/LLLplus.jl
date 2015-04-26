@@ -79,32 +79,31 @@ println("Error Rate is $(errRate). It should be zero or very small.\n")
 # test norm for matrix from http://www.latticechallenge.org/
 # --------------
 
-run(`ls -la challenge-200.mod`)
-# println("Testing now with 200x200 matrix from latticechallenge.org.")
-# println("All the column norms should be 30.")
-# mat = readdlm("challenge-200.mod",Int64)
+println("Testing now with 200x200 matrix from latticechallenge.org.")
+println("All the column norms should be 30.")
+mat = readdlm("test/challenge-200.mod",Int64) #run from parent directory
 
-# nrms = zeros(200,1)
-# for ix=1:200
-#     nrms[ix] = norm(mat[:,ix])
-# end
-# println("max col-norm of input is $(maximum(nrms))")
+nrms = zeros(200,1)
+for ix=1:200
+    nrms[ix] = norm(mat[:,ix])
+end
+println("max col-norm of input is $(maximum(nrms))")
 
-# @time (B,T) = lll(mat);
-# nrms = zeros(200,1)
-# for ix=1:200
-#     nrms[ix] = norm(B[:,ix])
-# end
-# maxlll = maximum(nrms)
-# println("max col-norm of lll-reduced basis is $(maxlll)")
-# @test maxlll<=30+1e-6
+@time (B,T) = lll(mat);
+nrms = zeros(200,1)
+for ix=1:200
+    nrms[ix] = norm(B[:,ix])
+end
+maxlll = maximum(nrms)
+println("max col-norm of lll-reduced basis is $(maxlll)")
+@test maxlll<=30+1e-6
 
-# @time (B,T) = seysen(mat);
-# nrms = zeros(200,1)
-# for ix=1:200
-#     nrms[ix] = norm(B[:,ix])
-# end
-# maxSeysen = maximum(nrms)
-# println("max column norm of seysen-reduced basis is $(maxSeysen)")
-# @test maxSeysen<=30+1e-6
+@time (B,T) = seysen(mat);
+nrms = zeros(200,1)
+for ix=1:200
+    nrms[ix] = norm(B[:,ix])
+end
+maxSeysen = maximum(nrms)
+println("max column norm of seysen-reduced basis is $(maxSeysen)")
+@test maxSeysen<=30+1e-6
 
