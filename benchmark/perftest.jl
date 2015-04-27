@@ -1,4 +1,6 @@
 include("../src/LLLplus.jl")
+Pkg.add("PyPlot")
+Pkg.clone("github.com:christianpeel/USERTime.jl.git")
 
 using PyPlot
 using LLLplus
