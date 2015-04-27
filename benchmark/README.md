@@ -13,7 +13,7 @@ the polynomial-time nature of the algorithm. Each data point
 is the average of execution time of 50 runs of a lattice-reduction
 technique, where the matrices used were generated using *randn* to
 emulate unit-variance Gaussian-distributed values.
-![Time vs matrix size](perfVsNfloat32.svg)
+![Time vs matrix size](perfVsNfloat32.png)
 
 The lattice-reduction techniques work for Intgeger (Int64),
 FloatingPoint (Float64), BigInt, and BigFloat. The vertical axis in
@@ -22,7 +22,7 @@ in the previous figure. In the horizontal axis, the values 1..6
 represent Int32, Int64, Int128, Float64, BitInt, and BigFloat
 datatypes which are used to generate 50 16x16 matrices, over which
 execution time for the lattic reduction techniques is averaged.
-![Time vs data type](perfVsDataTypeN16.svg)
+![Time vs data type](perfVsDataTypeN16.png)
 
 #### Possible updates to the tests
 

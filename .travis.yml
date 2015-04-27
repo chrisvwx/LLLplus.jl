@@ -21,6 +21,6 @@ script:
 after_success:
 - git checkout $TRAVIS_BRANCH
 - git status
-- git add benchmark/*.svg
+- git add benchmark/*.png
 - git commit -m "Performance results via Travis" -m"[skip ci]"
 - git push deploy
