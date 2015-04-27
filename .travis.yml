@@ -12,7 +12,7 @@ before_install:
 - git config user.name "Travis build"
 - git config --global push.default simple
 - sudo apt-get install python-matplotlib
-- git add remote deploy git@github.com:christianpeel/LLLplus.jl.git
+- git remote add deploy git@github.com:christianpeel/LLLplus.jl.git
 - git remote -v
 script:
 - date
