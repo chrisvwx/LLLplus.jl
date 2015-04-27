@@ -14,7 +14,11 @@ function seysen{Td}(H::Array{Td,2})
 if Td<:BigInt || Td<:BigFloat
     Ti= Td<:Complex?Complex{BigInt}:BigInt
 else
-    Ti= Td<:Complex?Complex{Int}:Int
+    if Td<:Integer
+        Ti= Td<:Complex?Complex{Td}:Td
+    else
+        Ti= Td<:Complex?Complex{Int}:Int
+    end
 end
 roundf(r) = Td<:Complex?round(real(r)) + im*round(imag(r)):round(r);
 
@@ -68,7 +72,12 @@ while do_reduction
     num_it = num_it + 1;
     
     # perform basis update
-    B[:,s] = B[:,s] + Λ[s,t]*B[:,t];
+    try
+        B[:,s] = B[:,s] + Λ[s,t]*B[:,t];
+    catch
+        println("B[:,s] = $(B[:,s]), typeof(B[:,s]) = $(typeof(B[:,s]))")
+        println("Λ[s,t] = $(Λ[s,t]), typeof(Λ[s,t]) = $(typeof(Λ[s,t]))")
+    end
 
     # compute corresponding unimodular trasformation matrix
     T[:,s] = T[:,s] + Λ[s,t]*T[:,t];  # basis transformation matrix
@@ -104,17 +113,18 @@ while do_reduction
             if ((ind1==s) | (ind1==t) | (ind2==s) | (ind2==t)) & (ind1!=ind2)
                 x = 0.5*(Adual[ind2,ind1]/Adual[ind1,ind1]-A[ind2,ind1]/
                          A[ind2,ind2]);
-                try
+                # try
                     Λ[ind1,ind2] = roundf(x);
-                catch
-                    println("x = $(x), typeof(x) = $(typeof(x))")
-                    println("A[ind2,ind2] = $(A[ind2,ind2]), typeof(A[ind2,ind2]) = $(typeof(A[ind2,ind2]))")
-                    println("roundf(x)) = $(roundf(x))"*
-                            "typeof(roundf(x))) = $(typeof(roundf(x)))")
-                    println("Λ[ind1,ind2]) = $(Λ[ind1,ind2])"*
-                            "typeof(Λ[ind1,ind2])) = $(typeof(Λ[ind1,ind2]))")
-                    println(" ")
-                end
+                # catch
+                #     println("x = $(x), typeof(x) = $(typeof(x))")
+                #     println("A[ind2,ind2] = $(A[ind2,ind2]),  "*
+                #             "typeof(A[ind2,ind2]) = $(typeof(A[ind2,ind2]))")
+                #     println("roundf(x)) = $(roundf(x))  "*
+                #             "typeof(roundf(x))) = $(typeof(roundf(x)))")
+                #     println("Λ[ind1,ind2]) = $(Λ[ind1,ind2])  "*
+                #             "typeof(Λ[ind1,ind2])) = $(typeof(Λ[ind1,ind2]))")
+                #     println(" ")
+                # end
                 AbsΛ = abs(Λ[ind1,ind2])^2;
                 if AbsΛ != 0
                     zw = real(Λ[ind1,ind2])*real(x)+imag(Λ[ind1,ind2])*imag(x);
