@@ -5,4 +5,8 @@ notifications:
     email: false
 script:
   - date
-  - julia -e 'include("test/runtests.jl")'
+  - julia -e 'include("test/runtests.jl"); include("benchmark/perftest.jl")'
+  - ls -la benchmark
+  - git add benchmark/*.png
+  - git commit -m "Performance results\n[skip ci]"
+  - git push
