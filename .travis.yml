@@ -15,10 +15,11 @@ after_success:
 - eval "$(ssh-agent)"
 - ssh-add .id_rsa_peelcb
 - git remote add deploy git@github.com:christianpeel/LLLplus.jl.git
-- git config user.email "build@travis"
+- git config user.email "peelcb@gmail.com"
 - git config user.name "Travis build"
-- ls -la benchmark
+- git config --global push.default simple
 - git add benchmark/*.png
 - git status
 - git commit -m "Performance results via Travis\n[skip ci]"
 - git push deploy
+- git status
