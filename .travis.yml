@@ -2,11 +2,18 @@
 #  - export TZ=America/Los_Angeles
 language: julia
 notifications:
-    email: false
+  email: false
 script:
   - date
   - julia -e 'include("test/runtests.jl"); include("benchmark/perftest.jl")'
+after_success:
+  - openssl aes-256-cbc -K $encrypted_5b34a3804359_key -iv $encrypted_5b34a3804359_iv -in .id_rsa_peelcb.enc -out .id_rsa_peelcb -d
+  - chmod 600 .id_rsa_peelcb
+  - ssh-add .id_rsa_peelcb
+  - git remote add git@github.com:christianpeel/LLLplus.jl.git
+  - ls -la .id*
   - ls -la benchmark
   - git add benchmark/*.png
+  - git status
   - git commit -m "Performance results\n[skip ci]"
   - git push
