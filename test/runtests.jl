@@ -52,9 +52,9 @@ println("\nTesting LLL on $(N)x$(N) complex matrix...")
 H = randn(N,N) + im*randn(N,N);
 @time (B,T,Q,R) = lll(H);
 @time (B,T,Q,R) = lll(H);
-println("Testing Seysen on same $(N)x$(N) complex matrix...")
-@time (B,T) = seysen(H);
-@time (B,T) = seysen(H);
+# println("Testing Seysen on same $(N)x$(N) complex matrix...")
+# @time (B,T) = seysen(H);
+# @time (B,T) = seysen(H);
 println("Testing VBLAST on same $(N)x$(N) complex matrix...")
 @time (W,P,B) = vblast(H);
 @time (W,P,B) = vblast(H);
