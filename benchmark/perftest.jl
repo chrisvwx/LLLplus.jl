@@ -1,10 +1,10 @@
 include("../src/LLLplus.jl")
 Pkg.add("PyPlot")
-Pkg.clone("github.com:christianpeel/USERTime.jl.git")
+Pkg.add("CPUTime")
 
 using PyPlot
 using LLLplus
-using USERTime
+using CPUTime
 
 include("lrtest.jl")
 
