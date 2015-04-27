@@ -128,7 +128,9 @@ for ix = 1:Ns
         (B,T) = lrAlgs[ax](data);
         times[ax,ix] = CPUtoq();
         # detB = abs(det(B))
+        # # Hermite factor
         # hermitef[ax,ix] = norm(B[:,1])/detB^(1/N)
+        # # Orthogonality defect
         # orthf[ax,ix] = prodBi(B,N)/detB
 
         # if abs(abs(det(T))-1.0)>1e-6

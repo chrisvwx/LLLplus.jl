@@ -5,25 +5,20 @@ notifications:
 before_install:
 - openssl aes-256-cbc -K $encrypted_5b34a3804359_key -iv $encrypted_5b34a3804359_iv
   -in .id_rsa_peelcb.enc -out .id_rsa_peelcb -d
-- sudo apt-get install python-matplotlib
 - chmod 600 .id_rsa_peelcb
 - eval "$(ssh-agent)"
 - ssh-add .id_rsa_peelcb
-- git remote -v
-- git remote add deploy git@github.com:christianpeel/LLLplus.jl.git
-- git remote -v
 - git config user.email "peelcb@gmail.com"
 - git config user.name "Travis build"
 - git config --global push.default simple
+- sudo apt-get install python-matplotlib
 script:
 - date
 - julia -e 'include("test/runtests.jl");'
-after_success:
 - julia -e 'include("benchmark/perftest.jl")'
-- git checkout master
-- git add benchmark/*.png
-- git add benchmark/*.png
+after_success:
+- git checkout $TRAVIS_BRANCH
 - git status
-- git commit -m "Performance results via Travis\n[skip ci]"
-- git push deploy
-- git status
+- git add benchmark/*.svg
+- git commit -m "Performance results via Travis" -m"[skip ci]"
+- git push

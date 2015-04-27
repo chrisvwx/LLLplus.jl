@@ -75,9 +75,6 @@ following improvements are among changes which can be made:
   over many random Gaussian-disributed matrices
 * More examples
 
-Comments, feedback, criticism are welcome; contact the author using
-the email [here](https://github.com/christianpeel). 
-
 
 ### References
 
@@ -99,3 +96,10 @@ ISSSE: 295–300.
 [4] Y. Chen, P. Q. Nguyen (2011) ["BKZ 2.0: Better Lattice Security Estimates"]
 (http://www.iacr.org/archive/asiacrypt2011/70730001/70730001.pdf).
 Proc. ASIACRYPT 2011.
+
+### Author
+
+This module was written by
+[Chris Peel](https://github.com/ChristianPeel).
+
+
