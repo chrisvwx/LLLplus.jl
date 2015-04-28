@@ -40,40 +40,75 @@ Here are a few examples of using the functions in the
 package on random lattices.
 
 ```julia
-include("src/LLLplus.jl")
+Pkg.add("LLLplus")
 using LLLplus
 
-# Time LLL decomposition of a 1000x1000 real matrix with randn entries 
+# Time LLL, VBLAST decomposition of a complex matrix with randn entries 
 N = 1000;
-H = randn(N,N);
-println("Testing LLL on $(N)x$(N) real matrix...")
-@time (B,T,Q,R) = lll(H);
-
-# Time LLL, Seysen, VBLAST decompositions of a 10x10 complex matrix with
-# randn entries
-N = 10;
 H = randn(N,N) + im*randn(N,N);
 println("Testing LLL on $(N)x$(N) complex matrix...")
 @time (B,T,Q,R) = lll(H);
-println("Testing Seysen on $(N)x$(N) complex matrix...")
-@time (T,H_red,H_red_dual) = seysen(H);
-println("Testing VBLAST on $(N)x$(N) complex matrix...")
-@time (W,P,B) = vblast(H);
+M = 200;
+println("Testing VBLAST on $(M)x$(M) chunk of same matrix...")
+@time (W,P,B) = vblast(H[1:M,1:M]);
+
+# Time LLL, Seysen decompositions of a 100x100 Int128 matrix with
+# rand entries distributed uniformly between -100:100
+N = 100;
+H = zeros(Int64, N,N);
+rand!(-100:100, H);
+println("Testing LLL on $(N)x$(N) real matrix...")
+@time (B,T,Q,R) = lll(H);
+println("Testing Seysen on same $(N)x$(N) matrix...")
+@time (B,T) = seysen(H);
 ```
+
+### Execution Time results
+
+On this page we give a few performance results from tests run on
+Travis-CI during normal CI tests. In the tests we time execution of the
+lattice-reduction functions, average the results over multiple random
+matrices, and show results as a function of the size of the matrix and
+of the data type. 
+
+We first show how the time varies with matrix size (1,2,4,...64); the
+vertical axis shows execution time on a logarithmic scale; the x-axis
+is also logarithmic. The generally linear nature of the LLL curve supports
+the polynomial-time nature of the algorithm. Each data point
+is the average of execution time of 50 runs of a lattice-reduction
+technique, where the matrices used were generated using *randn* to
+emulate unit-variance Gaussian-distributed values.
+![Time vs matrix size](benchmark/perfVsNfloat32.png)
+
+The lattice-reduction techniques work for Intgeger (Int64),
+FloatingPoint (Float64), BigInt, and BigFloat. The vertical axis in
+the next figure is a logarithmic representation of execution time as
+in the previous figure. In the horizontal axis, the values 1..6
+represent Int32, Int64, Int128, Float64, BitInt, and BigFloat
+datatypes which are used to generate 50 16x16 matrices, over which
+execution time for the lattic reduction techniques is averaged.
+![Time vs data type](benchmark/perfVsDataTypeN16.png)
+
 
 ### Future work
 
 These tools were developed and tested in the context of multi-antenna
 wireless communication, and do not reflect the state-of-the art
-lattice tools used for cryptography [4]. Adding these tools and the
+lattice tools used for cryptography [4]. Adding such tools and the
 following improvements are among changes which can be made:
 * Block-Korkin-Zolotarev lattice redution, with improvements
   as in [4]
+* The [SVP](http://www.latticechallenge.org/svp-challenge/) Challenge
+  and the
+  [Ideal](http://www.latticechallenge.org/ideallattice-challenge/)
+  Lattice challenge have code to generate lattices for the respective
+  contests which could be used or duplicated to make challenging
+  tests. The main [Lattice](http://www.latticechallenge.org/)
+  Challenge also lists references which could be used to replicate
+  tests.
+* Utilize BLAS functions for faster vector-matrix operations
 * Brun lattice reduction
 * Discussion and examples of use with integer and fixed-point lattices
-* Execution times for the algorithms for various dimensions averaged
-  over many random Gaussian-disributed matrices
-* More examples
 
 
 ### References

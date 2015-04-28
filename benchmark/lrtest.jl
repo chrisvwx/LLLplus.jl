@@ -36,7 +36,7 @@ if length(N)>1
     end
     plotfun = PyPlot.loglog;
     xval = N;
-    xlab = "Set Size";
+    xlab = "Matrix Size";
     tstr = @sprintf("Ns=%d,L=%d,Type=%s,dist=%s",
                     Ns,L[1],string(dataType[1]),distType);
 elseif length(L)>1
@@ -45,7 +45,7 @@ elseif length(L)>1
     end
     plotfun = semilogy;
     xval = L;
-    xlab = "Max";
+    xlab = "L";
     tstr = @sprintf("Ns=%d,N=%d,Type=%s,dist=%s",
                     Ns,N[1],string(dataType[1]),distType);
 elseif length(dataType)>1
@@ -54,7 +54,7 @@ elseif length(dataType)>1
     end
     plotfun = semilogy;
     xval = 1:length(dataType)
-    xlab = "Max";
+    xlab = "dataType";
     tstr = @sprintf("Ns=%d,N=%d,L=%d,dist=%s",Ns,N[1],L[1],distType);
 end
 
