@@ -70,7 +70,7 @@ Nout = size(out,1);
 
 f=figure(num=1,figsize=(5.5,3.5))
 clf()
-plt.style[:use]("ggplot")
+plt.style[:use]("fivethirtyeight")
 
 times = zeros(Nout);
 for a=1:length(out[1][2])
