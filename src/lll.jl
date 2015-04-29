@@ -1,12 +1,12 @@
-function lll{Td}(H::Array{Td,2},δ=3/4)
+function lll{Td}(H::Array{Td,2},δ::Float64=3/4)
 # (B,T,Q,R) = LLL(H,δ=3/4)
 #  Do Lenstra–Lenstra–Lovász lattice reduction of matrix H using optional
 #  parameter δ.  The output is B, an LLL-reduced basis; T, a unimodular
-#  transformation matrix such that B= H*T; Q and R such that B=Q*R and Q is
-#  orthonormal, and R is upper triangular.  So H = inv(T)*Q*R
+#  (det(T)=+/-1) transformation matrix such that B= H*T; Q and R such that
+#  B=Q*R and Q is orthonormal, and R is upper triangular.  So H = inv(T)*Q*R
 #
-#  H can be of Integer, FloatingPoint, BigInt, BigFloat, or of other Numeric
-#  type. The core algorithm is designed for floating-point.
+#  H can be of Integer, FloatingPoint, BigInt, or BigFloat types. The core
+#  algorithm is designed for floating-point.
 #
 # Example with large real matrix:
 #   N=500;H = randn(N,N); (B,T) = lll(H)
@@ -35,7 +35,7 @@ else
     T = eye(Int,L);
     roundf(r) = round(r);
 end
-    
+
 lx  = 2;
 while lx <= L
   
@@ -46,12 +46,7 @@ while lx <= L
         if abs(mu)>0
             B[:,lx]   = B[:,lx]   - mu * B[:,k]
             R[1:k,lx] = R[1:k,lx] - mu * R[1:k,k]
-            T[:,lx]   =try
-                T[:,lx]   - mu * T[:,k]
-            catch
-                println("T=$(T)")
-                println("mu=$(mu)")
-            end
+            T[:,lx]   = T[:,lx]   - mu * T[:,k]
         end
     end
 

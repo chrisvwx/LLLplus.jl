@@ -16,6 +16,7 @@
 # """
 function lrtest(Ns::Int,N::Array{Int,1},L::Array{Int,1},
                 dataType::Array{DataType,1},distType)
+#                dataType,distType)
 
 # Packages that need to be loaded for lrtest to work include PyPlot, and
 # CPUTime.
@@ -29,6 +30,7 @@ for ax = 1:min(length(lrAlgs),6)
 end
 @printf("\n")
 
+xtickStrs = [];
 out = cell(0)
 if length(N)>1
     for s = 1:length(N)
@@ -54,18 +56,22 @@ elseif length(dataType)>1
     end
     plotfun = semilogy;
     xval = 1:length(dataType)
+    xtickStrs = map(string,dataType)
     xlab = "dataType";
     tstr = @sprintf("Ns=%d,N=%d,L=%d,dist=%s",Ns,N[1],L[1],distType);
 end
 
-pColor = {"r>-","bo--","kx-.","gd-","c^--","m*-.",
+pColor = {"r-","b.-","k-","g-","c-","m-",
+          "r--","b.-.","k--","g.-.","c--","m*-.",
           "rs--","gp-.","bv-","kh--","c+-.","m.-",};
 pIdx   = 1;
 
 Nout = size(out,1);
 
-figure(num=1,figsize=(6,5))
+f=figure(num=1,figsize=(6.5,4.5))
 clf()
+plt.style[:use]("ggplot")
+
 times = zeros(Nout);
 for a=1:length(out[1][2])
     for k=1:Nout
@@ -80,9 +86,13 @@ hold(false);
 xlabel(xlab);
 ylabel("execution time (sec)");
 legend(loc=2);
-grid(which="both",axis="y")
-grid(which="major",axis="x")
-title(tstr)
+#title(tstr)
+if ~isempty(xtickStrs)
+    xticks(xval,xtickStrs)
+end
+grid(figure=f,which="both",axis="y")
+grid(figure=f,which="major",axis="x")
+plt.tight_layout()
 
 return
 end
@@ -111,7 +121,7 @@ data = Array(dataType,N,N);
 
 for ix = 1:Ns
     cnum = Inf;
-    while cnum>1e5  # With Ints need to check for si
+    while cnum>1e5  # With Ints need to check for singular matrices
         data = randf!(data);
         if !(dataType<:BigInt || dataType<:BigFloat)
             cnum = cond(data)

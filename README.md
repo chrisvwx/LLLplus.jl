@@ -6,7 +6,7 @@
 This package provides the following tools, which all operate on
 floating-point lattices: Lenstra-Lenstra-Lovacsz (LLL) lattice
 reduction, Seysen lattice reduction, a sphere decoder, and VBLAST
-matrix decomposition.
+matrix decomposition. 
 
 [LLL](https://en.wikipedia.org/wiki/Lenstra%E2%80%93Lenstra%E2%80%93Lov%C3%A1sz_lattice_basis_reduction_algorithm) [1]
 lattice reduction is a powerful tool in computer science that is used
@@ -75,41 +75,43 @@ We first show how the time varies with matrix size (1,2,4,...64); the
 vertical axis shows execution time on a logarithmic scale; the x-axis
 is also logarithmic. The generally linear nature of the LLL curve supports
 the polynomial-time nature of the algorithm. Each data point
-is the average of execution time of 50 runs of a lattice-reduction
-technique, where the matrices used were generated using *randn* to
+is the average of execution time of 200 runs of a lattice-reduction
+technique, where the matrices used were generated using 'randn' to
 emulate unit-variance Gaussian-distributed values.
 ![Time vs matrix size](benchmark/perfVsNfloat32.png)
 
-The lattice-reduction techniques work for Intgeger (Int64),
-FloatingPoint (Float64), BigInt, and BigFloat. The vertical axis in
-the next figure is a logarithmic representation of execution time as
-in the previous figure. In the horizontal axis, the values 1..6
-represent Int32, Int64, Int128, Float64, BitInt, and BigFloat
-datatypes which are used to generate 50 16x16 matrices, over which
-execution time for the lattic reduction techniques is averaged.
-![Time vs data type](benchmark/perfVsDataTypeN16.png)
+In the horizontal axis of the next figure, the values 1..6 represent
+Int32, Int64, Int128, Float64, BitInt, and BigFloat datatypes which
+are used to generate 200 16x16 matrices, over which execution time for
+the lattic reduction techniques is averaged.  The vertical axis is a
+logarithmic representation of execution time as in the previous
+figure. ![Time vs data type](benchmark/perfVsDataTypeN16.png)
 
+### Future
 
-### Future work
+The performance tests above were designed to accomodate new
+lattice-reduction techniques. These could be simple updates of one of
+the current techniques to include BLAS functions, or something like
+BKZ [4] reduction, which is used to break crypto systems. Once a new
+technique is available, it can be added directly to this package, or
+included via something like 'Pkg.add("NewLR"); using NewLR' in
+'benchmarks/perftest.jl'. 
 
-These tools were developed and tested in the context of multi-antenna
-wireless communication, and do not reflect the state-of-the art
-lattice tools used for cryptography [4]. Adding such tools and the
-following improvements are among changes which can be made:
-* Block-Korkin-Zolotarev lattice redution, with improvements
-  as in [4]
+Possible future improvements include:
+* Add Block-Korkin-Zolotarev lattice redution, with improvements
+  as in [4], and Brun lattice reduction 
 * The [SVP](http://www.latticechallenge.org/svp-challenge/) Challenge
   and the
   [Ideal](http://www.latticechallenge.org/ideallattice-challenge/)
   Lattice challenge have code to generate lattices for the respective
   contests which could be used or duplicated to make challenging
-  tests. The main [Lattice](http://www.latticechallenge.org/)
-  Challenge also lists references which could be used to replicate
-  tests.
-* Utilize BLAS functions for faster vector-matrix operations
-* Brun lattice reduction
-* Discussion and examples of use with integer and fixed-point lattices
-
+  performance tests. The main
+  [Lattice](http://www.latticechallenge.org/) Challenge also lists
+  references which could be used to replicate tests.
+* Compare with the [Number Theory Library](http://www.shoup.net/ntl/).
+* Utilize BLAS functions for faster vector-matrix operations, or just
+  devectorize the functions (at present they are not much faster than
+  the corresponding Matlab functions).
 
 ### References
 
@@ -131,8 +133,6 @@ ISSSE: 295–300.
 [4] Y. Chen, P. Q. Nguyen (2011) ["BKZ 2.0: Better Lattice Security Estimates"]
 (http://www.iacr.org/archive/asiacrypt2011/70730001/70730001.pdf).
 Proc. ASIACRYPT 2011.
-
-### Author
 
 This module was written by
 [Chris Peel](https://github.com/ChristianPeel).
