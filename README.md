@@ -6,7 +6,7 @@
 This package provides the following tools, which all operate on
 floating-point lattices: Lenstra-Lenstra-Lovacsz (LLL) lattice
 reduction, Seysen lattice reduction, a sphere decoder, and VBLAST
-matrix decomposition.
+matrix decomposition. 
 
 [LLL](https://en.wikipedia.org/wiki/Lenstra%E2%80%93Lenstra%E2%80%93Lov%C3%A1sz_lattice_basis_reduction_algorithm) [1]
 lattice reduction is a powerful tool in computer science that is used
@@ -80,15 +80,12 @@ technique, where the matrices used were generated using *randn* to
 emulate unit-variance Gaussian-distributed values.
 ![Time vs matrix size](benchmark/perfVsNfloat32.png)
 
-The lattice-reduction techniques work for Intgeger (Int64),
-FloatingPoint (Float64), BigInt, and BigFloat. The vertical axis in
-the next figure is a logarithmic representation of execution time as
-in the previous figure. In the horizontal axis, the values 1..6
-represent Int32, Int64, Int128, Float64, BitInt, and BigFloat
-datatypes which are used to generate 50 16x16 matrices, over which
-execution time for the lattic reduction techniques is averaged.
-![Time vs data type](benchmark/perfVsDataTypeN16.png)
-
+In the horizontal axis of the next figure, the values 1..6 represent
+Int32, Int64, Int128, Float64, BitInt, and BigFloat datatypes which
+are used to generate 50 16x16 matrices, over which execution time for
+the lattic reduction techniques is averaged.  The vertical axis is a
+logarithmic representation of execution time as in the previous
+figure. ![Time vs data type](benchmark/perfVsDataTypeN16.png)
 
 ### Future work
 
@@ -96,8 +93,8 @@ These tools were developed and tested in the context of multi-antenna
 wireless communication, and do not reflect the state-of-the art
 lattice tools used for cryptography [4]. Adding such tools and the
 following improvements are among changes which can be made:
-* Block-Korkin-Zolotarev lattice redution, with improvements
-  as in [4]
+* Add Block-Korkin-Zolotarev lattice redution, with improvements
+  as in [4], and Brun lattice reduction 
 * The [SVP](http://www.latticechallenge.org/svp-challenge/) Challenge
   and the
   [Ideal](http://www.latticechallenge.org/ideallattice-challenge/)
@@ -106,9 +103,10 @@ following improvements are among changes which can be made:
   tests. The main [Lattice](http://www.latticechallenge.org/)
   Challenge also lists references which could be used to replicate
   tests.
-* Utilize BLAS functions for faster vector-matrix operations
-* Brun lattice reduction
-* Discussion and examples of use with integer and fixed-point lattices
+* Compare with the [Number Theory Library](http://www.shoup.net/ntl/).
+* Utilize BLAS functions for faster vector-matrix operations, or just
+  devectorize the functions (at present they are not much faster than
+  the corresponding Matlab functions).
 
 
 ### References

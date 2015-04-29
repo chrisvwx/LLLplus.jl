@@ -1,12 +1,12 @@
-include("../src/LLLplus.jl")
+include("src/LLLplus.jl")
 Pkg.add("PyPlot")
 Pkg.add("CPUTime")
 
 using PyPlot
-using LLLplus
 using CPUTime
+using LLLplus
 
-include("lrtest.jl")
+include("benchmark/lrtest.jl")
 
 
 lrtest(100,2.^[4;],[100;],[Int32,Int64,Int128,Float64,BigInt,BigFloat],"rand")
