@@ -90,12 +90,12 @@ figure. ![Time vs data type](benchmark/perfVsDataTypeN16.png)
 ### Future
 
 The performance tests above were designed to accomodate new
-lattice-reduction techniques. These could be simple updates of one of
-the current techniques to include BLAS functions, or something like
-BKZ [4] reduction, which is used to break crypto systems. Once a new
-technique is available, it can be added directly to this package, or
-included via something like 'Pkg.add("NewLR"); using NewLR' in
-'benchmarks/perftest.jl'. 
+lattice-reduction techniques, which we invite you to add. These could
+be simple updates of one of the current techniques to include BLAS
+functions, or something like BKZ [4] reduction, which is used to break
+crypto systems. Once a new technique is available, it can be added
+directly to this package, or included just in the tests via something
+like 'Pkg.add("NewLR"); using NewLR' in 'benchmarks/perftest.jl'.
 
 Possible future improvements include:
 * Add Block-Korkin-Zolotarev lattice redution, with improvements
