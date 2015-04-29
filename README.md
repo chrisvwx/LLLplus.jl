@@ -75,14 +75,14 @@ We first show how the time varies with matrix size (1,2,4,...64); the
 vertical axis shows execution time on a logarithmic scale; the x-axis
 is also logarithmic. The generally linear nature of the LLL curve supports
 the polynomial-time nature of the algorithm. Each data point
-is the average of execution time of 50 runs of a lattice-reduction
+is the average of execution time of 200 runs of a lattice-reduction
 technique, where the matrices used were generated using *randn* to
 emulate unit-variance Gaussian-distributed values.
 ![Time vs matrix size](benchmark/perfVsNfloat32.png)
 
 In the horizontal axis of the next figure, the values 1..6 represent
 Int32, Int64, Int128, Float64, BitInt, and BigFloat datatypes which
-are used to generate 50 16x16 matrices, over which execution time for
+are used to generate 200 16x16 matrices, over which execution time for
 the lattic reduction techniques is averaged.  The vertical axis is a
 logarithmic representation of execution time as in the previous
 figure. ![Time vs data type](benchmark/perfVsDataTypeN16.png)
