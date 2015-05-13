@@ -1,12 +1,11 @@
 include("../src/LLLplus.jl")
 Pkg.add("PyPlot")
 Pkg.add("CPUTime")
+Pkg.add("ArrayViews")
 
 using PyPlot
 using CPUTime
 using LLLplus
-using Base.BLAS
-using ArrayViews
 
 include("lrtest.jl")
 

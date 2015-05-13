@@ -22,7 +22,7 @@ function lrtest(Ns::Int,N::Array{Int,1},L::Array{Int,1},
 # CPUTime.
     
 #lrAlgs = [lll, lllrecursive,seysen]
-lrAlgs = [lll, lllnative, seysen]
+lrAlgs = [lll, seysen]
 
 @printf("      Ns      N      L   dataType")
 for ax = 1:min(length(lrAlgs),6)

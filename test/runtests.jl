@@ -1,6 +1,7 @@
 # --------------
 # Initialization
 # --------------
+Pkg.add("ArrayViews")
 include("../src/LLLplus.jl")
 
 using LLLplus
