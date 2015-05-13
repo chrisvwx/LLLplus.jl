@@ -113,18 +113,20 @@ while do_reduction
             if ((ind1==s) | (ind1==t) | (ind2==s) | (ind2==t)) & (ind1!=ind2)
                 x = 0.5*(Adual[ind2,ind1]/Adual[ind1,ind1]-A[ind2,ind1]/
                          A[ind2,ind2]);
-                # try
+                ## There is an intermitent bug that I haven't yet figured
+                ## out that this try/catch code is aimed at. Yes, it's ugly...
+                try
                     Λ[ind1,ind2] = roundf(x);
-                # catch
-                #     println("x = $(x), typeof(x) = $(typeof(x))")
-                #     println("A[ind2,ind2] = $(A[ind2,ind2]),  "*
-                #             "typeof(A[ind2,ind2]) = $(typeof(A[ind2,ind2]))")
-                #     println("roundf(x)) = $(roundf(x))  "*
-                #             "typeof(roundf(x))) = $(typeof(roundf(x)))")
-                #     println("Λ[ind1,ind2]) = $(Λ[ind1,ind2])  "*
-                #             "typeof(Λ[ind1,ind2])) = $(typeof(Λ[ind1,ind2]))")
-                #     println(" ")
-                # end
+                catch
+                    println("x = $(x), typeof(x) = $(typeof(x))")
+                    println("A[ind2,ind2] = $(A[ind2,ind2]),  "*
+                            "typeof(A[ind2,ind2]) = $(typeof(A[ind2,ind2]))")
+                    println("roundf(x)) = $(roundf(x))  "*
+                            "typeof(roundf(x))) = $(typeof(roundf(x)))")
+                    println("Λ[ind1,ind2]) = $(Λ[ind1,ind2])  "*
+                            "typeof(Λ[ind1,ind2])) = $(typeof(Λ[ind1,ind2]))")
+                    println(" ")
+                end
                 AbsΛ = abs(Λ[ind1,ind2])^2;
                 if AbsΛ != 0
                     zw = real(Λ[ind1,ind2])*real(x)+imag(Λ[ind1,ind2])*imag(x);

@@ -81,10 +81,9 @@ println("Error Rate is $(errRate). It should be zero or very small.\n")
 # test norm for matrix from http://www.latticechallenge.org/
 # --------------
 
-# Following works on Travis, but causes Julia package tests to fail. It's
-# commented-out for now
 println("Testing now with 200x200 matrix from latticechallenge.org.")
-println("All the column norms should be 30.")
+println("The col norm of the input should be 233, col norm of the "*
+        "reduced bases should be 30.")
 mat = readdlm("challenge-200.mod",Int64) #run from parent directory
 
 nrms = zeros(200,1)
