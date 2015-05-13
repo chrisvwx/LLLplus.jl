@@ -1,4 +1,4 @@
-function lll{Td}(H::Array{Td,2},δ=3/4)
+function lllnative{Td}(H::Array{Td,2},δ::Float64=3/4)
 # (B,T,Q,R) = LLL(H,δ=3/4)
 #  Do Lenstra–Lenstra–Lovász lattice reduction of matrix H using optional
 #  parameter δ.  The output is B, an LLL-reduced basis; T, a unimodular
@@ -44,12 +44,9 @@ while lx <= L
         rk = R[k,lx]/R[k,k]
         mu = roundf(rk)
         if abs(mu)>0
-            #B[:,lx]   = B[:,lx]   - mu * B[:,k]
-            axpy!(-mu, B[:,k], view(B,:,lx))
-            #R[1:k,lx] = R[1:k,lx] - mu * R[1:k,k]
-            axpy!(-mu, R[1:k,k], view(R,1:k,lx))
-            #T[:,lx]   = T[:,lx]   - mu * T[:,k]
-            axpy!(-mu, T[:,k],view(T,:,lx))
+            B[:,lx]   = B[:,lx]   - mu * B[:,k]
+            R[1:k,lx] = R[1:k,lx] - mu * R[1:k,k]
+            T[:,lx]   = T[:,lx]   - mu * T[:,k]
         end
     end
 
@@ -67,11 +64,8 @@ while lx <= L
         ss = R[lx,lx-1]   / nrm
         Θ = [cc' ss; -ss cc]
 
-        # Don't have BLAS working here yet
         R[lx-1:lx,lx-1:end] = Θ * R[lx-1:lx,lx-1:end]
-        #gemm!('N','N',1.0,Θ,R[lx-1:lx,lx-1:end],0.0,R[lx-1:lx,lx-1:end])
         Q[:,lx-1:lx] = Q[:,lx-1:lx] * Θ'
-        #gemm!('N','C', 1.0, Q[:,lx-1:lx], Θ, 0.0, Q[:,lx-1:lx])
         lx = max(lx-1,2)
     else
         lx = lx+1;

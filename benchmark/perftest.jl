@@ -5,6 +5,8 @@ Pkg.add("CPUTime")
 using PyPlot
 using CPUTime
 using LLLplus
+using Base.BLAS
+using ArrayViews
 
 include("lrtest.jl")
 

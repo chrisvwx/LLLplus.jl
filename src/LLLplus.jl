@@ -2,6 +2,7 @@ module LLLplus
 
 export
     lll,
+    lllnative,
     seysen,
     vblast,
     hard_sphere
