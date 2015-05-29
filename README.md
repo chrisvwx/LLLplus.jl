@@ -18,7 +18,6 @@ the
 (SVP).
 Seysen [2] introduced a lattice reduction which focuses on global
 optimization rather than local optimization as in LLL.
-
 The
 [closest vector problem](https://en.wikipedia.org/wiki/Lattice_problem#Closest_vector_problem_.28CVP.29)
 (CVP) is related to the SVP; in the context of multi-antenna decoding
@@ -28,11 +27,14 @@ it is referred to as
 Finally, we include code to do a
 [V-BLAST](https://en.wikipedia.org/wiki/Bell_Laboratories_Layered_Space-Time)
 (Vertical-Bell Laboratories Layered Space-Time) matrix
-decomposition. This decomposition is used in a detection algorithm [3] for
-decoding spatially-multiplexed streams of data on multiple antennas or
-other multi-terminal systems. V-BLAST is not as widely used outside of
-the wireless communication community as lattice reduction and CVP
-techniques such as the sphere decoder.
+decomposition. This decomposition is used in a detection algorithm [3]
+for decoding spatially-multiplexed streams of data on multiple
+antennas or other multi-terminal systems. V-BLAST is not as widely
+used outside of the wireless communication community as lattice
+reduction and CVP techniques such as the sphere decoder. In the Julia
+package [MUMIMO.jl](https://github.com/christianpeel/MUMIMO.jl) we use
+the LLL, sphere-decoder, and V-BLAST functions in this package to
+decode multi-user, multi-antenna signals.
 
 ### Examples
 
@@ -66,10 +68,11 @@ println("Testing Seysen on same $(N)x$(N) matrix...")
 ### Execution Time results
 
 On this page we give a few performance results from tests run on
-Travis-CI during normal CI tests. In the tests we time execution of the
-lattice-reduction functions, average the results over multiple random
-matrices, and show results as a function of the size of the matrix and
-of the data type. 
+Travis-CI during normal CI tests:
+`julia -e 'include("benchmark/perftest.jl")'`
+In the tests we time execution of the lattice-reduction functions,
+average the results over multiple random matrices, and show results as
+a function of the size of the matrix and of the data type. 
 
 We first show how the time varies with matrix size (1,2,4,...64); the
 vertical axis shows execution time on a logarithmic scale; the x-axis
@@ -80,11 +83,12 @@ technique, where the matrices used were generated using 'randn' to
 emulate unit-variance Gaussian-distributed values.
 ![Time vs matrix size](benchmark/perfVsNfloat32.png)
 
-In the horizontal axis of the next figure, the values 1..6 represent
-Int32, Int64, Int128, Float64, BitInt, and BigFloat datatypes which
-are used to generate 200 16x16 matrices, over which execution time for
-the lattic reduction techniques is averaged.  The vertical axis is a
-logarithmic representation of execution time as in the previous
+All the modules can handle a variety of data types. In the horizontal
+axis of the next figure, the values 1..6 represent Int32, Int64,
+Int128, Float64, BitInt, and BigFloat datatypes which are used to
+generate 200 16x16 matrices, over which execution time for the lattic
+reduction techniques is averaged.  The vertical axis is a logarithmic
+representation of execution time as in the previous
 figure. ![Time vs data type](benchmark/perfVsDataTypeN16.png)
 
 ### Future
@@ -94,8 +98,9 @@ lattice-reduction techniques, which we invite you to add. These could
 be simple updates of one of the current techniques to include BLAS
 functions, or something like BKZ [4] reduction, which is used to break
 crypto systems. Once a new technique is available, it can be added
-directly to this package, or included just in the tests via something
-like 'Pkg.add("NewLR"); using NewLR' in 'benchmarks/perftest.jl'.
+directly to this package, or included in the tests via something
+like `Pkg.add("NewLR"); using NewLR` in `benchmarks/perftest.jl`,
+followed by appropriate changes to `lrtest.jl`.
 
 Possible future improvements include:
 * Add Block-Korkin-Zolotarev lattice redution, with improvements
