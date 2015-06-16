@@ -2,6 +2,7 @@ include("../src/LLLplus.jl")
 Pkg.add("PyPlot")
 Pkg.add("CPUTime")
 Pkg.add("ArrayViews")
+Pkg.add("Docile")
 
 using PyPlot
 using CPUTime

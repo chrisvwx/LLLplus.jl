@@ -2,6 +2,7 @@
 # Initialization
 # --------------
 Pkg.add("ArrayViews")
+Pkg.add("Docile")
 include("../src/LLLplus.jl")
 
 using LLLplus

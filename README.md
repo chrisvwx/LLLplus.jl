@@ -83,9 +83,9 @@ technique, where the matrices used were generated using 'randn' to
 emulate unit-variance Gaussian-distributed values.
 ![Time vs matrix size](benchmark/perfVsNfloat32.png)
 
-All the modules can handle a variety of data types. In the horizontal
-axis of the next figure, the values 1..6 represent Int32, Int64,
-Int128, Float64, BitInt, and BigFloat datatypes which are used to
+All the modules can handle a variety of data types. In the next figure
+we show execution time for several datatypes (Int32, Int64,
+Int128, Float64, BitInt, and BigFloat) which are used to
 generate 200 16x16 matrices, over which execution time for the lattic
 reduction techniques is averaged.  The vertical axis is a logarithmic
 representation of execution time as in the previous
@@ -104,7 +104,7 @@ followed by appropriate changes to `lrtest.jl`.
 
 Possible future improvements include:
 * Add Block-Korkin-Zolotarev lattice redution, with improvements
-  as in [4], and Brun lattice reduction 
+    as in [4], and Brun lattice reduction 
 * The [SVP](http://www.latticechallenge.org/svp-challenge/) Challenge
   and the
   [Ideal](http://www.latticechallenge.org/ideallattice-challenge/)
@@ -114,9 +114,6 @@ Possible future improvements include:
   [Lattice](http://www.latticechallenge.org/) Challenge also lists
   references which could be used to replicate tests.
 * Compare with the [Number Theory Library](http://www.shoup.net/ntl/).
-* Utilize BLAS functions for faster vector-matrix operations, or just
-  devectorize the functions (at present they are not much faster than
-  the corresponding Matlab functions).
 
 ### References
 

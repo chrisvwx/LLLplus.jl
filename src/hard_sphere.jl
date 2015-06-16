@@ -1,15 +1,19 @@
+# @doc """
+# x=hard_sphere(y,H,Nc)
+#   Solve the problem argmin_x ||y-Hx||, where the elements of x are
+#   integers.  The input vector y is of dimension N, with H of dimension N
+#   by M, and the returned vector x of dimension M and comes from the
+#   integers 0:Nc-1. 
+# X=hard_sphere(Y,H,Nc)
+#   The input may be a matrix Y of dimension N by Ns, in which case
+#   the problem is solved for each column of Y, with the solutions in
+#   the columns of X. 
+#
+# Examples:
+#   X = hard_sphere([1 2]', [1 2; 3 4],2)
+#   X = hard_sphere(rand(0:20,2,15), [1 2; 3 4],2)
+# """ ->
 function hard_sphere{Td}(Y::Array{Td,2},H::Array{Td,2},Nc)
-    # x=hard_sphere(y,H,Nc)
-    #  Solve the problem argmin_x ||y-Hx||, where the elements of x are
-    #  integers.  The input vector y is of dimension N, with H of dimension N
-    #  by M, and the returned vector x of dimension M.
-    # X=hard_sphere(Y,H)
-    #  The input may be a matrix Y of dimension N by Ns, in which case
-    #  the problem is solved for each column of Y, with the solutions in
-    #  the columns of X. 
-    #
-    # Examples:
-    #  X = hard_sphere([1 2]', [1 2; 3 4],2)
     (N,M) = size(H);
 
     if length(Nc)==1;
