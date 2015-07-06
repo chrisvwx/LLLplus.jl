@@ -3,10 +3,11 @@
 [![Build Status](https://travis-ci.org/christianpeel/LLLplus.jl.svg?branch=master)](https://travis-ci.org/christianpeel/LLLplus.jl)
 [![LLLplus](http://pkg.julialang.org/badges/LLLplus_release.svg)](http://pkg.julialang.org/?pkg=LLLplus&ver=release)
 
-This package provides the following tools, which all operate on
-floating-point lattices: Lenstra-Lenstra-Lovacsz (LLL) lattice
-reduction, Seysen lattice reduction, a sphere decoder, and VBLAST
-matrix decomposition. 
+Lattice reduction and related lattice tools are increasingly important
+in wireless communication, cryptography, and signal processing.  This
+package provides the following tools: Lenstra-Lenstra-Lovacsz (LLL)
+lattice reduction, Seysen lattice reduction, a sphere decoder, and
+VBLAST matrix decomposition.
 
 [LLL](https://en.wikipedia.org/wiki/Lenstra%E2%80%93Lenstra%E2%80%93Lov%C3%A1sz_lattice_basis_reduction_algorithm) [1]
 lattice reduction is a powerful tool in computer science that is used
@@ -83,7 +84,8 @@ technique, where the matrices used were generated using 'randn' to
 emulate unit-variance Gaussian-distributed values.
 ![Time vs matrix size](benchmark/perfVsNfloat32.png)
 
-All the modules can handle a variety of data types. In the next figure
+Though the focus of the package is on floating-point, 
+all the modules can handle a variety of data types. In the next figure
 we show execution time for several datatypes (Int32, Int64,
 Int128, Float64, BitInt, and BigFloat) which are used to
 generate 200 16x16 matrices, over which execution time for the lattic

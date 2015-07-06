@@ -3,7 +3,7 @@ function lll{Td}(H::Array{Td,2},δ=3/4)
 #  Do Lenstra–Lenstra–Lovász lattice reduction of matrix H using optional
 #  parameter δ.  The output is B, an LLL-reduced basis; T, a unimodular
 #  (det(T)=+/-1) transformation matrix such that B= H*T; Q and R such that
-#  B=Q*R and Q is orthonormal, and R is upper triangular.  So H = inv(T)*Q*R
+#  B=Q*R and Q is orthonormal, and R is upper triangular.  So H = Q*R*inv(T)
 #
 #  H can be of Integer, FloatingPoint, BigInt, or BigFloat types. The core
 #  algorithm is designed for floating-point.
