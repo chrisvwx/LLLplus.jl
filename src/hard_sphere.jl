@@ -81,7 +81,7 @@ function algII_smart(yp,R,Qc)
             else # inside sphere and inside signal set
                 if ix>1
                     # ksi[ix-1] = (conj(R[ix-1,ix:M])*xp[ix:M])[1];
-                    ksi[ix-1] = (R[ix-1,ix:M]*xp[ix:M])[1];
+                    ksi[ix-1] = (R[ix-1,ix:M]'*xp[ix:M])[1];
                     TT[ix-1] = TT[ix] + ytmp'*ytmp;
                     ix = ix-1;
                     state = 2;

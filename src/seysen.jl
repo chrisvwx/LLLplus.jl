@@ -55,7 +55,7 @@ for s = 1:m
 end # - end calculation of Λ and Δ
 
 # find maximum reduction in Seysen's measure (greedy approach)
-(zw,max_ind) = findmax(abs(Δ[:]));
+(zw,max_ind) = findmax(abs.(Δ[:]));
 (s, t)        = ind2sub((m,m),max_ind);
 
 # init loop
@@ -139,7 +139,7 @@ while do_reduction
     end # - end update Λ and Δ
 
     # find maximum reduction in Seysen's measure (greedy approach)
-    (zw, max_ind) = findmax(abs(Δ[:]));
+    (zw, max_ind) = findmax(abs.(Δ[:]));
     (s, t)        = ind2sub((m,m),max_ind);
 
     # if no reduction is possible, exit loop

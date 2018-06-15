@@ -1,9 +1,15 @@
+# to test code, run following in "test" directory
+# julia> include("runtests.jl")
+
 # --------------
 # Initialization
 # --------------
-Pkg.add("ArrayViews")
+if VERSION<=v"0.6.3"
+    include("../src/LLLplus.jl")
+else
+    using Pkg
+end
 Pkg.add("Docile")
-include("../src/LLLplus.jl")
 
 using LLLplus
 using Base.Test
@@ -27,8 +33,8 @@ T1=[0   0   1  -1
     0   0   0   1
     1  -3   3  -2];
 (B,T) = lll(H);
-@test sum(abs(B-B1))==0
-@test sum(abs(T-T1))==0
+@test sum(abs.(B-B1))==0
+@test sum(abs.(T-T1))==0
 println("...done")
 
 
@@ -55,19 +61,19 @@ println("\nTesting LLL on $(N)x$(N) complex matrix...")
 H = randn(N,N) + im*randn(N,N);
 @time (B,T,Q,R) = lll(H);
 @time (B,T,Q,R) = lll(H);
-# println("Testing Seysen on same $(N)x$(N) complex matrix...")
-# @time (B,T) = seysen(H);
-# @time (B,T) = seysen(H);
+println("Testing Seysen on same $(N)x$(N) complex matrix...")
+@time (B,T) = seysen(H);
+@time (B,T) = seysen(H);
 println("Testing VBLAST on same $(N)x$(N) complex matrix...")
 @time (W,P,B) = vblast(H);
 @time (W,P,B) = vblast(H);
 
 # Test sphere decoder
 Ns = 100000;
-N = 2;
+N = 3;
 println("\nTesting sphere decoder on $(Ns) samples of $(N)x$(N) BPSK system...")
 NN = randn(N,Ns)/sqrt(100);
-H = [.6 -2.6; -.5 .95];
+H = randn(N,N);
 C = [-1,1];
 Z = rand(1:2,N,Ns);
 X = C[Z];
@@ -75,7 +81,7 @@ Y = H*X+NN;
 @time Zt = hard_sphere(Y,H,2);
 @time Zt = hard_sphere(Y,H,2);
 Zh = Zt+1;
-errRate = sum(abs(Z-Zh))/Ns;
+errRate = sum(abs.(Z-Zh))/Ns;
 println("Error Rate is $(errRate). It should be zero or very small.\n")
 
 # --------------

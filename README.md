@@ -3,11 +3,13 @@
 [![Build Status](https://travis-ci.org/christianpeel/LLLplus.jl.svg?branch=master)](https://travis-ci.org/christianpeel/LLLplus.jl)
 [![LLLplus](http://pkg.julialang.org/badges/LLLplus_release.svg)](http://pkg.julialang.org/?pkg=LLLplus&ver=release)
 
-Lattice reduction and related lattice tools are increasingly important
-in wireless communication, cryptography, and signal processing.  This
-package provides the following tools: Lenstra-Lenstra-Lovacsz (LLL)
-lattice reduction, Seysen lattice reduction, a sphere decoder, and
-VBLAST matrix decomposition.
+Lattice reduction and related lattice tools are used in wireless
+communication, cryptography, and mathematics.  This package provides
+the following tools: Lenstra-Lenstra-Lovacsz (LLL) lattice reduction,
+Seysen lattice reduction, a sphere decoder, and VBLAST matrix
+decomposition. This package was created as a way to explore the Julia
+language, and is not intended to be a cannonical tool for lattice
+reduction.
 
 [LLL](https://en.wikipedia.org/wiki/Lenstra%E2%80%93Lenstra%E2%80%93Lov%C3%A1sz_lattice_basis_reduction_algorithm) [1]
 lattice reduction is a powerful tool in computer science that is used
@@ -79,7 +81,7 @@ We first show how the time varies with matrix size (1,2,4,...64); the
 vertical axis shows execution time on a logarithmic scale; the x-axis
 is also logarithmic. The generally linear nature of the LLL curve supports
 the polynomial-time nature of the algorithm. Each data point
-is the average of execution time of 200 runs of a lattice-reduction
+is the average of execution time of 10 runs of a lattice-reduction
 technique, where the matrices used were generated using 'randn' to
 emulate unit-variance Gaussian-distributed values.
 ![Time vs matrix size](benchmark/perfVsNfloat32.png)
@@ -88,23 +90,14 @@ Though the focus of the package is on floating-point,
 all the modules can handle a variety of data types. In the next figure
 we show execution time for several datatypes (Int32, Int64,
 Int128, Float64, BitInt, and BigFloat) which are used to
-generate 200 16x16 matrices, over which execution time for the lattic
+generate 10 4x4 matrices, over which execution time for the lattice
 reduction techniques is averaged.  The vertical axis is a logarithmic
 representation of execution time as in the previous
 figure. ![Time vs data type](benchmark/perfVsDataTypeN16.png)
 
 ### Future
 
-The performance tests above were designed to accomodate new
-lattice-reduction techniques, which we invite you to add. These could
-be simple updates of one of the current techniques to include BLAS
-functions, or something like BKZ [4] reduction, which is used to break
-crypto systems. Once a new technique is available, it can be added
-directly to this package, or included in the tests via something
-like `Pkg.add("NewLR"); using NewLR` in `benchmarks/perftest.jl`,
-followed by appropriate changes to `lrtest.jl`.
-
-Possible future improvements include:
+Possible improvements include:
 * Add Block-Korkin-Zolotarev lattice redution, with improvements
     as in [4], and Brun lattice reduction 
 * The [SVP](http://www.latticechallenge.org/svp-challenge/) Challenge
@@ -137,8 +130,4 @@ ISSSE: 295–300.
 [4] Y. Chen, P. Q. Nguyen (2011) ["BKZ 2.0: Better Lattice Security Estimates"]
 (http://www.iacr.org/archive/asiacrypt2011/70730001/70730001.pdf).
 Proc. ASIACRYPT 2011.
-
-This module was written by
-[Chris Peel](https://github.com/ChristianPeel).
-
 
