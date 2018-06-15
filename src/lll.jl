@@ -1,4 +1,4 @@
-function lll{Td}(H::Array{Td,2},δ=3/4)
+function lll{Td}(H::Array{Td,2},δ::Float64=3/4)
 # (B,T,Q,R) = LLL(H,δ=3/4)
 #  Do Lenstra–Lenstra–Lovász lattice reduction of matrix H using optional
 #  parameter δ.  The output is B, an LLL-reduced basis; T, a unimodular
@@ -27,13 +27,16 @@ end
 
 B = copy(H);
 L = size(B,2);
-(Q,R) = qr(B);
+(Qt,R) = qr(B);
+Q = Matrix(Qt);
+
+roundf{Td<:Complex}(r::Td) = round(real(r)) + im*round(imag(r));
+roundf(r) = round(r);
+
 if Td<:Complex
     T = eye(Complex{Int},L)
-    roundf(r) = round(real(r)) + im*round(imag(r));
 else
     T = eye(Int,L);
-    roundf(r) = round(r);
 end
 
 lx  = 2;
@@ -44,12 +47,9 @@ while lx <= L
         rk = R[k,lx]/R[k,k]
         mu = roundf(rk)
         if abs(mu)>0
-            #B[:,lx]   = B[:,lx]   - mu * B[:,k]
-            axpy!(-mu, B[:,k], view(B,:,lx))
-            #R[1:k,lx] = R[1:k,lx] - mu * R[1:k,k]
-            axpy!(-mu, R[1:k,k], view(R,1:k,lx))
-            #T[:,lx]   = T[:,lx]   - mu * T[:,k]
-            axpy!(-mu, T[:,k],view(T,:,lx))
+            B[:,lx]   -= mu .* B[:,k]
+            R[1:k,lx] -= mu .* R[1:k,k]
+            T[:,lx]   -= mu .* T[:,k]
         end
     end
 

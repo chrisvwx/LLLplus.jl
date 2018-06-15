@@ -16,10 +16,9 @@
 # """
 function lrtest(Ns::Int,N::Array{Int,1},L::Array{Int,1},
                 dataType::Array{DataType,1},distType)
-#                dataType,distType)
 
-# Packages that need to be loaded for lrtest to work include PyPlot, and
-# CPUTime.
+# Packages that need to be loaded for lrtest to work include PyPlot and
+# BenchmarkTools
     
 #lrAlgs = [lll, lllrecursive,seysen]
 lrAlgs = [lll, seysen]
@@ -31,7 +30,7 @@ end
 @printf("\n")
 
 xtickStrs = [];
-out = cell(0)
+out = []
 if length(N)>1
     for s = 1:length(N)
         push!(out,lrsim(Ns,N[s],L[1],dataType[1], distType, lrAlgs));
@@ -61,16 +60,16 @@ elseif length(dataType)>1
     tstr = @sprintf("Ns=%d,N=%d,L=%d,dist=%s",Ns,N[1],L[1],distType);
 end
 
-pColor = {"r-","b.-","k-","g-","c-","m-",
+pColor = ["r-","b.-","k-","g-","c-","m-",
           "r--","b.-.","k--","g.-.","c--","m*-.",
-          "rs--","gp-.","bv-","kh--","c+-.","m.-",};
+          "rs--","gp-.","bv-","kh--","c+-.","m.-",];
 pIdx   = 1;
 
 Nout = size(out,1);
 
 f=figure(num=1,figsize=(6.5,4.5))
 clf()
-plt.style[:use]("ggplot")
+#plt.style[:use]("ggplot")
 
 times = zeros(Nout);
 for a=1:length(out[1][2])
@@ -78,21 +77,19 @@ for a=1:length(out[1][2])
         times[k] = out[k][1][a];
     end
     plotfun(xval,times,pColor[pIdx],label=out[1][2][a]);
-    hold(true);
     pIdx = pIdx==length(pColor)? 1: pIdx + 1;
 end
-hold(false);
 
 xlabel(xlab);
 ylabel("execution time (sec)");
 legend(loc=2);
-#title(tstr)
+
 if ~isempty(xtickStrs)
     xticks(xval,xtickStrs)
 end
 grid(figure=f,which="both",axis="y")
 grid(figure=f,which="major",axis="x")
-plt.tight_layout()
+
 
 return
 end
@@ -101,23 +98,20 @@ end
 function lrsim(Ns,N,L,dataType,distType,lrAlgs)
 # sortDict = Dict("Insertion" => d->sort(d,alg=InsertionSort),
 
-distDict =     {"rand"=> d -> rand!(-L:L,d),
+distDict = Dict("rand"=> d -> rand!(d,-L:L),
                 "randmax"=> d -> rand(dataType,N,N),
                 "randn"=> d -> L*randn!(d::AbstractArray{dataType,2}),
-                 };
-# distDict =     {"rand"=> d -> rand!(-L:L,d),
-#                 "randmax"=> d -> rand!(dataType,d),
-#                 "randn"=> d -> L*randn!(d::AbstractArray{dataType,2}),
-#                  };
+                 );
 randf! = distDict[distType];
 
 Nalgs = length(lrAlgs);
 times = ones(Nalgs,Ns)*Inf;
 hermitef = ones(Nalgs,Ns)*Inf;
 orthf = ones(Nalgs,Ns)*Inf;
-algNames = cell(Nalgs)
+#algNames = cell(Nalgs)
+algNames = Array{Any}(Nalgs)
 
-data = Array(dataType,N,N);
+data = Array{dataType}(N,N);
 
 for ix = 1:Ns
     cnum = Inf;
@@ -134,9 +128,10 @@ for ix = 1:Ns
     # Lattice-reduction algorithms
     #
     for ax = 1:length(lrAlgs)
-        CPUtic();
-        (B,T) = lrAlgs[ax](data);
-        times[ax,ix] = CPUtoq();
+        # CPUtic();
+        # (B,T) = lrAlgs[ax](data);
+        # times[ax,ix] = CPUtoq();
+        times[ax,ix] = @belapsed (B,T) = $lrAlgs[$ax]($data) samples=2 seconds=1
         # detB = abs(det(B))
         # # Hermite factor
         # hermitef[ax,ix] = norm(B[:,1])/detB^(1/N)
