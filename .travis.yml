@@ -1,18 +1,10 @@
 sudo: required
 language: julia
 julia:
-- 0.3
-- 0.4
-- 0.5
+- 0.6
 - nightly
 notifications:
   email: false
-before_install:
-- sudo apt-get install python-pip
-- python --version
-- pip --version
-- sudo pip install --upgrade pip
-- sudo pip install matplotlib
 script:
 - date
 - julia -e 'cd("test"); include("runtests.jl");'
