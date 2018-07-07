@@ -1,6 +1,6 @@
-function vblast{T}(H::Array{T,2},mu=Inf)
+function vblast(H::Array{T,2},mu=Inf) where {T}
 # (W,P,B) = vblast(H)
-#  Returns a VBLAST matrix decomposition of H such that 
+#  Returns a VBLAST matrix decomposition of H such that
 #  H = pinv(W)*B*P' or B = W*H*P.  Here P is a permutation matrix, B is
 #  lower triangular with ones on the diagonal, and W has orthogonal rows.
 # (W,P,B) = vblast(H,mu)
@@ -10,8 +10,8 @@ function vblast{T}(H::Array{T,2},mu=Inf)
 #
 # Example: For decoding with N receivers
 #  N=4;H = rand(N,N); include("vblast.jl");(W,P,B) = vblast(H)
-# Example: For MMSE decoding with N receivers mu=rho/N 
-#  (W,P,B) = vblast(H,rho/size(H,1)); 
+# Example: For MMSE decoding with N receivers mu=rho/N
+#  (W,P,B) = vblast(H,rho/size(H,1));
 
 (K,N) = size(H);
 
@@ -21,7 +21,7 @@ Hp = H;
 k = zeros(Int,K,1);
 indexH = [1:N;];
 for i=1:N
-    G = inv(Hp'*Hp + eye(N-i+1)/mu)*Hp'; # Do pseudoinverse
+    G = inv(Hp'*Hp + I/mu)*Hp'; # Do pseudoinverse
     gn = diag(G*G');
     (mx,mi) = findmin(abs.(gn))
     k[i] = indexH[mi];

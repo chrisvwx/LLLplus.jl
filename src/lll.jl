@@ -1,4 +1,4 @@
-function lll{Td}(H::Array{Td,2},δ::Float64=3/4)
+function lll(H::Array{Td,2},δ::Float64=3/4) where {Td}
 # (B,T,Q,R) = LLL(H,δ=3/4)
 #  Do Lenstra–Lenstra–Lovász lattice reduction of matrix H using optional
 #  parameter δ.  The output is B, an LLL-reduced basis; T, a unimodular
@@ -30,18 +30,18 @@ L = size(B,2);
 (Qt,R) = qr(B);
 Q = Matrix(Qt);
 
-roundf{Td<:Complex}(r::Td) = round(real(r)) + im*round(imag(r));
+roundf(r::Td) where {Td<:Complex} = round(real(r)) + im*round(imag(r));
 roundf(r) = round(r);
 
 if Td<:Complex
-    T = eye(Complex{Int},L)
+    T = Matrix{Complex{Int}}(I, L, L)
 else
-    T = eye(Int,L);
+    T = Matrix{Int}(I, L, L)
 end
 
 lx  = 2;
 while lx <= L
-  
+
     # reduce lx-th column of B
     for k=lx-1:-1:1
         rk = R[k,lx]/R[k,k]
@@ -61,7 +61,7 @@ while lx <= L
         T[:,[lx-1,lx]]    = T[:,[lx,lx-1]];
         R[1:lx,[lx-1,lx]] = R[1:lx,[lx,lx-1]];
 
-        # upper triangular by Givens rotation 
+        # upper triangular by Givens rotation
         # mult with matrix Θ achieves R[lx,lx-1] = 0
         cc = R[lx-1,lx-1] / nrm # nrm = ||R[lx-1:lx,lx-1]|| after swapping
         ss = R[lx,lx-1]   / nrm
