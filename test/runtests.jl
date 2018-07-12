@@ -73,10 +73,9 @@ C = [-1,1];
 Z = rand(1:2,N,Ns);
 X = C[Z];
 Y = H*X+NN;
-@time Zt = hard_sphere(Y,H,2);
-@time Zt = hard_sphere(Y,H,2);
-Zh = Zt.+1;
-errRate = sum(abs.(Z.-Zh))/Ns;
+@time Xt = hard_sphere(Y,H,2);
+@time Xt = hard_sphere(Y,H,2);
+errRate = sum(abs.(X-Xt))/Ns;
 println("Error Rate is $(errRate). It should be zero or very small.\n")
 
 # --------------
