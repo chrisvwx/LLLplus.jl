@@ -1,32 +1,36 @@
 # @doc """
-# x=hard_sphere(y,H,Nc)
-#   Solve the problem argmin_x ||y-Hx||, where the elements of x are
-#   integers.  The input vector y is of dimension N, with H of dimension N
-#   by M, and the returned vector x of dimension M and comes from the
-#   integers 0:Nc-1.
-# X=hard_sphere(Y,H,Nc)
-#   The input may be a matrix Y of dimension N by Ns, in which case
-#   the problem is solved for each column of Y, with the solutions in
-#   the columns of X.
+#x=hard_sphere(y,H,Nc)
+#   Solve the problem argmin_x ||y-Hx||, where if Nc is even the elements of
+#   x are integers from [0:Nc-1]*2-(Nc-1).  The input vector y is of
+#   length N, with H of dimension N by M, and the returned vector x of
+#   length M.
+#X=hard_sphere(Y,H,Nc)
+#   The input may be a matrix Y of dimension N by Ns, in which case the
+#   problem is solved for each column of Y, with the solutions in the
+#   columns of X.
 #
 # Examples:
-#   X = hard_sphere([1 2]', [1 2; 3 4],2)
+#   X = hard_sphere([1; 2], [1 2; 3 4],2)
 #   X = hard_sphere(rand(0:20,2,15), [1 2; 3 4],2)
 # """ ->
-function hard_sphere(Y::Array{Td,2},H::Array{Td,2},Nc) where {Td}
+function hard_sphere(Y::Array{Td,2},H::Array{Td,2},Nc::Integer) where {Td}
     (N,M) = size(H);
 
-    if length(Nc)==1;
-        Nc = ones(M,1)*Nc;
+    Qc = ones(M)*Nc;
+    if isodd(Nc)
+        xoffset = Qc.-1
+        xmult = 2
+    else
+        xoffset = floor.(Qc/2)
+        xmult = 1
     end
     (Q,R) = qr(H);
     (N,Ns) = size(Y);
     Xh = zeros(Int,M,Ns);
     for ns = 1:Ns
-        yp = (Q'*Y[:,ns] + R*ones(M,1).*(Nc.-1))/2;
-        xp = algII_smart(yp,R,Nc);
-        #    Xh[:,ns] = xp*2 -(Nc-1);
-        Xh[:,ns] = xp
+        yp = (Q'*Y[:,ns] + R*ones(M,1).*xoffset)/xmult;
+        xp = algII_smart(yp,R,Qc);
+        Xh[:,ns] = xp*xmult - xoffset; 
     end
 
     return Xh
