@@ -4,15 +4,10 @@
 # --------------
 # Initialization
 # --------------
-if VERSION<=v"0.6.3"
-    include("../src/LLLplus.jl")
-else
-    using Pkg
-end
-Pkg.add("Docile")
-
 using LLLplus
-using Base.Test
+using Test
+using LinearAlgebra
+using DelimitedFiles
 
 # --------------
 # tests with small matrices
@@ -47,7 +42,7 @@ println("\nIn all the following tests, the first time includes the "*
         "compilation is already done and the time\n"*
         "should be faster.\n")
 
-# Time LLL decomposition of a 1000x1000 real matrix with randn entries 
+# Time LLL decomposition of a 1000x1000 real matrix with randn entries
 N = 1000;
 H = randn(N,N);
 println("Testing LLL on $(N)x$(N) real matrix...")
@@ -80,8 +75,8 @@ X = C[Z];
 Y = H*X+NN;
 @time Zt = hard_sphere(Y,H,2);
 @time Zt = hard_sphere(Y,H,2);
-Zh = Zt+1;
-errRate = sum(abs.(Z-Zh))/Ns;
+Zh = Zt.+1;
+errRate = sum(abs.(Z.-Zh))/Ns;
 println("Error Rate is $(errRate). It should be zero or very small.\n")
 
 # --------------

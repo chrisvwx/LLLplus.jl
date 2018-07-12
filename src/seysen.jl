@@ -1,4 +1,4 @@
-function seysen{Td}(H::Array{Td,2})
+function seysen(H::Array{Td,2}) where {Td}
 # [B,T,B_dual,num_it] = seysen{Td}(H::Array{Td,2})
 #
 # Do greedy Seysen lattice reduction on the matrix H (real or
@@ -12,15 +12,15 @@ function seysen{Td}(H::Array{Td,2})
 # Munich, March 2004.
 
 if Td<:BigInt || Td<:BigFloat
-    Ti= Td<:Complex?Complex{BigInt}:BigInt
+    Ti= Td<:Complex ? Complex{BigInt} : BigInt
 else
     if Td<:Integer
-        Ti= Td<:Complex?Complex{Td}:Td
+        Ti= Td<:Complex ? Complex{Td} : Td
     else
-        Ti= Td<:Complex?Complex{Int}:Int
+        Ti= Td<:Complex ? Complex{Int} : Int
     end
 end
-roundf(r) = Td<:Complex?round(real(r)) + im*round(imag(r)):round(r);
+roundf(r) = Td<:Complex ? round(real(r)) + im*round(imag(r)) : round(r);
 
 #H = H*1.0
 
@@ -30,8 +30,8 @@ roundf(r) = Td<:Complex?round(real(r)) + im*round(imag(r)):round(r);
 # initialization, outputs
 B      = copy(H);    # reduced lattice basis
 num_it = 0;          # number of iterations
-T      = eye(Ti,m);  # unimodular matrix
-A      = (H'*H)*1.0;       # Gram matrix of H
+T      = Matrix{Ti}(I, m, m)  # unimodular matrix
+A      = (H'*H)*1.0;          # Gram matrix of H
 Adual  = inv(A);     # Inverse gram matrix of H
 B_dual = H*Adual;    # Dual basis
 
@@ -56,7 +56,7 @@ end # - end calculation of Λ and Δ
 
 # find maximum reduction in Seysen's measure (greedy approach)
 (zw,max_ind) = findmax(abs.(Δ[:]));
-(s, t)        = ind2sub((m,m),max_ind);
+(s, t)       = Tuple(CartesianIndices((m,m))[max_ind])
 
 # init loop
 do_reduction = true;
@@ -70,7 +70,7 @@ end
 while do_reduction
 
     num_it = num_it + 1;
-    
+
     # perform basis update
     try
         B[:,s] = B[:,s] + Λ[s,t]*B[:,t];
@@ -105,7 +105,7 @@ while do_reduction
         end
 
     end # - end update Gram und inverse Gram matrix
-    
+
     # update all possible update values Λ[s,t]
     # and their corresponding reduction Δ[s,t] in Seysen's measure
     for ind1 = 1:m
@@ -140,13 +140,13 @@ while do_reduction
 
     # find maximum reduction in Seysen's measure (greedy approach)
     (zw, max_ind) = findmax(abs.(Δ[:]));
-    (s, t)        = ind2sub((m,m),max_ind);
+    (s, t)        = Tuple(CartesianIndices((m,m))[max_ind])
 
     # if no reduction is possible, exit loop
     if Δ[s,t] == 0
         do_reduction = false;
     end
-	
+
 end # - end lattice reduction loop
 
 

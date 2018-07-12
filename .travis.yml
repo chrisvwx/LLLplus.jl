@@ -1,9 +1,7 @@
 sudo: required
 language: julia
 julia:
-- 0.6
+  - 0.7
+  - nightly
 notifications:
   email: false
-script:
-- date
-- julia -e 'cd("test"); include("runtests.jl");'
