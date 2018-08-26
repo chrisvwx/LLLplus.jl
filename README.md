@@ -1,7 +1,7 @@
 # LLLplus
 
 [![Build Status](https://travis-ci.org/christianpeel/LLLplus.jl.svg?branch=master)](https://travis-ci.org/christianpeel/LLLplus.jl)
-[![LLLplus](http://pkg.julialang.org/badges/LLLplus_release.svg)](http://pkg.julialang.org/?pkg=LLLplus&ver=0.6)
+[![LLLplus](http://pkg.julialang.org/badges/LLLplus_release.svg)](http://pkg.julialang.org/?pkg=LLLplus&ver=0.7)
 
 Lattice reduction and related lattice tools are used in wireless
 communication, cryptography, and mathematics.  This package provides
@@ -97,7 +97,7 @@ figure. ![Time vs data type](benchmark/perfVsDataTypeN16.png)
 ### Future
 
 Possible improvements include:
-* Change from "LLLplus" to "LLLtoy" or some such to emphasize that
+* Change from "LLLplus" to "LLLtoy" or some such to emphasize
   the nature of this package.
 * Add Block-Korkin-Zolotarev lattice redution, with improvements
     as in [4], and Brun lattice reduction 
