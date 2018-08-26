@@ -1,7 +1,7 @@
 # LLLplus
 
 [![Build Status](https://travis-ci.org/christianpeel/LLLplus.jl.svg?branch=master)](https://travis-ci.org/christianpeel/LLLplus.jl)
-[![LLLplus](http://pkg.julialang.org/badges/LLLplus_release.svg)](http://pkg.julialang.org/?pkg=LLLplus&ver=0.6)
+[![LLLplus](http://pkg.julialang.org/badges/LLLplus_release.svg)](http://pkg.julialang.org/?pkg=LLLplus&ver=0.7)
 
 Lattice reduction and related lattice tools are used in wireless
 communication, cryptography, and mathematics.  This package provides
@@ -9,7 +9,7 @@ the following tools: Lenstra-Lenstra-Lovacsz (LLL) lattice reduction,
 Seysen lattice reduction, a sphere decoder, and VBLAST matrix
 decomposition. This package was created as a way to explore the Julia
 language, and is not intended to be a cannonical tool for lattice
-reduction; use at your own risk! :-)
+reduction; *use at your own risk!* :-)
 
 [LLL](https://en.wikipedia.org/wiki/Lenstra%E2%80%93Lenstra%E2%80%93Lov%C3%A1sz_lattice_basis_reduction_algorithm) [1]
 lattice reduction is a powerful tool in computer science that is used
@@ -57,11 +57,10 @@ M = 200;
 println("Testing VBLAST on $(M)x$(M) chunk of same matrix...")
 @time (W,P,B) = vblast(H[1:M,1:M]);
 
-# Time LLL, Seysen decompositions of a 100x100 Int128 matrix with
+# Time LLL, Seysen decompositions of a 100x100 Int64 matrix with
 # rand entries distributed uniformly between -100:100
 N = 100;
-H = zeros(Int64, N,N);
-rand!(-100:100, H);
+H = rand(-100:100,N,N);
 println("Testing LLL on $(N)x$(N) real matrix...")
 @time (B,T,Q,R) = lll(H);
 println("Testing Seysen on same $(N)x$(N) matrix...")
@@ -70,8 +69,8 @@ println("Testing Seysen on same $(N)x$(N) matrix...")
 
 ### Execution Time results
 
-On this page we give a few performance results from tests run on
-Travis-CI during normal CI tests:
+On this page we give a few performance results obtained from the
+following command in the top-level LLLplus directory:
 `julia -e 'include("benchmark/perftest.jl")'`
 In the tests we time execution of the lattice-reduction functions,
 average the results over multiple random matrices, and show results as
@@ -90,7 +89,7 @@ Though the focus of the package is on floating-point,
 all the modules can handle a variety of data types. In the next figure
 we show execution time for several datatypes (Int32, Int64,
 Int128, Float64, BitInt, and BigFloat) which are used to
-generate 10 4x4 matrices, over which execution time for the lattice
+generate 100 4x4 matrices, over which execution time for the lattice
 reduction techniques is averaged.  The vertical axis is a logarithmic
 representation of execution time as in the previous
 figure. ![Time vs data type](benchmark/perfVsDataTypeN16.png)
@@ -98,6 +97,8 @@ figure. ![Time vs data type](benchmark/perfVsDataTypeN16.png)
 ### Future
 
 Possible improvements include:
+* Change from "LLLplus" to "LLLtoy" or some such to emphasize
+  the nature of this package.
 * Add Block-Korkin-Zolotarev lattice redution, with improvements
     as in [4], and Brun lattice reduction 
 * The [SVP](http://www.latticechallenge.org/svp-challenge/) Challenge

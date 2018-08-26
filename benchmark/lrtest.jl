@@ -77,7 +77,7 @@ for a=1:length(out[1][2])
         times[k] = out[k][1][a];
     end
     plotfun(xval,times,pColor[pIdx],label=out[1][2][a]);
-    pIdx = pIdx==length(pColor)? 1: pIdx + 1;
+    pIdx = pIdx==length(pColor) ? 1 : pIdx + 1;
 end
 
 xlabel(xlab);
@@ -109,18 +109,17 @@ times = ones(Nalgs,Ns)*Inf;
 hermitef = ones(Nalgs,Ns)*Inf;
 orthf = ones(Nalgs,Ns)*Inf;
 #algNames = cell(Nalgs)
-algNames = Array{Any}(Nalgs)
-
-data = Array{dataType}(N,N);
+algNames = Array{Any,1}(undef,Nalgs)
+data = Array{dataType,2}(undef,N,N);
 
 for ix = 1:Ns
     cnum = Inf;
-    while cnum>1e5  # With Ints need to check for singular matrices
+    while cnum > 1e5  # With Ints need to check for singular matrices
         data = randf!(data);
         if !(dataType<:BigInt || dataType<:BigFloat)
             cnum = cond(data)
         else
-            cnum = 0
+            cnum = 0.0
         end
     end
 
@@ -159,6 +158,7 @@ end
 outtimes = zeros(Nalgs,1);
 outHF = zeros(Nalgs,1);
 outOF = zeros(Nalgs,1);
+mean(x) = sum(x)/length(x)
 for ax = 1:Nalgs
 #    stimes = sort(vec(times[ax,:]));
 #    outtimes[ax] = mean(stimes[1:floor(Ns*2/3)]);
