@@ -1,5 +1,5 @@
 function seysen(H::Array{Td,2}) where {Td}
-# [B,T,B_dual,num_it] = seysen{Td}(H::Array{Td,2})
+# [B,T,B_dual,num_it] = seysen(H::Array{Td,2}) where Td
 #
 # Do greedy Seysen lattice reduction on the matrix H (real or
 # complex-valued), returning T a unimodular matrix that reduces H;
