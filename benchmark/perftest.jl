@@ -1,14 +1,15 @@
-using PyPlot
+using Plots
 using BenchmarkTools
 using LLLplus
 using Printf
 using Random
 using LinearAlgebra
+using DoubleFloats
 
 include("lrtest.jl")
 
-lrtest(5,2 .^[2],[100],[Int32,Int64,Int128,Float64,BigInt,BigFloat],"rand")
-savefig("benchmark/perfVsDataTypeN16.png") # run from root directory
+lrtest(40,2 .^[7],[100],[Int32,Int64,Int128,Float32,Float64,Double64,BigInt,BigFloat],"rand")
+savefig("perfVsDataType.png")
 
-lrtest(5,2 .^[0:5;],[1],[Float64],"randn")
-savefig("benchmark/perfVsNfloat32.png") # run from root directory
+lrtest(40,2 .^[0:8;],[1],[Float64],"randn")
+savefig("perfVsNfloat64.png")

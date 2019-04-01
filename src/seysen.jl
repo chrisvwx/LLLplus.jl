@@ -1,15 +1,30 @@
-function seysen(H::Array{Td,2}) where {Td}
-# [B,T,B_dual,num_it] = seysen(H::Array{Td,2}) where Td
-#
-# Do greedy Seysen lattice reduction on the matrix H (real or
-# complex-valued), returning T a unimodular matrix that reduces H;
-# B, the reduced lattice basis (i.e. B = H*T);
-# B_dual,  dual lattice basis (i.e., B_dual = pinv(B)); and
-# the number of iterations (the number of basis updates).
+"""
+    B,T,B_dual,num_it = seysen(H::Array{Td,2}) where Td
 
-# Follows LLL in D. Wueben, et al, MMSE-Based Lattice-Reduction for Near-ML
-# Detection of MIMO Systems International IEEE Workshop on Smart Antennas,
-# Munich, March 2004.
+Do greedy  Seysen lattice reduction  on the  matrix `H`, returning  `B`, the
+reduced lattice basis;  `T` a unimodular matrix that reduces  `H` (i.e. `B =
+H*T`); `B_dual`, dual lattice basis (i.e., `B_dual = pinv(B)`); and num_it the number
+of iterations (basis updates). See also [`lll`](@ref), and [`brun`](@ref).
+
+Follows Seysen algorithm in "Lattice Reduction - A Survey with Applications
+in Wireless Communications" by D. Wuebben, et al, IEEE Signal Processing
+Magazine, 2011.
+
+# Examples
+```jldoctest
+julia> H= [1 2; 3 4];B,_ = seysen(H); B
+2×2 Array{Int64,2}:
+ 1  -1
+ 1   1
+
+julia> H= BigFloat.([1.5 2; 3 4]) .+ 2im; B,_= seysen(H); B
+2×2 Array{Complex{BigFloat},2}:
+ 0.0+1.0im  0.50+0.0im
+ 0.0+0.0im   1.0+0.0im
+
+```
+"""
+function seysen(H::Array{Td,2}) where {Td}
 
 if Td<:BigInt || Td<:BigFloat
     Ti= Td<:Complex ? Complex{BigInt} : BigInt
@@ -20,12 +35,8 @@ else
         Ti= Td<:Complex ? Complex{Int} : Int
     end
 end
-roundf(r) = Td<:Complex ? round(real(r)) + im*round(imag(r)) : round(r);
 
-#H = H*1.0
-
-# get size of input
-(n, m) = size(H); # m-dimensional lattice in an n-dimensional space
+n,m = size(H); # m-dimensional lattice in an n-dimensional space
 
 # initialization, outputs
 B      = copy(H);    # reduced lattice basis
@@ -35,8 +46,8 @@ A      = (H'*H)*1.0;          # Gram matrix of H
 Adual  = inv(A);     # Inverse gram matrix of H
 B_dual = H*Adual;    # Dual basis
 
-# calculate all possible update values Λ[s,t)
-# and their corresponding reduction Δ[s,t) in Seysen's measure
+# calculate update values Λ[s,t] and the corresponding reduction Δ[s,t] in
+# Seysen's measure 
 Λ = zeros(Ti,m,m);
 Δ = zeros(Td,m,m)*0.0;
 
@@ -55,14 +66,13 @@ for s = 1:m
 end # - end calculation of Λ and Δ
 
 # find maximum reduction in Seysen's measure (greedy approach)
-(zw,max_ind) = findmax(abs.(Δ[:]));
-(s, t)       = Tuple(CartesianIndices((m,m))[max_ind])
+zw,max_ind = findmax(abs.(Δ[:]));
+s,t        = Tuple(CartesianIndices((m,m))[max_ind])
 
 # init loop
 do_reduction = true;
 
-# if no improvement can be achieved
-if Δ[s,t] == 0
+if Δ[s,t] == 0  # if no improvement can be achieved
     do_reduction = false;
 end
 
@@ -71,23 +81,12 @@ while do_reduction
 
     num_it = num_it + 1;
 
-    # perform basis update
-    try
-        B[:,s] = B[:,s] + Λ[s,t]*B[:,t];
-    catch
-        println("B[:,s] = $(B[:,s]), typeof(B[:,s]) = $(typeof(B[:,s]))")
-        println("Λ[s,t] = $(Λ[s,t]), typeof(Λ[s,t]) = $(typeof(Λ[s,t]))")
-    end
+    
+    B[:,s]  = B[:,s] + Λ[s,t]*B[:,t];    # perform basis update
+    T[:,s]  = T[:,s] + Λ[s,t]*T[:,t];    # updater unimodular transformation
+    B_dual[:,t] = B_dual[:,t] - Λ[s,t]'*B_dual[:,s];  # update dual basis
 
-    # compute corresponding unimodular trasformation matrix
-    T[:,s] = T[:,s] + Λ[s,t]*T[:,t];  # basis transformation matrix
-
-    # update corresponding dual basis
-    B_dual[:,t] = B_dual[:,t] - Λ[s,t]'*B_dual[:,s];
-
-    # Update Gram and inverse Gram matrix
     for ind = 1:m
-
         # update Gram matrix
         if ind != s
             A[s,ind] = A[s,ind]+Λ[s,t]'*A[t,ind];
@@ -95,7 +94,6 @@ while do_reduction
         else
             A[s,ind] = norm(B[:,s]).^2;
         end
-
         # update inverse Gram matrix
         if ind != t
             Adual[t,ind] = Adual[t,ind]-Λ[s,t]*Adual[s,ind];
@@ -103,8 +101,7 @@ while do_reduction
         else
             Adual[t,ind] = norm(B_dual[:,t])^2;
         end
-
-    end # - end update Gram und inverse Gram matrix
+    end
 
     # update all possible update values Λ[s,t]
     # and their corresponding reduction Δ[s,t] in Seysen's measure
@@ -113,20 +110,10 @@ while do_reduction
             if ((ind1==s) | (ind1==t) | (ind2==s) | (ind2==t)) & (ind1!=ind2)
                 x = 0.5*(Adual[ind2,ind1]/Adual[ind1,ind1]-A[ind2,ind1]/
                          A[ind2,ind2]);
-                ## There is an intermitent bug that I haven't yet figured
-                ## out that this try/catch code is aimed at. Yes, it's ugly...
-                try
-                    Λ[ind1,ind2] = roundf(x);
-                catch
-                    println("x = $(x), typeof(x) = $(typeof(x))")
-                    println("A[ind2,ind2] = $(A[ind2,ind2]),  "*
-                            "typeof(A[ind2,ind2]) = $(typeof(A[ind2,ind2]))")
-                    println("roundf(x)) = $(roundf(x))  "*
-                            "typeof(roundf(x))) = $(typeof(roundf(x)))")
-                    println("Λ[ind1,ind2]) = $(Λ[ind1,ind2])  "*
-                            "typeof(Λ[ind1,ind2])) = $(typeof(Λ[ind1,ind2]))")
-                    println(" ")
-                end
+
+                # Try Float64 if the following fails w Float32
+                Λ[ind1,ind2] = Ti(roundf(x));
+
                 AbsΛ = abs(Λ[ind1,ind2])^2;
                 if AbsΛ != 0
                     zw = real(Λ[ind1,ind2])*real(x)+imag(Λ[ind1,ind2])*imag(x);
@@ -136,19 +123,19 @@ while do_reduction
                 end
             end
         end
-    end # - end update Λ and Δ
+    end
 
     # find maximum reduction in Seysen's measure (greedy approach)
-    (zw, max_ind) = findmax(abs.(Δ[:]));
-    (s, t)        = Tuple(CartesianIndices((m,m))[max_ind])
+    zw,max_ind = findmax(abs.(Δ[:]));
+    s,t = Tuple(CartesianIndices((m,m))[max_ind])
 
     # if no reduction is possible, exit loop
     if Δ[s,t] == 0
         do_reduction = false;
     end
 
-end # - end lattice reduction loop
+end # while do_reduction
 
 
-return (B,T,B_dual,num_it)
+return B,T,B_dual,num_it
 end
