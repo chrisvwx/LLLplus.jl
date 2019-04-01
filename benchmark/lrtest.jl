@@ -17,9 +17,6 @@
 function lrtest(Ns::Int,N::Array{Int,1},L::Array{Int,1},
                 dataType::Array{DataType,1},distType)
 
-# Packages that need to be loaded for lrtest to work include PyPlot and
-# BenchmarkTools
-
 #lrAlgs = [lll, lllrecursive,seysen]
 lrAlgs = [lll, seysen]
 

@@ -31,8 +31,7 @@ constellations.
 We also include code to do a
 [Vertical-Bell Laboratories Layered Space-Time](https://en.wikipedia.org/wiki/Bell_Laboratories_Layered_Space-Time)
 (V-BLAST) [5] matrix decomposition which is used in digital
-communications. In digital communications (see
-[MUMIMO.jl](https://github.com/christianpeel/MUMIMO.jl)) the LLL,
+communications. The LLL,
 Seysen, V-BLAST, and CVP functions are used to solve (exactly or
 approximately) CVP problems in encoding and decoding multi-terminal
 signals.
