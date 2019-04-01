@@ -1,5 +1,4 @@
 using Plots
-using BenchmarkTools
 using LLLplus
 using Printf
 using Random

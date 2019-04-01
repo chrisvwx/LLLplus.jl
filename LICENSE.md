@@ -1,6 +1,8 @@
-The LLLplus.jl package is licensed under the MIT "Expat" License:
+The LLLplus.jl package is licensed under the MIT License. The package
+consists of the contents of the /src and other files in this
+repository. 
 
-> Copyright (c) 2015: Chris Peel.
+> Copyright (c) 2019: Christian Peel
 >
 > Permission is hereby granted, free of charge, to any person obtaining
 > a copy of this software and associated documentation files (the
