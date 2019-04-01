@@ -19,7 +19,7 @@ function lrtest(Ns::Int,N::Array{Int,1},L::Array{Int,1},
 
 # Packages that need to be loaded for lrtest to work include PyPlot and
 # BenchmarkTools
-    
+
 #lrAlgs = [lll, lllrecursive,seysen]
 lrAlgs = [lll, seysen]
 
@@ -35,16 +35,18 @@ if length(N)>1
     for s = 1:length(N)
         push!(out,lrsim(Ns,N[s],L[1],dataType[1], distType, lrAlgs));
     end
-    plotfun = PyPlot.loglog;
+    xscale=:log10;
+    yscale=:log10;
     xval = N;
     xlab = "Matrix Size";
-    tstr = @sprintf("Ns=%d,L=%d,Type=%s,dist=%s",
-                    Ns,L[1],string(dataType[1]),distType);
+    tstr = @sprintf("Ns=%d,Type=%s,dist=%s",
+                    Ns,string(dataType[1]),distType);
 elseif length(L)>1
     for s = 1:length(L)
         push!(out,lrsim(Ns,N[1],L[s],dataType[1], distType, lrAlgs));
     end
-    plotfun = semilogy;
+    xscale = :identity;
+    yscale = :log10;
     xval = L;
     xlab = "L";
     tstr = @sprintf("Ns=%d,N=%d,Type=%s,dist=%s",
@@ -53,11 +55,17 @@ elseif length(dataType)>1
     for s = 1:length(dataType)
         push!(out,lrsim(Ns,N[1],L[1],dataType[s], distType, lrAlgs));
     end
-    plotfun = semilogy;
+    xscale = :identity;
+    yscale = :log10;
     xval = 1:length(dataType)
     xtickStrs = map(string,dataType)
     xlab = "dataType";
     tstr = @sprintf("Ns=%d,N=%d,L=%d,dist=%s",Ns,N[1],L[1],distType);
+    for n=xval
+        if dataType[n]== DoubleFloat{Float64}
+            xtickStrs[n] = "Double64"
+        end
+    end
 end
 
 pColor = ["r-","b.-","k-","g-","c-","m-",
@@ -67,31 +75,33 @@ pIdx   = 1;
 
 Nout = size(out,1);
 
-f=figure(num=1,figsize=(6.5,4.5))
-clf()
-#plt.style[:use]("ggplot")
 
 times = zeros(Nout);
+orthf = zeros(Nout);
+pltT = plot(legend=:topleft);
+#pltO = plot(legend=:topleft);
+
 for a=1:length(out[1][2])
     for k=1:Nout
-        times[k] = out[k][1][a];
+        times[k] = out[k][2][a];
+        orthf[k] = out[k][3][a];
     end
-    plotfun(xval,times,pColor[pIdx],label=out[1][2][a]);
+    plot!(pltT,xval,times,xscale=xscale,yscale=yscale,label=out[1][1][a],linewidth=3);
+#    plot!(pltO,xval,orthf,xscale=xscale,yscale=yscale,label=out[1][1][a],linewidth=3);
     pIdx = pIdx==length(pColor) ? 1 : pIdx + 1;
 end
 
-xlabel(xlab);
-ylabel("execution time (sec)");
-legend(loc=2);
+plot!(pltT,xlabel=xlab,ylabel="execution time (sec)")
+#plot!(pltO,xlabel=xlab,ylabel="orthogonalization factor")
 
 if ~isempty(xtickStrs)
-    xticks(xval,xtickStrs)
+    plot!(pltT,xticks=(xval,xtickStrs))
+#    plot!(pltO,xticks=(xval,xtickStrs))
 end
-grid(figure=f,which="both",axis="y")
-grid(figure=f,which="major",axis="x")
 
+display(pltT)
+#display(pltO)
 
-return
 end
 
 #######################################################################
@@ -130,12 +140,12 @@ for ix = 1:Ns
         # CPUtic();
         # (B,T) = lrAlgs[ax](data);
         # times[ax,ix] = CPUtoq();
-        times[ax,ix] = @belapsed (B,T) = $lrAlgs[$ax]($data) samples=2 seconds=1
-        # detB = abs(det(B))
-        # # Hermite factor
-        # hermitef[ax,ix] = norm(B[:,1])/detB^(1/N)
-        # # Orthogonality defect
-        # orthf[ax,ix] = prodBi(B,N)/detB
+        times[ax,ix] = @elapsed (B,T) = lrAlgs[ax](data) 
+        detB = abs(det(B))
+        # Hermite factor
+        hermitef[ax,ix] = norm(B[:,1])/detB^(1/N)
+        # Orthogonality defect
+        orthf[ax,ix] = prodBi(B,N)/detB
 
         # if abs(abs(det(T))-1.0)>1e-6
         #     println("For $(lrAlgs[ax]), det(T) is $(abs(det(T)))")
@@ -152,7 +162,7 @@ end
 for ax = 1:length(lrAlgs)
     algNames[ax] = string(lrAlgs[ax]);
 end
-@printf("%8d %6d %6d %10s", Ns,  N,  L, string(dataType))
+@printf("%8d %6d %6d %10s", Ns,  N,  L, string(dataType)[1:min(end,10)])
 
 #outtimes = mean(times,2);
 outtimes = zeros(Nalgs,1);
@@ -162,25 +172,18 @@ mean(x) = sum(x)/length(x)
 for ax = 1:Nalgs
 #    stimes = sort(vec(times[ax,:]));
 #    outtimes[ax] = mean(stimes[1:floor(Ns*2/3)]);
+#    outtimes[ax] = minimum(times[ax,:]);
     outtimes[ax] = mean(times[ax,:]);
     outHF[ax] = mean(hermitef[ax,:]);
     outOF[ax] = mean(orthf[ax,:]);
 end
 
-# BOLD= "\x1B[1;30m"
-# RESET="\x1B[0;0m"
-# (mn,mx)=findmin(outtimes)
 for ax = 1:min(Nalgs,7)
-    # if ax==mx
-    #     @printf("    %s%10.4f%s",BOLD,outtimes[ax]*1000,RESET)
-    # else
-        @printf("    %10.4f",outtimes[ax]*1000)
-#        @printf("    %10.4f",outHF[ax])
-    # end 
+    @printf("    %10.4f",outtimes[ax]*1000)
 end
 @printf("\n")
 
-return outtimes, algNames
+return algNames, outtimes, outOF, outHF
 end
 
 #######################################################################
@@ -191,7 +194,7 @@ function prodBi(B,N)
         for m=1:N
             pn+=conj(B[m,n])*B[m,n]
         end
-        println("pn=$(pn), typeof(pn)=$(typeof(pn))")
+        # println("pn=$(pn), typeof(pn)=$(typeof(pn))")
         prod*=sqrt(pn)
     end
     return prod

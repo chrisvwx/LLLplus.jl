@@ -12,7 +12,7 @@
 #   columns of X.
 #
 # Examples:
-#   X = hard_sphere([1 2]', [1 2; 3 4],2)
+#   X = hard_sphere([1; 2], [1 2; 3 4],2)
 #   X = hard_sphere(rand(0:20,2,15), [1 2; 3 4],2)
 # """ ->
 function hard_sphere(Y::AbstractArray{Td,2},H::AbstractArray{Td,2},Nc::Integer) where {Td}

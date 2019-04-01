@@ -83,31 +83,33 @@ println("Error Rate is $(errRate). It should be zero or very small.\n")
 # --------------
 
 println("Testing now with 200x200 matrix from latticechallenge.org.")
-println("The col norm of the input should be 233, col norm of the "*
-        "reduced bases should be 30.")
+println("The min norm of the input should be 30, min norm of the "*
+        "reduced bases should be smaller.")
 mat = readdlm("challenge-200.mod",Int64) #run from parent directory
+mat = Matrix(mat');
+N = size(mat,2)
 
-nrms = zeros(200,1)
-for ix=1:200
+nrms = zeros(N,1);
+for ix=1:N
     nrms[ix] = norm(mat[:,ix])
 end
-println("max col-norm of input is $(maximum(nrms))")
+println("min norm of input is $(minimum(nrms))")
 
 @time (B,T) = lll(mat);
-nrms = zeros(200,1)
-for ix=1:200
-    nrms[ix] = norm(B[:,ix])
+nrms = zeros(N,1);
+for ix=1:N
+    nrms[ix] = norm(B[:,ix]);
 end
-maxlll = maximum(nrms)
-println("max col-norm of lll-reduced basis is $(maxlll)")
-@test maxlll<=30+1e-6
+mlll=minimum(nrms)
+println("min norm of lll-reduced basis is $(mlll)")
+@test mlll<=30+1e-6
 
 @time (B,T) = seysen(mat);
-nrms = zeros(200,1)
-for ix=1:200
+nrms = zeros(N,1)
+for ix=1:N
     nrms[ix] = norm(B[:,ix])
 end
-maxSeysen = maximum(nrms)
-println("max column norm of seysen-reduced basis is $(maxSeysen)")
-@test maxSeysen<=30+1e-6
+mSeysen = minimum(nrms)
+println("min norm of seysen-reduced basis is $(mSeysen)")
+@test mSeysen<=30+1e-6
 
