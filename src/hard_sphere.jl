@@ -1,21 +1,37 @@
-# @doc """
-#x=hard_sphere(y,H,Nc)
-#   Solve the problem argmin_x ||y-Hx||.  The input vector y is of
-#   length N, with H of dimension N by M, and the returned vector x of
-#   length M.  If Nc is even the elements of x are integers from
-#   [0:Nc-1]*2-(Nc-1); odd Nc is not yet supported. For Nc=2, we're
-#   searching the 2PAM constellation of [-1,1], and for nInt=4 we're
-#   searching [-3,-1,1,3].
-#X=hard_sphere(Y,H,Nc)
-#   The input may be a matrix Y of dimension N by Ns, in which case the
-#   problem is solved for each column of Y, with the solutions in the
-#   columns of X.
-#
+"""
+    x=hardsphere(y,H,Nc)
+
+  Solve the problem argmin_x ||y-Hx||.  The input vector y is of
+  length N, with H of dimension N by M, and the returned vector x of
+  length M.  If Nc is even the elements of x are integers from
+  [0:Nc-1]*2-(Nc-1); odd Nc is not yet supported. For Nc=2, we're
+  searching the 2PAM constellation of [-1,1], and for nInt=4 we're
+  searching [-3,-1,1,3].
+
+  Digital communication researchers often call the Fincke-Pohst search
+  algorithm used in this function as the "sphere-decoder" because of its use
+  in decoding digital signals and for the use of a multi-dimensional sphere
+  to constrain search complexity. This function uses only hard-decision
+  decoding, hence the term "hardsphere".  To complete the vocabulary lesson,
+  the problem that number theorists call the "closest vector problem" is
+  labeled "integer least squares" by many GPS researchers.
+
+X=hardsphere(Y,H,Nc)
+
+  The input may be a matrix Y of dimension N by Ns, in which case the
+  problem is solved for each column of Y, with the solutions in the
+  columns of X.
+
 # Examples:
-#   X = hard_sphere([1; 2], [1 2; 3 4],2)
-#   X = hard_sphere(rand(0:20,2,15), [1 2; 3 4],2)
-# """ ->
-function hard_sphere(Y::AbstractArray{Td,2},H::AbstractArray{Td,2},Nc::Integer) where {Td}
+```jldoctest
+julia> X = hardsphere([1. 1]', [1. 2; 3 4],2)
+2×1 Array{Int64,2}:
+ -1
+  1
+
+```
+"""
+function hardsphere(Y::AbstractArray{Td,2},H::AbstractArray{Td,2},Nc::Integer) where {Td}
     (N,M) = size(H);
 
     Qc = ones(M)*Nc;
@@ -34,21 +50,39 @@ function hard_sphere(Y::AbstractArray{Td,2},H::AbstractArray{Td,2},Nc::Integer) 
     Xh = zeros(Int,M,Ns);
     for ns = 1:Ns
         yp = (Q'*Y[:,ns] + R*ones(M,1).*xoffset)/xmult;
-        xp = algII_smart(yp,R,Qc);
+        xp = algIIsmart(yp,R,Qc);
         Xh[:,ns] = xp*xmult - xoffset; 
     end
 
     return Xh
 end
 
-#########################################################################%
-function algII_smart(yp,R,Qc)
-    # xh = algII_smart(yp,R,Qc)
-    #
-    # Find the closest xh for yp=R*xh + w, where w is some unknown noise and
-    # x(i) is from the range [0,...,Qc(i)-1]. This implements the "Alg II-smart"
-    # hard-decision sphere decoder as in Damen, El Gamal, and Caire, Trans It
-    # 03.
+"""
+    hard_sphere(...) = hardsphere(...)
+
+See hardsphere; in a future version hard_sphere will be removed.
+"""
+hard_sphere(x...) = hardsphere(x...)
+
+"""
+    xh = algIIsmart(yp,R,Qc)
+
+Find the closest xh for yp=R*xh + w, where w is some unknown noise and x(i)
+is from the range [0,...,Qc(i)-1]. This implements the "Alg II-smart"
+hard-decision sphere decoder as in Damen, El Gamal, and Caire, Trans It
+03. This function is not exported from LLLplus at present and may disappear
+in the future. 
+
+# Examples:
+```jldoctest
+julia> X = algIIsmart([5. 8]', [1. 2; 0 4],[4,4])
+2×1 Array{Float64,2}:
+ 1.0
+ 2.0
+
+```
+"""
+function algIIsmart(yp,R,Qc)
     (N,M) = size(R);
 
     xh = zeros(M,1); # the best solution

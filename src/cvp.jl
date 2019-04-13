@@ -19,12 +19,16 @@ julia> H=[1 2; 3 4]; Q,R=qr(H); uhat = cvp(Q'*[0,2],R)
  -1.0
 
 julia> n=100;H=randn(n,n);Q,R=qr(H);
+
 julia> u=Int.(rand(0:1e10,n));y=H*u+rand(n)/100;
+
 julia> uhat=cvp(Q'*y,R); sum(abs.(u-uhat))
 0.0
 
 julia> n=500;H=randn(n,n);Q,R=qr(H);
+
 julia> u=Int.(rand(-1:1,n));y=H*u+rand(n)/10;
+
 julia> uhat=cvp(Q'*y,R,Val{false},1); sum(abs.(u-uhat))
 0.0
 ```
@@ -165,3 +169,4 @@ function svp(B::AbstractArray{Td,2}) where Td
     idx = sortperm(c)
     return V[:,idx[1]]
 end
+

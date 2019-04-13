@@ -1,8 +1,10 @@
-# LLLplus.jl
+## LLLplus
 
-[![Build Status](https://travis-ci.org/christianpeel/LLLplus.jl.svg?branch=master)](https://travis-ci.org/christianpeel/LLLplus.jl)
+```@meta
+CurrentModule = LLLplus
+```
 
-Lattice reduction and related lattice tools are used in
+Lattice reduction and related lattice tools are used in 
 cryptography, digital communication, and integer programming.  LLLplus
 includes Lenstra-Lenstra-Lovacsz (LLL), Brun,
 and Seysen lattice reduction; VBLAST matrix decomposition; and a closest vector
@@ -46,7 +48,7 @@ package on random lattices.
 Pkg.add("LLLplus")
 using LLLplus
 
-# Time LLL, VBLAST decomposition of a complex matrix with randn entries
+# Time LLL, VBLAST decomposition of a complex matrix with randn entries 
 N = 1000;
 H = randn(N,N) + im*randn(N,N);
 println("Testing LLL on $(N)x$(N) complex matrix...")
@@ -82,9 +84,9 @@ is the average of execution time of 40 runs of a lattice-reduction
 technique, where the matrices used were generated using 'randn' to
 emulate unit-variance Gaussian-distributed values.
 
-![Time vs matrix size](benchmark/perfVsNfloat64.png)
+![Time vs matrix size](../../benchmark/perfVsNfloat64.png)
 
-Though the focus of the package is on floating-point,
+Though the focus of the package is on floating-point, 
 all the modules can handle a variety of data types. In the next figure
 we show execution time for several datatypes (Int32, Int64,
 Int128, Float32, Float64, DoubleFloat, BitInt, and BigFloat) which are used to
@@ -93,7 +95,7 @@ reduction techniques is averaged.  The vertical axis is a logarithmic
 representation of execution time as in the previous
 figure.
 
-![Time vs data type](benchmark/perfVsDataType.png)
+![Time vs data type](../../benchmark/perfVsDataType.png)
 
 The algorithm pseudocode in the monograph [7] and the survey paper [4]
 were very helpful in writing the lattice reduction tools in LLLplus
@@ -118,7 +120,7 @@ Possible improvements include:
   and the
   [Ideal](http://www.latticechallenge.org/ideallattice-challenge/)
   Lattice challenge have code to generate lattices
-  which could be used to make challenging performance tests.
+  which could be used to make challenging performance tests. 
 * Compare with the [fplll](https://github.com/fplll/fplll) library,
   the [Number Theory Library](http://www.shoup.net/ntl/), and
   NEMO/FLINT. 
@@ -127,11 +129,11 @@ Possible improvements include:
 
 ### References
 
-[1] A. K. Lenstra; H. W. Lenstra Jr.; L. Lovász, ["Factoring polynomials with rational coefficients"](http://ftp.cs.elte.hu/~lovasz/scans/lll.pdf). Mathematische Annalen 261, 1982.
+[1] A. K. Lenstra; H. W. Lenstra Jr.; L. Lovász, ["Factoring polynomials with rational coefficients"](http://ftp.cs.elte.hu/~lovasz/scans/lll.pdf). Mathematische Annalen 261, 1982
 
 [2] V. Brun,
 ["En generalisation av kjedebrøken I,"](https://archive.org/stream/skrifterutgitavv201chri#page/300/mode/2up)
-Skr. Vidensk. Selsk. Kristiana, Mat. Nat. Klasse, 1919.
+Skr. Vidensk. Selsk. Kristiana, Mat. Nat. Klasse, 1919. 
 
 [3] M. Seysen, ["Simultaneous reduction of a lattice basis and its reciprocal basis"](http://link.springer.com/article/10.1007%2FBF01202355) Combinatorica, 1993.
 
@@ -151,3 +153,8 @@ ISSSE: 295–300, 1998.
 [9] L. Babai, ["On Lovász’ lattice reduction and the nearest lattice point problem"](https://link.springer.com/article/10.1007/BF02579403),
 Combinatorica, 1986.
 
+
+
+## List of Functions
+```@index
+```

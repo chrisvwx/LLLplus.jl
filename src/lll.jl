@@ -24,6 +24,7 @@ julia> H= BigFloat.([1.5 2; 3 4]) .+ 2im; B,_= lll(H); B
   1.0+0.0im  0.0+0.0im
 
 julia> N=500;H = randn(N,N); B,T = lll(H);
+
 ```
 """
 function lll(H::AbstractArray{Td,2},δ::Float64=3/4) where {Td<:Number}
@@ -37,27 +38,10 @@ L = size(B,2);
 Qt,R = qr(B);
 Q = Matrix(Qt); # A few cycles can be saved by skipping updates of the Q matrix.
 
-# of course these should be replaced with different methods... I'll do it
-# someday
-if Td<:BigInt || Td<:BigFloat
-    Ti = BigInt
-elseif Td==Float32 || Td==Int32
-    Ti=Int32
-elseif Td==Int16
-    Ti=Int16
-elseif Td==Int8
-    Ti=Int8
-else
-    Ti=Int
-end
-#Ti = (Td<:BigInt || Td<:BigFloat) ? BigInt : Int
-
-if Td<:Complex
-    T = Matrix{Complex{Ti}}(I, L, L)
-else
-    T = Matrix{Ti}(I, L, L)
-end
-
+Ti= getIntType(Td)
+T = Matrix{Ti}(I, L, L)
+zeroTi = real(zero(Ti))
+    
 lx  = 2;
 while lx <= L
 
@@ -65,7 +49,7 @@ while lx <= L
     for k=lx-1:-1:1
         rk = R[k,lx]/R[k,k]
         mu = roundf(rk)
-        if abs(mu)>zero(Ti)
+        if abs(mu)>zeroTi
             # B[:,lx]   -= mu * B[:,k]
             # R[1:k,lx] -= mu * R[1:k,k]
             # T[:,lx]   -= mu * T[:,k]
@@ -107,7 +91,7 @@ end
 """
     B = gauss(H)
 
-Do Gauss (or Lagrange?!) reduction on the lattice defined by the two columns of
+Do Gauss/Lagrange reduction on the lattice defined by the two columns of
 H.
 
 Follows Fig 2.3 of "Lattice Basis Reduction: An Introduction to the LLL
@@ -119,6 +103,7 @@ julia> H = [1 2; 3 3]; B = gauss(H)
 2×2 Array{Float64,2}:
  1.0  0.0
  0.0  3.0
+
 ```
 """
 function gauss(H::AbstractArray{Td,2}) where Td
@@ -143,4 +128,39 @@ function gauss(H::AbstractArray{Td,2}) where Td
         end
     end
     return [v1 v2]
+end
+
+
+"""
+    getIntType(Td)
+
+    Return an integer type that matches Td.  I.e. BigInt for Td=BigFloat, Int64
+    for Td=Float64. Should replace this with multiple functions; the
+    following gives a hint, but it's not correct:
+
+getIntType(Td::Complex{Tr}) = Complex{getIntType(Tr)}
+getIntType(Td) where {Td<:Integer} = Td
+getIntType(<:Float64) = Int64
+getIntType(<:Float32) = Int32
+getIntType(<:Float16) = Int16
+getIntType(<:BigFloat) = BigInt
+
+"""
+function getIntType(Td)
+    Tr = real(Td)
+    if Tr<:BigInt || Tr<:BigFloat
+        Ti = BigInt
+    elseif Tr==Float32 || Tr==Int32
+        Ti=Int32
+    elseif Tr==Int16
+        Ti=Int16
+    elseif Tr==Int8
+        Ti=Int8
+    else
+        Ti=Int
+    end
+    if Td<:Complex
+        Ti = Complex{Ti}
+    end
+    return Ti
 end
