@@ -1,17 +1,32 @@
+"""
+    W,P,B = vblast(H)
+
+Find a VBLAST decomposition of `H` such that `H = pinv(W)*B*P'` or `B =
+W*H*P`.  Here `P` is a permutation matrix, `B` is lower triangular with ones
+on the diagonal, and `W` has orthogonal rows.
+
+    W,P,B = vblast(H,mu)
+
+If an SNR argument `mu` is passed in, a regularized ("MMSE") decomposition
+is done, with the result that `W` will no longer have orthogonal rows and
+`B` is no longer lower triangular.
+
+
+# Examples
+```jldoctest
+julia> H= [1. 2; 3 4];W,_ = vblast(H); W
+2×2 Array{Float64,2}:
+ 1.5  -0.5
+ 0.1   0.3
+
+julia> H= BigFloat.([1.5 2; 3 4]) .+ 2im; W,_= vblast(H); W
+2×2 Array{Complex{BigFloat},2}:
+      -2.0+3.0im            2.0-1.5im     
+ 0.0779221-0.103896im  0.155844-0.103896im
+
+```
+"""
 function vblast(H::Array{T,2},mu=Inf) where {T}
-# (W,P,B) = vblast(H)
-#  Returns a VBLAST matrix decomposition of H such that
-#  H = pinv(W)*B*P' or B = W*H*P.  Here P is a permutation matrix, B is
-#  lower triangular with ones on the diagonal, and W has orthogonal rows.
-# (W,P,B) = vblast(H,mu)
-#  If an SNR argument mu is passed in, a regularized ("MMSE")
-#  decomposition is done, with the result that W will no longer have
-#  orthogonal rows and B is no longer lower triangular.
-#
-# Example: For decoding with N receivers
-#  N=4;H = rand(N,N); include("vblast.jl");(W,P,B) = vblast(H)
-# Example: For MMSE decoding with N receivers mu=rho/N
-#  (W,P,B) = vblast(H,rho/size(H,1));
 
 (K,N) = size(H);
 

@@ -62,6 +62,9 @@ println("Testing Seysen on same $(N)x$(N) complex matrix...")
 println("Testing VBLAST on same $(N)x$(N) complex matrix...")
 @time (W,P,B) = vblast(H);
 @time (W,P,B) = vblast(H);
+println("Testing Brun on real part of same $(N)x$(N) matrix...")
+@time (B,T) = brun(real.(H));
+@time (B,T) = brun(real.(H));
 
 # Test sphere decoder
 Ns = 100000;
@@ -73,8 +76,8 @@ C = [-1,1];
 Z = rand(1:2,N,Ns);
 X = C[Z];
 Y = H*X+NN;
-@time Xt = hard_sphere(Y,H,2);
-@time Xt = hard_sphere(Y,H,2);
+@time Xt = hardsphere(Y,H,2);
+@time Xt = hardsphere(Y,H,2);
 errRate = sum(abs.(X-Xt))/Ns;
 println("Error Rate is $(errRate). It should be zero or very small.\n")
 

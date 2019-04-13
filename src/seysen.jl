@@ -4,7 +4,7 @@
 Do greedy  Seysen lattice reduction  on the  matrix `H`, returning  `B`, the
 reduced lattice basis;  `T` a unimodular matrix that reduces  `H` (i.e. `B =
 H*T`); `B_dual`, dual lattice basis (i.e., `B_dual = pinv(B)`); and num_it the number
-of iterations (basis updates). See also [`lll`](@ref), and [`brun`](@ref).
+of iterations (basis updates). See also [`lll`](@ref).
 
 Follows Seysen algorithm in "Lattice Reduction - A Survey with Applications
 in Wireless Communications" by D. Wuebben, et al, IEEE Signal Processing
@@ -12,10 +12,10 @@ Magazine, 2011.
 
 # Examples
 ```jldoctest
-julia> H= [1 2; 3 4];B,_ = seysen(H); B
+julia> H= [1 2; 3 4];B,T = seysen(H); B
 2×2 Array{Int64,2}:
- 1  -1
- 1   1
+ -1  1
+  1  1
 
 julia> H= BigFloat.([1.5 2; 3 4]) .+ 2im; B,_= seysen(H); B
 2×2 Array{Complex{BigFloat},2}:
