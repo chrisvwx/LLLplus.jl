@@ -1,4 +1,4 @@
-## LLLplus
+## LLLplus README
 
 ```@meta
 CurrentModule = LLLplus
@@ -6,7 +6,7 @@ CurrentModule = LLLplus
 
 Lattice reduction and related lattice tools are used in 
 cryptography, digital communication, and integer programming.  LLLplus
-includes Lenstra-Lenstra-Lovacsz (LLL), Brun,
+includes Lenstra-Lenstra-Lovász (LLL), Brun,
 and Seysen lattice reduction; VBLAST matrix decomposition; and a closest vector
 problem (CVP) solver. The historical and practical prominence of the
 LLL technique in lattice tools is the reason for its use in the
@@ -41,6 +41,12 @@ programming feasibility problem; see `integerfeasibility`.
 
 ### Examples
 
+Each function contains documentation and examples available via the
+built-in documentation system, for example with `?lll`. Documentation
+of all the functions are available by searching for "LLLplus.jl" at
+[pkg.julialang.org](https://pkg.julialang.org). A tutorial
+[notebook](https://github.com/christianpeel/LLLplus.jl/docs/LLLplusTutorial.ipynb) is found in the `docs` directory.
+
 Here are a few examples of using the functions in the
 package on random lattices.
 
@@ -48,22 +54,25 @@ package on random lattices.
 Pkg.add("LLLplus")
 using LLLplus
 
-# Time LLL, VBLAST decomposition of a complex matrix with randn entries 
-N = 1000;
+# Time LLL, VBLAST decomposition of a complex matrix with randn entries
+N = 200;
 H = randn(N,N) + im*randn(N,N);
-println("Testing LLL on $(N)x$(N) complex matrix...")
-@time B,T,Q,R = lll(H);
-M = 200;
-println("Testing VBLAST on $(M)x$(M) chunk of same matrix...")
-@time W,P,B = vblast(H[1:M,1:M]);
+@time B,T = lll(H);
+@time B,T = lll(H);
+@time W,P,B = vblast(H);
+@time W,P,B = vblast(H);
 
 # Time LLL, Seysen decompositions of a 100x100 Int64 matrix with
-# rand entries distributed uniformly between -100:100
+# entries distributed uniformly between -100:100
 N = 100;
 H = rand(-100:100,N,N);
-println("Testing LLL on $(N)x$(N) real matrix...")
-@time B,T,Q,R = lll(H);
-println("Testing Seysen on same $(N)x$(N) matrix...")
+@time B,T = sizereduction(H);
+@time B,T = sizereduction(H);
+@time B,T = brun(H);
+@time B,T = brun(H);
+@time B,T = lll(H);
+@time B,T = lll(H);
+@time B,T = seysen(H);
 @time B,T = seysen(H);
 ```
 
@@ -84,9 +93,9 @@ is the average of execution time of 40 runs of a lattice-reduction
 technique, where the matrices used were generated using 'randn' to
 emulate unit-variance Gaussian-distributed values.
 
-![Time vs matrix size](../../benchmark/perfVsNfloat64.png)
+![Time vs matrix size](assets/perfVsNfloat64.png)
 
-Though the focus of the package is on floating-point, 
+Though the focus of the package is on floating-point,
 all the modules can handle a variety of data types. In the next figure
 we show execution time for several datatypes (Int32, Int64,
 Int128, Float32, Float64, DoubleFloat, BitInt, and BigFloat) which are used to
@@ -95,7 +104,7 @@ reduction techniques is averaged.  The vertical axis is a logarithmic
 representation of execution time as in the previous
 figure.
 
-![Time vs data type](../../benchmark/perfVsDataType.png)
+![Time vs data type](assets/perfVsDataType.png)
 
 The algorithm pseudocode in the monograph [7] and the survey paper [4]
 were very helpful in writing the lattice reduction tools in LLLplus
@@ -112,28 +121,24 @@ than 1.2.0; please treat the package as experimental.
 
 ### Future
 
-Possible improvements include:
+Possible improvements to LLLplus include:
+* A Julia wrapper around the [fplll](https://github.com/fplll/fplll)
+  or [Number Theory Library](http://www.shoup.net/ntl/). These
+  respected tools could be used directly and would provide
+  funcionality not in LLLplus. A wrapper around one or both of these
+  tools would be the most useful addition to lattice tools in Julia.
 * Add Block-Korkin-Zolotarev lattice reduction, with improvements
-  as in [8], code for Babai's CVP approximation [9], and explicit CVP
-  approximations using LLL, Brun, Seysen, and VBLAST.
-* The [SVP](http://www.latticechallenge.org/svp-challenge/) Challenge
-  and the
-  [Ideal](http://www.latticechallenge.org/ideallattice-challenge/)
-  Lattice challenge have code to generate lattices
-  which could be used to make challenging performance tests. 
-* Compare with the [fplll](https://github.com/fplll/fplll) library,
-  the [Number Theory Library](http://www.shoup.net/ntl/), and
-  NEMO/FLINT. 
-
-
+  as in [8], and explicit CVP approximations using LLL, Brun, Seysen,
+  and VBLAST. 
+* More examples of applications to encourage and motivate users.
 
 ### References
 
-[1] A. K. Lenstra; H. W. Lenstra Jr.; L. Lovász, ["Factoring polynomials with rational coefficients"](http://ftp.cs.elte.hu/~lovasz/scans/lll.pdf). Mathematische Annalen 261, 1982
+[1] A. K. Lenstra; H. W. Lenstra Jr.; L. Lovász, ["Factoring polynomials with rational coefficients"](http://ftp.cs.elte.hu/~lovasz/scans/lll.pdf). Mathematische Annalen 261, 1982.
 
 [2] V. Brun,
 ["En generalisation av kjedebrøken I,"](https://archive.org/stream/skrifterutgitavv201chri#page/300/mode/2up)
-Skr. Vidensk. Selsk. Kristiana, Mat. Nat. Klasse, 1919. 
+Skr. Vidensk. Selsk. Kristiana, Mat. Nat. Klasse, 1919.
 
 [3] M. Seysen, ["Simultaneous reduction of a lattice basis and its reciprocal basis"](http://link.springer.com/article/10.1007%2FBF01202355) Combinatorica, 1993.
 
@@ -149,9 +154,6 @@ ISSSE: 295–300, 1998.
  Algorithm and Its Applications"](https://www.amazon.com/Lattice-Basis-Reduction-Introduction-Applications/dp/1439807027) CRC Press, 2012.
 
 [8] Y. Chen, P. Q. Nguyen, ["BKZ 2.0: Better Lattice Security Estimates"](http://www.iacr.org/archive/asiacrypt2011/70730001/70730001.pdf). Proc. ASIACRYPT 2011.
-
-[9] L. Babai, ["On Lovász’ lattice reduction and the nearest lattice point problem"](https://link.springer.com/article/10.1007/BF02579403),
-Combinatorica, 1986.
 
 
 

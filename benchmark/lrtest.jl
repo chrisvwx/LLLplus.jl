@@ -1,19 +1,20 @@
-# @doc doc"""function lrtest(Ns::Int,N::Array{Int,1},L::Array{Int,1},
-#                dataType::Array{DataType,1},distType)
-#   Monte-Carlo evaluation of lattice reduction techniques. NxN matrices of
-#   dataType are decomposed with each LR technique, with execution time,
-#   memory, orthogonality defect, and Hermite factor shown.  Accepted
-#   datatypes include Integer types such as Int8; FloatingPoint types such
-#   as Float32; and Complex versions of these types. Accepted distTypes are
-#   "randn" (Gaussian distributed with variance L), "rand" (uniformly
-#   distributed over -L:L), "colUnif" (first column is uniform over -L:L).
-#
+"""
+    lrtest(Ns::Int, N::Array{Int,1}, L::Array{Int,1}, dataType::Array{DataType,1}, distType)
+
+Monte-Carlo evaluation of lattice reduction techniques. NxN matrices of
+dataType are decomposed with each LR technique, with execution time,
+memory, orthogonality defect, and Hermite factor shown.  Accepted
+datatypes include Integer types such as Int8; FloatingPoint types such
+as Float32; and Complex versions of these types. Accepted distTypes are
+"randn" (Gaussian distributed with variance L), "rand" (uniformly
+distributed over -L:L), "colUnif" (first column is uniform over -L:L).
+
 # Examples
-#   # As function of Integer width
-#   lrtest(50,2.^[4;],[100;],[Int32,Int64,Int128,Float64,BigInt,BigFloat],"rand")
-#   # As function of N
-#   lrtest(50,2.^[0:6;],[100;],[Float64],"rand")
-# """
+  # As function of Integer width
+  lrtest(50,2.^[4;],[100;],[Int32,Int64,Int128,Float64,BigInt,BigFloat],"rand")
+  # As function of N
+  lrtest(50,2.^[0:6;],[100;],[Float64],"rand")
+"""
 function lrtest(Ns::Int,N::Array{Int,1},L::Array{Int,1},
                 dataType::Array{DataType,1},distType)
 
@@ -101,7 +102,7 @@ display(pltT)
 
 end
 
-#######################################################################
+
 function lrsim(Ns,N,L,dataType,distType,lrAlgs)
 # sortDict = Dict("Insertion" => d->sort(d,alg=InsertionSort),
 
