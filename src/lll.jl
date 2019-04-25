@@ -41,7 +41,7 @@ Q = Matrix(Qt); # A few cycles can be saved by skipping updates of the Q matrix.
 Ti= getIntType(Td)
 T = Matrix{Ti}(I, L, L)
 zeroTi = real(zero(Ti))
-    
+
 lx  = 2;
 while lx <= L
 
@@ -145,6 +145,9 @@ getIntType(<:Float32) = Int32
 getIntType(<:Float16) = Int16
 getIntType(<:BigFloat) = BigInt
 
+    this is better:
+getIntType(Td::Type{Tr}) where {Tr<:Float128} = Int128
+
 """
 function getIntType(Td)
     Tr = real(Td)
@@ -163,4 +166,59 @@ function getIntType(Td)
         Ti = Complex{Ti}
     end
     return Ti
+end
+
+"""
+    B,T,Q,R = sizereduction(H)
+Do size reduction of matrix H.  The output is B, an size-reduced
+basis; T, a unimodular (det(T)=+/-1) transformation matrix such that B=
+H*T; Q and R such that B=Q*R and Q is orthonormal, and R is upper
+triangular.  So H = Q*R*inv(T)
+
+H can be of Integer, FloatingPoint, BigInt, or BigFloat types. The core
+algorithm is designed for floating-point.
+
+Size reduction is the first part of LLL lattice reduction.
+
+# Examples
+```jldoctest
+julia> H= [1 2; 3 4];B,_ = sizereduction(H); B
+2×2 Array{Int64,2}:
+ 3   1
+ 1   1
+
+julia> H= BigFloat.([1.5 2; 3 4]) .+ 2im; B,_= sizereduction(H); B
+2×2 Array{Complex{BigFloat},2}:
+ 1.5+2.0im  0.50+0.0im
+ 3.0+2.0im   1.0+0.0im
+
+julia> N=100;H = randn(N,N); B,T = sizereduction(H);
+
+```
+"""
+function sizereduction(H::Array{Td,2}) where {Td}
+    B = copy(H);
+    L = size(B,2);
+    Q,R = qr(B);
+
+    Ti= getIntType(Td)
+    T = Matrix{Ti}(I, L, L)
+
+    for lx=2:L
+        # reduce lx-th column of B
+        for k=lx-1:-1:1
+            rk = R[k,lx]/R[k,k]
+            mu = roundf(rk)
+            if abs(mu)>0
+                # B[:,lx]   -= mu * B[:,k]
+                # R[1:k,lx] -= mu * R[1:k,k]
+                # T[:,lx]   -= mu * T[:,k]
+                B[:,lx]   .-= mu .* view(B,:,k)
+                R[1:k,lx] .-= mu .* view(R,1:k,k)
+                T[:,lx]   .-= mu .* view(T,:,k)
+            end
+        end
+    end
+
+    return B,T,Q,R
 end

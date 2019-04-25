@@ -16,6 +16,7 @@ export
     svp,
     brun,
     gauss,
+    sizereduction,
     seysen,
     vblast,
     subsetsum,
@@ -23,7 +24,7 @@ export
     hardsphere, hard_sphere,
     issizereduced,islllreduced,orthogonalitydefect,hermitefactor,seysencond
 
-include("lll.jl")          # lll, gauss
+include("lll.jl")          # lll, gauss, sizereduction
 include("cvp.jl")          # cvp, svp
 include("brun.jl")
 include("seysen.jl")

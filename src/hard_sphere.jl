@@ -45,8 +45,8 @@ function hardsphere(Y::AbstractArray{Td,2},H::AbstractArray{Td,2},Nc::Integer) w
         xoffset = floor.(Qc/2)
         xmult = 1
     end
-    (Q,R) = qr(H);
-    (N,Ns) = size(Y);
+    Q,R = qr(H);
+    N,Ns = size(Y);
     Xh = zeros(Int,M,Ns);
     for ns = 1:Ns
         yp = (Q'*Y[:,ns] + R*ones(M,1).*xoffset)/xmult;
