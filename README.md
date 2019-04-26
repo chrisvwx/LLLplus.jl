@@ -112,7 +112,7 @@ one of the [Lattice Challenge](http://www.latticechallenge.org)
 records or are looking for robust, well-proven lattice tools, look at
 [fplll](https://github.com/fplll/fplll). Also, for many
 number-theoretic problems the
-[Nemo.jl](https://github.com/wbhart/Nemo.jl) package is appropriate;
+[Nemo.jl](https://github.com/Nemocas/Nemo.jl) package is appropriate;
 it uses the [FLINT](http://flintlib.org/) C library to do LLL
 reduction on Nemo-specific data types.
 Finally, LLLplus should have version number of about 0.2.0 rather
