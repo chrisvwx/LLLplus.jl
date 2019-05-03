@@ -63,13 +63,12 @@ end
 
 For a vector of integers `a`, and an integer `s`, try to find a binary
 vector `x` such that `x'*a=s`. We use the LLL algorithm to find the
-solution.
+solution. This is not a production-ready subset-sum solver, just a demo.
 
 This follows the technique described by Lagarias and Odlyzko  in 
 "Solving Low-Density Subset Sum Problems"  in Journal of ACM, Jan 1985.
 Code based on http://web.eecs.umich.edu/~cpeikert/lic15/lec05.pdf
-The original technique came from Lagarias and Odlyzko.  We can likely 
-get better results using techniques described and referencd in 
+We can likely get better results using techniques described and referencd in 
 https://www-almasty.lip6.fr/~joux/pages/papers/ToolBox.pdf
 
 It's odd that permuting the `a` vector in the second example given below
