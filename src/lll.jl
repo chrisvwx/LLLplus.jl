@@ -32,6 +32,9 @@ function lll(H::AbstractArray{Td,2},δ::Float64=3/4) where {Td<:Number}
 if !(0.25 < δ < 1.0)
     error("δ must be between 1/4 and 1.");
 end
+if Td<:AbstractFloat
+    δ= Td(δ)
+end
 
 B = copy(H);
 L = size(B,2);
