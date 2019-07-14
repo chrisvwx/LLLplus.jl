@@ -138,38 +138,31 @@ end
     getIntType(Td)
 
     Return an integer type that matches Td.  I.e. BigInt for Td=BigFloat, Int64
-    for Td=Float64. Should replace this with multiple functions; the
-    following gives a hint, but it's not correct:
+    for Td=Float64.
 
-getIntType(Td::Complex{Tr}) = Complex{getIntType(Tr)}
-getIntType(Td) where {Td<:Integer} = Td
-getIntType(<:Float64) = Int64
-getIntType(<:Float32) = Int32
-getIntType(<:Float16) = Int16
-getIntType(<:BigFloat) = BigInt
-
-    this is better:
-getIntType(Td::Type{Tr}) where {Tr<:Float128} = Int128
-
+    It's possible that the integer type could be picked on a per-matrix
+    basis depending on the values in the matrix and the decomposition
+    (i.e. [`lll`](@ref)) that is to be done. This is not done below.
+# Examples
+```julia-repl
+julia> Pkg.add("DoubleFloats")
+julia> using DoubleFloats
+julia> using LLLplus
+julia> import LLLplus.getIntType # yes, it's type piracy!
+julia> x = randn(3,3); xd = Double64(x); lll(xd)
+ERROR: MethodError: no method matching getIntType(::Type{DoubleFloat{Float64}})
+...
+julia> getIntType(Td::Type{Tr}) where {Tr<:Double64} = Int128
+julia> B,T =lll(xd); # succeeds
+```
 """
-function getIntType(Td)
-    Tr = real(Td)
-    if Tr<:BigInt || Tr<:BigFloat
-        Ti = BigInt
-    elseif Tr==Float32 || Tr==Int32
-        Ti=Int32
-    elseif Tr==Int16
-        Ti=Int16
-    elseif Tr==Int8
-        Ti=Int8
-    else
-        Ti=Int
-    end
-    if Td<:Complex
-        Ti = Complex{Ti}
-    end
-    return Ti
-end
+getIntType(Td::Type{Tr}) where {Tr<:Integer} = Tr
+getIntType(Td::Type{Tr}) where {Tr<:Float64} = Int64
+getIntType(Td::Type{Tr}) where {Tr<:Float32} = Int32
+getIntType(Td::Type{Tr}) where {Tr<:Float16} = Int16
+getIntType(Td::Type{Tr}) where {Tr<:BigFloat} = BigInt
+getIntType(Td::Type{Complex{Tr}}) where Tr = Complex{getIntType(Tr)}
+
 
 """
     B,T,Q,R = sizereduction(H)
