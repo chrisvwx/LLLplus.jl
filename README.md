@@ -1,6 +1,7 @@
 # LLLplus.jl
 
 [![Build Status](https://travis-ci.org/christianpeel/LLLplus.jl.svg?branch=master)](https://travis-ci.org/christianpeel/LLLplus.jl)
+[![](https://img.shields.io/badge/docs-stable-blue.svg)](https://pkg.julialang.org/docs/LLLplus/)
 
 LLLplus includes
 [Lenstra-Lenstra-Lovász](https://en.wikipedia.org/wiki/Lenstra%E2%80%93Lenstra%E2%80%93Lov%C3%A1sz_lattice_basis_reduction_algorithm)
