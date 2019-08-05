@@ -9,9 +9,7 @@ matrix `xNull` of vectors in the null space of `A` which could be added to the
 `x` vector to find a solution which satisfies a constraint such as `0 .≤ x
 .≤ u`; see the paper below.  
 
-This function is not intended to be a robust implementation of an integer
-programming feasibility solution, rather its purpose is to give a flavor
-of what problems the LLL technique can help with.
+This is not a robust tool, just a demo.
 
 "Solving A System Of Diophantine Equations With Bounds On The Variables" by
 Karen Aardal, Cor Hurkens, and Arjen Lenstra in Integer Programming and
@@ -63,7 +61,7 @@ end
 
 For a vector of integers `a`, and an integer `s`, try to find a binary
 vector `x` such that `x'*a=s`. We use the LLL algorithm to find the
-solution. This is not a production-ready subset-sum solver, just a demo.
+solution. This is not a robust tool, just a demo.
 
 This follows the technique described by Lagarias and Odlyzko  in 
 "Solving Low-Density Subset Sum Problems"  in Journal of ACM, Jan 1985.
@@ -156,3 +154,63 @@ function subsetsum(a::AbstractArray{Ti,1},s::Ti) where {Ti<:Integer}
     return missing.*Bp[:,1]
 end
 
+
+"""
+    rationalapprox(x::AbstractArray{<:Real,1},M,Ti=BigInt,verbose=false)
+
+For a vector of Reals `x`, and an integer `M`, find an integer q such that
+`maximum(abs.(x*q-round.(x*q)))` is small; the vector `x` is approximated by
+`round.(x*q)//q`.  The integer `q` is less than or equal to `M` and the
+approximation satisfies `max(abs.(x*q-round.(x*q)))≤sqrt(5)*2^(n/4 -
+5)*M^(-1/n)`; this equation comes from the paper below.  The LLL algorithm
+reduction is used to find the solution. The approximation vector is returned.
+This is also known as "simultaneous diophantine approximation"; see for
+example the title of the Hanrot paper below.
+
+This is not a robust tool, just a demo.
+
+"LLL: A Tool for Effective Diophantine Approximation" by Guillaume Hanrot in
+the book "The LLL Algorithm: Survey and Applications" edited by Phong
+Q. Nguyen and Brigitte Vallée, Springer, Heidelberg, 2010.
+
+See also Chapter 9 of M. R. Bremner, "Lattice Basis Reduction: An
+Introduction to the LLL Algorithm and Its Applications" CRC Press, 2012.
+
+# Examples
+```jldoctest
+julia> x = [0.3912641745333527; 0.5455179974014548; 0.1908698210882469];
+julia> rationalapprox(x,1e4,Int64)
+3-element Array{Rational{Int64},1}:
+ 43//110
+  6//11
+ 21//110
+```
+"""
+function rationalapprox(x::AbstractArray{<:Real,1},M,Ti=BigInt,verbose=false)
+    # Follows the multivariate technique in Theorem 8 of the
+    # Nguyen and Vallee paper above
+
+    n = length(x)
+    Q = (M/2^(1/4))^(1/n)
+    C = Ti(ceil(Q^(n+1)))
+    Cx = Ti.(round.(C*x))
+
+    X = [one(Ti) zeros(Ti,1,n);
+         [Cx     C*I] ]
+    B,_ = lll(X)
+    q = abs(B[1,1])
+    maxErr = maximum(abs.(x-round.(x*q)/q))
+    bound = sqrt(5)*2^(n/4 - 1)/Q /q
+    if maxErr>bound
+        warning("The max error in the approximation $(maxErr) is unexpectedly "*
+                "greater than the bound $(bound).")
+    end
+    p = Ti.(round.(x*q));
+    if verbose
+        println("q        = $(q)\n"*
+                "maxErr/q = $(maxErr)\n"*
+                "bound/q  = $(bound)")
+        display([x round.(x*q)/q abs.(x-round.(x*q)/q)])
+    end
+    return p//q
+end
