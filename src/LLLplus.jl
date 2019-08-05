@@ -21,6 +21,7 @@ export
     vblast,
     subsetsum,
     integerfeasibility,
+    rationalapprox,
     hardsphere, hard_sphere,
     issizereduced,islllreduced,orthogonalitydefect,hermitefactor,seysencond
 
@@ -29,7 +30,7 @@ include("cvp.jl")          # cvp, svp
 include("brun.jl")
 include("seysen.jl")
 include("vblast.jl")
-include("applications.jl") # subsetsum, integerFeasibility
+include("applications.jl") # subsetsum, integerfeasibility, rationalapprox
 include("utilities.jl")
 
 include("hard_sphere.jl")  # may be deprecated in future

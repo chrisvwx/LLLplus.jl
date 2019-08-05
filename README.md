@@ -36,14 +36,17 @@ Another important application is in cryptanalysis; as an example of a
 cryptanalytic attack, see the `subsetsum` function.  Another important
 application is in integer programming, where the LLL algorithm has
 been shown to solve the integer programming feasibility problem; see
-`integerfeasibility`.
+`integerfeasibility`. Lattice tools are often used to study and solve
+Diophantine problems; for example in  "simultaneous diophantine
+approximation" a vector of real numbers are approximated by rationals
+with a common deonminator. For a demo function, see `rationalapprox`.
 
 ### Examples
 
 Each function contains documentation and examples available via Julia's
 built-in documentation system, for example with `?lll`. Documentation
-of all the functions are available by searching for "LLLplus.jl" at
-[pkg.julialang.org](https://pkg.julialang.org). A tutorial notebook is
+of all the functions are available on
+[pkg.julialang.org](https://pkg.julialang.org/docs/LLLplus/). A tutorial notebook is
 found in the [`docs`](docs/LLLplusTutorial.ipynb) directory or on
 [nbviewer](https://nbviewer.jupyter.org/github/christianpeel/LLLplus.jl/blob/master/docs/LLLplusTutorial.ipynb).
 
