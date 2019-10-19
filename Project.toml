@@ -2,9 +2,13 @@ name = "LLLplus"
 uuid = "142c1900-a1c3-58ae-a66d-b187f9ca6423"
 keywords = ["lattice reduction", "lattice basis reduction",
             "shortest vector problem", "closest vector problem",
-            "LLL", "Lenstra-Lenstra-Lovász","Seysen", "Brun","VBLAST"]
-authors = ["Christian Peel <chris.peel@ieee.org>"]
-version = "1.2.2"
+            "LLL", "Lenstra-Lenstra-Lovász","Seysen", "Brun","VBLAST",
+            "subset-sum problem"]
+license = "MIT"
+version = "1.2.3"
+
+[compat]
+julia = "1"
 
 [deps]
 BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"

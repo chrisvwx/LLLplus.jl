@@ -146,7 +146,7 @@ julia> H = [1 2; 3 4]; Q,R = gso(H)
 
 ```
 """
-function gso(H::AbstractArray{Td,2}) where {Td}
+function gso(H::Matrix{Td}) where {Td}
 # This is classic GS; see comparison between classic and modified in
 # http://www.cis.upenn.edu/~cis610/Gram-Schmidt-Bjorck.pdf
 
@@ -165,3 +165,17 @@ function gso(H::AbstractArray{Td,2}) where {Td}
     end
     return Q,R
 end
+
+"""
+    volume(B)
+
+Volume of fundamental parallelepiped of a lattice with basis B.
+
+# Examples
+```jldoctest
+julia> B = [1 2; 3 4]; volume(B)
+1.9999999999999964
+
+```
+"""
+volume(B) = sqrt(det(B'*B))

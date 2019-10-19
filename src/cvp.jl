@@ -4,7 +4,7 @@
 Solve the problem `argmin_x ||y-Hx||` for integer x using the technique from
 the paper below.  The input vector `y` is of length `n`, with `H` of
 dimension `n` by `n`, and the returned vector `x` of length `n`. If
-`finite==Val{false}` then we search the (infinite) lattice, otherwise we
+`infinite==Val{true}` then we search the (infinite) lattice, otherwise we
 search integers in `[-Umax,Umax]`.  At present cvp does not handle complex
 numbers.
 

@@ -66,7 +66,7 @@ solution. This is not a robust tool, just a demo.
 This follows the technique described by Lagarias and Odlyzko  in 
 "Solving Low-Density Subset Sum Problems"  in Journal of ACM, Jan 1985.
 Code based on http://web.eecs.umich.edu/~cpeikert/lic15/lec05.pdf
-We can likely get better results using techniques described and referencd in 
+We can likely get better results using techniques described and referenced in
 https://www-almasty.lip6.fr/~joux/pages/papers/ToolBox.pdf
 
 It's odd that permuting the `a` vector in the second example given below
@@ -93,15 +93,17 @@ julia> setprecision(BigFloat,300); x=subsetsum(a,s); s-x'*a
 
 ```
 """
-function subsetsum(a::AbstractArray{Ti,1},s::Ti) where {Ti<:Integer}
+function subsetsum(a::AbstractArray{Ti,1},ss::Ti,returnBinary=false) where {Ti<:Integer}
     # page numbers below refer to lecture note above
 
     n = length(a)
     
-    flag = false
-    if s<sum(a)/2
+    if ss<sum(a)/2
         flag=true
-        s = sum(a)-s
+        s = sum(a)-ss
+    else
+        flag = false
+        s = ss
     end
     # b is the "B" parameter defined at bottom of page 2
     nt = Ti(n)
@@ -136,15 +138,20 @@ function subsetsum(a::AbstractArray{Ti,1},s::Ti) where {Ti<:Integer}
     if binarySolution
         return xb
     else
+        x = mdsubsetsum(a,ss,.5,1)
+        if ~ismissing(x)
+            print("A solution was found via mdsubsetsum\n")
+            return x
+        end
+
         if maximum(a)<2^(n^2/2)
             density = n/maximum(log2.(a))
             @printf("The density (%4.2f) of the 'a' vector is not as low as required\n",
                     density)
-            @printf("(%4.2f) for Lagarias-Odlyzko to work. We'll look for a ",2/n)
-            @printf("solution\nanyway... ")
+            @printf("(%4.2f) for Lagarias-Odlyzko to work. \n",2/n)
         end
 
-        if length(ixMatch)>=1
+        if returnBinary && length(ixMatch)>=1
             print("A non-binary solution was found; check that it's correct\n")
             return Bp[:,ixMatch[1][2]]
         else
@@ -152,6 +159,71 @@ function subsetsum(a::AbstractArray{Ti,1},s::Ti) where {Ti<:Integer}
         end
     end
     return missing.*Bp[:,1]
+end
+
+
+"""
+    x = mdsubsetsum(a,sM,ratio=.5,Kpm=3)
+
+For a vector of integers `a`, and an integer `sM`, try to find a binary
+vector `x` such that `x'*a=s` using the technique from "Multidimensional
+subset sum problem" [1][2]. A major goal of the technique is to solve
+problems in there are about 50% ones in `x`; other ratios of ones to zeros
+can be specified in `ratio`.  The thesis also suggests searching `Kpm=3`
+values around the nominal k. This technique is related to that in
+[`subsetsum`](@ref) in that both use the LLL algorithm.  This is not a
+robust tool, just a demo.
+
+[1] https://scholarworks.rit.edu/theses/64/
+[2] https://pdfs.semanticscholar.org/21a7/c2f9ff29507f1153aefcca04d1cd308e45c0.pdf
+
+# Examples
+```jldoctest
+julia> a=[1,2,4,9,20,38]; s=30; x=mdsubsetsum(a,s); s-x'*a
+0.0
+
+julia> a=[32771,65543,131101,262187,524387,1048759, # from Bremner p 117
+          2097523,4195057,8390143,16780259,33560539,
+          67121039,134242091,268484171,536968403];
+
+julia> sM=891221976; x=mdsubsetsum(a,sM); sM-x'*a
+
+julia> N=40;a=rand(1:2^BigInt(256),N);xtrue=rand(Bool,N); s=a'*xtrue;
+
+julia> setprecision(BigFloat,300); x=mdsubsetsum(a,s); s-x'*a
+```
+"""
+function mdsubsetsum(a::AbstractArray{Ti,1},sM::Ti,ratio=.5,Kpm=3) where {Ti<:Integer}
+
+    n = Ti(length(a))
+
+    # r is heuristic value for r from end of Section 11 of thesis above
+    r = Ti(2^round(.65*log2(maximum(a))))
+    c = 2^10 # a heuristic; look right below eq (10)
+
+    p = a .÷ r # See start of Section 10
+    s = a-p.*r
+    k0 = Ti(round(sum(s)*ratio/r)) # Equation (9) with ratio=.5 and j=1.
+    p0 = sM ÷ r
+    m = sM - p0*r
+
+    for k = k0-Kpm:k0+Kpm
+        # Equation (14)
+        Bt = [Matrix{Ti}(I,n,n)*2 c*s       c*p      zeros(Ti,n);
+              ones(Ti,1,n)        c*(k*r+m) c*(p0-k) 1]
+        BB = Bt'  # Notation in paper is row-based; my brain is column-based
+        B,T = lll(BB)
+
+        for nx = 1:n
+            if abs(B[n+3,nx])==1 && B[n+2,nx]==0 && B[n+1,nx]==0 &&
+                      all((B[1:n,nx] .==1) .| (B[1:n,nx] .==-1))
+                xhat = abs.(B[1:n,nx] .- B[n+3,nx])/2
+                return Ti.(xhat)
+            end
+        end
+    end
+    @warn "Solution not found"
+    return missing
 end
 
 
