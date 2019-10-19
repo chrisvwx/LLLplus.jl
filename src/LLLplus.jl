@@ -19,7 +19,7 @@ export
     sizereduction,
     seysen,
     vblast,
-    subsetsum,
+    subsetsum,mdsubsetsum,
     integerfeasibility,
     rationalapprox,
     hardsphere, hard_sphere,

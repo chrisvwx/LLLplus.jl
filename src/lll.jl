@@ -1,5 +1,5 @@
 """
-    B,T,Q,R = LLL(H,δ=3/4)
+    B,T,Q,R = lll(H,δ=3/4)
 
 Do Lenstra–Lenstra–Lovász lattice reduction of matrix `H` using optional
 parameter `δ`.  The output is `B`, an LLL-reduced basis; `T`, a unimodular
@@ -8,8 +8,10 @@ finally `Q` and `R` which are a QR decomposition of `B`.  So `H = B*inv(T) =
 Q*R*inv(T)`.
 
 Follows D. Wuebben, et al, "Lattice Reduction - A Survey with Applications
-in Wireless Communications". IEEE Signal Processing Magazine, 2011. See
-[`subsetsum`](@ref) for an application of `lll`.
+in Wireless Communications". IEEE Signal Processing Magazine, 2011. When
+comparing with the core lattice reduction technique, we belive it is closest
+to the floating-point algorithm of C. P. Schnorr. "A more efficient
+algorithm for lattice basis reduction". Journal of Algorithms, Vol 9, 1988.
 
 # Examples
 ```jldoctest

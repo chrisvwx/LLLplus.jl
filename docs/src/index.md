@@ -6,13 +6,15 @@ CurrentModule = LLLplus
 
 LLLplus includes
 [Lenstra-Lenstra-Lovász](https://en.wikipedia.org/wiki/Lenstra%E2%80%93Lenstra%E2%80%93Lov%C3%A1sz_lattice_basis_reduction_algorithm)
-(LLL), Brun, and Seysen lattice reduction; VBLAST matrix
+(LLL), [Brun](https://en.wikipedia.org/wiki/Viggo_Brun), and Seysen lattice reduction; VBLAST matrix
 decomposition; and a
 [closest vector problem](https://en.wikipedia.org/wiki/Lattice_problem#Closest_vector_problem_.28CVP.29)
 (CVP) solver. These lattice reduction and related lattice tools are
 used in cryptography, digital communication, and integer programming.
 The historical and practical prominence of the LLL technique in
 lattice tools is the reason for its use in the name "LLLplus".
+Also, this package is experimental; see
+[fplll](https://github.com/fplll/fplll) for a robust tool.
 
 LLL [1] lattice reduction is a powerful tool that is widely used in
 cryptanalysis, in cryptographic system design, in digital
