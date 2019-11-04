@@ -111,7 +111,9 @@ while do_reduction
                 x = 0.5*(Adual[ind2,ind1]/Adual[ind1,ind1]-A[ind2,ind1]/
                          A[ind2,ind2]);
 
-                # Try Float64 if the following fails w Float32
+                # If you get an "InexactError:..." here, try a float type
+                # (or float+int type) with more precision. For some reason
+                # Seysen is more sensitive than LLL to bit precision.
                 Λ[ind1,ind2] = Ti(roundf(x));
 
                 AbsΛ = abs(Λ[ind1,ind2])^2;

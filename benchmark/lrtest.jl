@@ -7,7 +7,8 @@ memory, orthogonality defect, and Hermite factor shown.  Accepted
 datatypes include Integer types such as Int8; FloatingPoint types such
 as Float32; and Complex versions of these types. Accepted distTypes are
 "randn" (Gaussian distributed with variance L), "rand" (uniformly
-distributed over -L:L), "colUnif" (first column is uniform over -L:L).
+distributed over -L:L), "gen_qary" (tough lattice representative of
+those used in lattice cryptography).
 
 # Examples
   # As function of Integer width
@@ -18,8 +19,7 @@ distributed over -L:L), "colUnif" (first column is uniform over -L:L).
 function lrtest(Ns::Int,N::Array{Int,1},L::Array{Int,1},
                 dataType::Array{DataType,1},distType)
 
-#lrAlgs = [lll, lllrecursive,seysen]
-lrAlgs = [lll, seysen]
+lrAlgs = [l2, lll, seysen,]
 
 @printf("      Ns      N      L   dataType")
 for ax = 1:min(length(lrAlgs),6)
@@ -106,7 +106,8 @@ end
 function lrsim(Ns,N,L,dataType,distType,lrAlgs)
 # sortDict = Dict("Insertion" => d->sort(d,alg=InsertionSort),
 
-distDict = Dict("rand"=> d -> rand!(d,-L:L),
+distDict = Dict("gen_qary"=> d -> gen_qary!(d,Int(N/2),rand(1:2^L-1)),
+                "rand"=> d -> rand!(d,-L:L),
                 "randmax"=> d -> rand(dataType,N,N),
                 "randn"=> d -> L*randn!(d::AbstractArray{dataType,2}),
                  );
@@ -123,7 +124,7 @@ data = Array{dataType,2}(undef,N,N);
 for ix = 1:Ns
     cnum = Inf;
     while cnum > 1e5  # With Ints need to check for singular matrices
-        data = randf!(data);
+        randf!(data);
         if !(dataType<:BigInt || dataType<:BigFloat)
             cnum = cond(data)
         else
@@ -135,10 +136,11 @@ for ix = 1:Ns
     # Lattice-reduction algorithms
     #
     for ax = 1:length(lrAlgs)
-        # CPUtic();
-        # (B,T) = lrAlgs[ax](data);
-        # times[ax,ix] = CPUtoq();
-        times[ax,ix] = @elapsed (B,T) = lrAlgs[ax](data) 
+        if lrAlgs[ax]==l2
+            times[ax,ix] = @mytwice B = lrAlgs[ax](data)
+        else
+            times[ax,ix] = @mytwice (B,T) = lrAlgs[ax](data)
+        end
         detB = abs(det(B))
         # Hermite factor
         hermitef[ax,ix] = norm(B[:,1])/detB^(1/N)

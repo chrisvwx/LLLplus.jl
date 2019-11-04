@@ -26,6 +26,14 @@ julia> integerfeasibility(A,d)
  2
  9
 
+julia> A=[10 1.1 -9.1; 1 8 8]; d=A*xtrue;
+
+julia> integerfeasibility(A,d)
+3-element Array{Int64,1}:
+ 0
+ 2
+ 9
+
 julia> n=20;m=30; A = rand(-10:10,n,m); xtrue = rand(0:10,m); d=A*xtrue;
 
 julia> sum(abs.(xtrue - integerfeasibility(A,d) ))
@@ -36,13 +44,19 @@ julia> sum(abs.(xtrue - integerfeasibility(A,d) ))
 function integerfeasibility(A::AbstractArray{Td,2},
                             d::AbstractArray{Td,1}, flag=false) where {Td<:Number}
     m,n=size(A)
-    N1=10^3
-    N2=10^4
+    # N1=10^3
+    # N2=10^4
+    N1=10^4
+    N2=10^5
     B = [[I           zeros(Td,n,1)];
          zeros(Td,1,n) N1;
          N2*A          -N2*d]
 
     Bhat,_ = lll(B)
+    #Bhat = l2(B)  # doesn't work?
+
+    # the columns are not always sorted. A sort here helps sometimes.
+
     Bprime = Bhat[1:n+1,1:n-m+1]
     x_d = Bprime[1:n,end]
 
@@ -63,6 +77,57 @@ For a vector of integers `a`, and an integer `s`, try to find a binary
 vector `x` such that `x'*a=s`. We use the LLL algorithm to find the
 solution. This is not a robust tool, just a demo.
 
+This function tries first the technique in the `lagariasodlyzko` function,
+and if it fails, a solution via `mdsubsetsum` is attempted.
+
+It appears that this function can also solve some integer relations
+problems. See the first example.
+
+# Examples
+```jldoctest
+julia> a=[1.5;.5;0;.1;.2]; s=2.2; x,_=subsetsum(a,s,true); s-x'*a
+0.0
+
+julia> a=[32771,65543,131101,262187,524387,1048759, # from Bremner p 117
+          2097523,4195057,8390143,16780259,33560539,
+          67121039,134242091,268484171,536968403];
+
+julia> s=891221976; x,_=subsetsum(a,s,true); s-x'*a
+0.0
+
+julia> N=40;a=rand(1:2^BigInt(256),N);xtrue=rand(Bool,N); s=a'*xtrue; 
+
+julia> setprecision(BigFloat,300); x,_=subsetsum(a,s); s-x'*a
+0.0
+
+```
+"""
+function subsetsum(a::AbstractArray{Td,1},ss::Td,verbose=false) where {Td<:Number}
+
+    xlo,binarylo = lagariasodlyzko(a,ss,verbose);
+    if binarylo===true && ~any(ismissing.(xlo))
+        verbose && print("A solution was found via lagariasodlyzko\n")
+        return xlo,binarylo
+    else
+        x = mdsubsetsum(a,ss,.5,1)
+        if ~ismissing(x)
+            verbose && print("A solution was found via mdsubsetsum\n")
+            return x,true
+        elseif binarylo===false
+            return xlo,binarylo
+        end
+    end
+    return missing.*Bp[:,1]
+end
+
+
+"""
+    x = lagariasodlyzko(a,s)
+
+For a vector of integers `a`, and an integer `s`, try to find a binary
+vector `x` such that `x'*a=s`. We use the LLL algorithm to find the
+solution. This is not a robust tool, just a demo.
+
 This follows the technique described by Lagarias and Odlyzko  in 
 "Solving Low-Density Subset Sum Problems"  in Journal of ACM, Jan 1985.
 Code based on http://web.eecs.umich.edu/~cpeikert/lic15/lec05.pdf
@@ -70,34 +135,34 @@ We can likely get better results using techniques described and referenced in
 https://www-almasty.lip6.fr/~joux/pages/papers/ToolBox.pdf
 
 It's odd that permuting the `a` vector in the second example given below
-causes the alg to often not find a solution. The example doesn't have the
-required density, so maybe we should be asking why it finds an answer at
-all.
+causes the alg to often not find a binary solution. Apparently this is a
+common oddity with lattice solvers.
 
 # Examples
 ```jldoctest
-julia> a=[1,2,4,9,20,38]; s=30; x=subsetsum(a,s); s-x'*a
+julia> a=[1.5;.5;0;.1;.2]; s=2.2; x,_=lagariasodlyzko(a,s,true); s-x'*a
 0.0
 
 julia> a=[32771,65543,131101,262187,524387,1048759, # from Bremner p 117
           2097523,4195057,8390143,16780259,33560539,
           67121039,134242091,268484171,536968403];
 
-julia> s=891221976; x=subsetsum(a,s); s-x'*a
+julia> s=891221976; x,_=lagariasodlyzko(a,s); s-x'*a
 0.0
 
 julia> N=40;a=rand(1:2^BigInt(256),N);xtrue=rand(Bool,N); s=a'*xtrue; 
 
-julia> setprecision(BigFloat,300); x=subsetsum(a,s); s-x'*a
+julia> setprecision(BigFloat,300); x,_=lagariasodlyzko(a,s); s-x'*a
 0.0
 
 ```
 """
-function subsetsum(a::AbstractArray{Ti,1},ss::Ti,returnBinary=false) where {Ti<:Integer}
+function lagariasodlyzko(a::AbstractArray{Td,1},ss::Td,verbose=false) where {Td<:Number}
     # page numbers below refer to lecture note above
 
     n = length(a)
-    
+
+    Ti = getIntType(Td)
     if ss<sum(a)/2
         flag=true
         s = sum(a)-ss
@@ -110,7 +175,8 @@ function subsetsum(a::AbstractArray{Ti,1},ss::Ti,returnBinary=false) where {Ti<:
     b = ceil(sqrt(nt*2^nt))
     # BB is the 'B' matrix defined also at bottom of page 2
     BB = [Matrix{Ti}(I,n,n+1); -b*a' b*s]
-    B,T = lll(BB)
+    B,_ = lll(BB)
+    #B = l2(BB)
 
     # Pick off the interesting parts of the B matrix
     Bp = B[1:n,1:n+1]
@@ -120,45 +186,39 @@ function subsetsum(a::AbstractArray{Ti,1},ss::Ti,returnBinary=false) where {Ti<:
     # d = diag(Bp'*Bp)  # solution generally matches a small element of d
 
     binarySolution = false
-    global xb
+    xr = zeros(Ti,n+1,1)
     for ix=1:length(ixMatch)
         # Pick off a column of B
         x = Bp[:,ixMatch[ix][2]]
         if !(any(x.<0)|any(x.>1))
+            
             binarySolution= true
-            xb = flag ? mod.(x .+ 1,2) : x
+            xr = flag ? mod.(x .+ 1,2) : x
         end
         x = -x
         if !(any(x.<0)|any(x.>1))
             binarySolution= true
-            xb = flag ? mod.(x .+ 1,2) : x
+            xr = flag ? mod.(x .+ 1,2) : x
         end
     end
 
-    if binarySolution
-        return xb
-    else
-        x = mdsubsetsum(a,ss,.5,1)
-        if ~ismissing(x)
-            print("A solution was found via mdsubsetsum\n")
-            return x
-        end
-
-        if maximum(a)<2^(n^2/2)
+    if ~binarySolution
+        if maximum(a)<2^(n^2/2) && verbose
             density = n/maximum(log2.(a))
-            @printf("The density (%4.2f) of the 'a' vector is not as low as required\n",
-                    density)
+            @printf("The density (%4.2f) of 'a' is not as low as required\n", density)
             @printf("(%4.2f) for Lagarias-Odlyzko to work. \n",2/n)
         end
 
-        if returnBinary && length(ixMatch)>=1
-            print("A non-binary solution was found; check that it's correct\n")
-            return Bp[:,ixMatch[1][2]]
+        if length(ixMatch)>=1
+            verbose && print("A non-binary Lagarias-Odlyzko solution was "*
+                             "found; check that it's correct\n")
+            xr=Bp[:,ixMatch[1][2]]
         else
-            print("A solution was not found\n")
+            verbose && print("A Lagarias-Odlyzko solution was not found\n")
+            xr= missing.*xr
         end
     end
-    return missing.*Bp[:,1]
+    return xr, binarySolution
 end
 
 
@@ -168,7 +228,7 @@ end
 For a vector of integers `a`, and an integer `sM`, try to find a binary
 vector `x` such that `x'*a=s` using the technique from "Multidimensional
 subset sum problem" [1][2]. A major goal of the technique is to solve
-problems in there are about 50% ones in `x`; other ratios of ones to zeros
+problems in which there are about 50% ones in `x`; other ratios of ones to zeros
 can be specified in `ratio`.  The thesis also suggests searching `Kpm=3`
 values around the nominal k. This technique is related to that in
 [`subsetsum`](@ref) in that both use the LLL algorithm.  This is not a
@@ -179,7 +239,7 @@ robust tool, just a demo.
 
 # Examples
 ```jldoctest
-julia> a=[1,2,4,9,20,38]; s=30; x=mdsubsetsum(a,s); s-x'*a
+julia> a=[1.5;.5;0;.1;.2]; s=2.2; x=mdsubsetsum(a,s); s-x'*a
 0.0
 
 julia> a=[32771,65543,131101,262187,524387,1048759, # from Bremner p 117
@@ -193,12 +253,13 @@ julia> N=40;a=rand(1:2^BigInt(256),N);xtrue=rand(Bool,N); s=a'*xtrue;
 julia> setprecision(BigFloat,300); x=mdsubsetsum(a,s); s-x'*a
 ```
 """
-function mdsubsetsum(a::AbstractArray{Ti,1},sM::Ti,ratio=.5,Kpm=3) where {Ti<:Integer}
+function mdsubsetsum(a::AbstractArray{Td,1},sM::Td,ratio=.5,Kpm=3) where {Td<:Number}
 
+    Ti = getIntType(Td)
     n = Ti(length(a))
 
     # r is heuristic value for r from end of Section 11 of thesis above
-    r = Ti(2^round(.65*log2(maximum(a))))
+    r = Ti(ceil(2^round(.65*log2(maximum(a)))))
     c = 2^10 # a heuristic; look right below eq (10)
 
     p = a .÷ r # See start of Section 10
@@ -212,7 +273,8 @@ function mdsubsetsum(a::AbstractArray{Ti,1},sM::Ti,ratio=.5,Kpm=3) where {Ti<:In
         Bt = [Matrix{Ti}(I,n,n)*2 c*s       c*p      zeros(Ti,n);
               ones(Ti,1,n)        c*(k*r+m) c*(p0-k) 1]
         BB = Bt'  # Notation in paper is row-based; my brain is column-based
-        B,T = lll(BB)
+        B,_ = lll(BB)
+        #B = l2(BB)
 
         for nx = 1:n
             if abs(B[n+3,nx])==1 && B[n+2,nx]==0 && B[n+1,nx]==0 &&

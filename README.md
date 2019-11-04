@@ -29,10 +29,10 @@ We also include code to do a
 [Vertical-Bell Laboratories Layered Space-Time](https://en.wikipedia.org/wiki/Bell_Laboratories_Layered_Space-Time)
 (V-BLAST) [6] matrix decomposition which is used in digital
 communications. The LLL, Brun, Seysen, V-BLAST, and CVP functions are
-used to solve (exactly or approximately) CVP problems; see
-[MUMIMO.jl](https://github.com/christianpeel/MUMIMO.jl) where it is
-used to approximate CVP in encoding and decoding multi-antenna
-signals.
+used to solve (exactly or approximately) CVP problems; the
+[MUMIMO.jl](https://github.com/christianpeel/MUMIMO.jl) package
+demostrates how these functions can be used in encoding and decoding
+multi-antenna signals.
 
 Another important application is in cryptanalysis; as an example of a
 cryptanalytic attack, see the `subsetsum` function.  Another important

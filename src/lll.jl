@@ -8,8 +8,8 @@ finally `Q` and `R` which are a QR decomposition of `B`.  So `H = B*inv(T) =
 Q*R*inv(T)`.
 
 Follows D. Wuebben, et al, "Lattice Reduction - A Survey with Applications
-in Wireless Communications". IEEE Signal Processing Magazine, 2011. When
-comparing with the core lattice reduction technique, we belive it is closest
+in Wireless Communications", IEEE Signal Processing Magazine, 2011. When
+comparing with academic lattice reduction papers, it is likely closest
 to the floating-point algorithm of C. P. Schnorr. "A more efficient
 algorithm for lattice basis reduction". Journal of Algorithms, Vol 9, 1988.
 
@@ -39,7 +39,7 @@ if Td<:AbstractFloat
 end
 
 B = copy(H);
-L = size(B,2);
+N,L = size(B);
 Qt,R = qr(B);
 Q = Matrix(Qt); # A few cycles can be saved by skipping updates of the Q matrix.
 
@@ -48,19 +48,25 @@ T = Matrix{Ti}(I, L, L)
 zeroTi = real(zero(Ti))
 
 lx  = 2;
-while lx <= L
+@inbounds while lx <= L
 
     # reduce lx-th column of B
     for k=lx-1:-1:1
         rk = R[k,lx]/R[k,k]
         mu = roundf(rk)
         if abs(mu)>zeroTi
+            # Vectorized, easy-to-read
             # B[:,lx]   -= mu * B[:,k]
             # R[1:k,lx] -= mu * R[1:k,k]
             # T[:,lx]   -= mu * T[:,k]
-            B[:,lx]   .-= mu .* view(B,:,k)
-            R[1:k,lx] .-= mu .* view(R,1:k,k)
-            T[:,lx]   .-= mu .* view(T,:,k)
+            # With broadcasts and views
+            # B[:,lx]   .-= mu .* view(B,:,k)
+            # R[1:k,lx] .-= mu .* view(R,1:k,k)
+            # T[:,lx]   .-= mu .* view(T,:,k)
+            # With loops and @simd
+            @simd for n=1:N; B[n,lx]-= mu * B[n,k]; end
+            @simd for n=1:k; R[n,lx]-= mu * R[n,k]; end
+            @simd for n=1:L; T[n,lx]-= mu * T[n,k]; end
         end
     end
 
@@ -91,6 +97,7 @@ while lx <= L
 end
 return B,T,Q,R
 end
+
 
 
 """
@@ -141,6 +148,9 @@ end
 
     Return an integer type that matches Td.  I.e. BigInt for Td=BigFloat, Int64
     for Td=Float64.
+
+    This could be changed to add methods to `Integer`, except that
+    `Integer(Float32(1.0))` returns an Int64, not Int32. MB this is ok? Somehow?
 
     It's possible that the integer type could be picked on a per-matrix
     basis depending on the values in the matrix and the decomposition
