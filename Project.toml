@@ -5,7 +5,7 @@ keywords = ["lattice reduction", "lattice basis reduction",
             "LLL", "Lenstra-Lenstra-Lovász","Seysen", "Brun","VBLAST",
             "subset-sum problem"]
 license = "MIT"
-version = "1.2.3"
+version = "1.2.4"
 
 [compat]
 julia = "1"

@@ -11,7 +11,7 @@ using LinearAlgebra
 using Printf
 
 export
-    lll,
+    lll,l2,
     cvp,
     svp,
     brun,
@@ -19,12 +19,15 @@ export
     sizereduction,
     seysen,
     vblast,
-    subsetsum,mdsubsetsum,
+    subsetsum,lagariasodlyzko,mdsubsetsum,
     integerfeasibility,
     rationalapprox,
     hardsphere, hard_sphere,
-    issizereduced,islllreduced,orthogonalitydefect,hermitefactor,seysencond
+    issizereduced,islllreduced,orthogonalitydefect,hermitefactor,seysencond,
+    gen_qary_b,gen_qary!,
+    dataTypeForGram,intTypeGivenBitsRequired
 
+include("l2.jl")           # l2 (cholseky) variant of LLL
 include("lll.jl")          # lll, gauss, sizereduction
 include("cvp.jl")          # cvp, svp
 include("brun.jl")
@@ -32,6 +35,7 @@ include("seysen.jl")
 include("vblast.jl")
 include("applications.jl") # subsetsum, integerfeasibility, rationalapprox
 include("utilities.jl")
+include("latticegen.jl")
 
 include("hard_sphere.jl")  # may be deprecated in future
 
