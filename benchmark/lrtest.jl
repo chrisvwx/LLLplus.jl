@@ -1,3 +1,14 @@
+macro runtwice(ex)
+    quote
+        local t0 = time_ns()
+        local val0 = $(esc(ex))
+        local t1 = time_ns()
+        local val1 = $(esc(ex))
+        local t2 = time_ns()
+        min(t1-t0,t2-t1)/1e9
+    end
+end
+
 """
     lrtest(Ns::Int, N::Array{Int,1}, L::Array{Int,1}, dataType::Array{DataType,1}, distType)
 
@@ -137,9 +148,9 @@ for ix = 1:Ns
     #
     for ax = 1:length(lrAlgs)
         if lrAlgs[ax]==l2
-            times[ax,ix] = @mytwice B = lrAlgs[ax](data)
+            times[ax,ix] = @runtwice B = lrAlgs[ax](data)
         else
-            times[ax,ix] = @mytwice (B,T) = lrAlgs[ax](data)
+            times[ax,ix] = @runtwice (B,T) = lrAlgs[ax](data)
         end
         detB = abs(det(B))
         # Hermite factor

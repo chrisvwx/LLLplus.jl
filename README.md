@@ -1,7 +1,7 @@
 # LLLplus.jl
 
 [![Build Status](https://travis-ci.org/christianpeel/LLLplus.jl.svg?branch=master)](https://travis-ci.org/christianpeel/LLLplus.jl)
-[![](https://img.shields.io/badge/docs-stable-blue.svg)](https://pkg.julialang.org/docs/LLLplus/)
+[![](https://img.shields.io/badge/docs-devel-blue.svg)](https://pkg.julialang.org/docs/LLLplus/)
 
 LLLplus includes
 [Lenstra-Lenstra-Lovász](https://en.wikipedia.org/wiki/Lenstra%E2%80%93Lenstra%E2%80%93Lov%C3%A1sz_lattice_basis_reduction_algorithm)
@@ -12,7 +12,7 @@ decomposition; and a
 used in cryptography, digital communication, and integer programming.
 The historical and practical prominence of the LLL technique in
 lattice tools is the reason for its use in the name "LLLplus".
-Also, this package is experimental; see
+This package is experimental; see
 [fplll](https://github.com/fplll/fplll) for a robust tool.
 
 LLL [1] lattice reduction is a powerful tool that is widely used in
