@@ -9,12 +9,15 @@ end
 ```
 ```@docs
     lll
+    l2
     cvp
     svp
     gauss
     seysen
     vblast
     subsetsum
+    lagariasodlyzko
+    mdsubsetsum
     integerfeasibility
     hard_sphere
     issizereduced
@@ -22,4 +25,5 @@ end
     orthogonalitydefect
     hermitefactor
     seysencond
+    gen_qary_b
 ```
