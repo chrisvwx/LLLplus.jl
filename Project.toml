@@ -2,7 +2,7 @@ name = "LLLplus"
 uuid = "142c1900-a1c3-58ae-a66d-b187f9ca6423"
 keywords = ["lattice reduction", "lattice basis reduction", "shortest vector problem", "closest vector problem", "LLL", "Lenstra-Lenstra-Lovász", "Seysen", "Brun", "VBLAST", "subset-sum problem"]
 license = "MIT"
-version = "1.2.4"
+version = "1.2.5"
 
 [deps]
 DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
