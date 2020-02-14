@@ -101,7 +101,7 @@ for ix=1:N
 end
 println("min norm of input is $(minimum(nrms))")
 
-@time B = lll(mat);
+@time B,_ = lll(mat);
 nrms = zeros(N,1);
 for ix=1:N
     nrms[ix] = norm(B[:,ix]);
