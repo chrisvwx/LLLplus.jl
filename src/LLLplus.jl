@@ -21,7 +21,7 @@ export
     vblast,
     subsetsum,lagariasodlyzko,mdsubsetsum,
     integerfeasibility,
-    rationalapprox,
+    rationalapprox,spigotBBP,
     hardsphere, hard_sphere,
     issizereduced,islllreduced,orthogonalitydefect,hermitefactor,seysencond,
     gen_qary_b,gen_qary!,

@@ -12,6 +12,7 @@ end
     l2
     cvp
     svp
+    brun
     gauss
     seysen
     vblast
@@ -19,6 +20,8 @@ end
     lagariasodlyzko
     mdsubsetsum
     integerfeasibility
+    rationalapprox
+    spigotBBP
     hard_sphere
     issizereduced
     islllreduced

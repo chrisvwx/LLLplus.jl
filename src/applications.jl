@@ -104,7 +104,7 @@ julia> setprecision(BigFloat,300); x,_=subsetsum(a,s); s-x'*a
 """
 function subsetsum(a::AbstractArray{Td,1},ss::Td,verbose=false) where {Td<:Number}
 
-    xlo,binarylo = lagariasodlyzko(a,ss,verbose);
+    xlo,binarylo = lagariasodlyzko(a,ss,0,verbose);
     if binarylo===true && ~any(ismissing.(xlo))
         verbose && print("A solution was found via lagariasodlyzko\n")
         return xlo,binarylo
@@ -140,7 +140,7 @@ common oddity with lattice solvers.
 
 # Examples
 ```jldoctest
-julia> a=[1.5;.5;0;.1;.2]; s=2.2; x,_=lagariasodlyzko(a,s,true); s-x'*a
+julia> a=[1.5;.5;0;.1;.2]; s=2.2; x,_=lagariasodlyzko(a,s); s-x'*a
 0.0
 
 julia> a=[32771,65543,131101,262187,524387,1048759, # from Bremner p 117
@@ -157,7 +157,8 @@ julia> setprecision(BigFloat,300); x,_=lagariasodlyzko(a,s); s-x'*a
 
 ```
 """
-function lagariasodlyzko(a::AbstractArray{Td,1},ss::Td,verbose=false) where {Td<:Number}
+function lagariasodlyzko(a::AbstractArray{Td,1},ss::Td,b=0,
+                         verbose=false) where {Td<:Number}
     # page numbers below refer to lecture note above
 
     n = length(a)
@@ -170,9 +171,10 @@ function lagariasodlyzko(a::AbstractArray{Td,1},ss::Td,verbose=false) where {Td<
         flag = false
         s = ss
     end
-    # b is the "B" parameter defined at bottom of page 2
-    nt = Ti(n)
-    b = ceil(sqrt(nt*2^nt))
+    if b≤0  # b is the "B" parameter defined at bottom of page 2
+        nt = Ti(n)
+        b = ceil(sqrt(nt*2^nt))
+    end
     # BB is the 'B' matrix defined also at bottom of page 2
     BB = [Matrix{Ti}(I,n,n+1); -b*a' b*s]
     B,_ = lll(BB)
@@ -182,8 +184,19 @@ function lagariasodlyzko(a::AbstractArray{Td,1},ss::Td,verbose=false) where {Td<
     Bp = B[1:n,1:n+1]
     # Check if any of the columns satisfy the requirement
     sums = abs.(a'*Bp)
-    ixMatch = findall(sums.==s)
-    # d = diag(Bp'*Bp)  # solution generally matches a small element of d
+    ixMatch = findall(sums.≈s)
+    if length(ixMatch)==0
+        @printf("A match that is close according to `isapprox` was not found.\n")
+        err,ixx = findmin(sums .-s)
+        if abs(err)<1e-4
+            @printf("A solution w err %e will be used. Check that it's correct \n",
+                    Float64(err))
+            ixMatch = findall(sums.-s .≈ err) # lazy hack to find ixMatch
+        else
+            xr = zeros(Ti,n+1,1).*missing
+            return xr, false
+        end
+    end
 
     binarySolution = false
     xr = zeros(Ti,n+1,1)
@@ -202,7 +215,9 @@ function lagariasodlyzko(a::AbstractArray{Td,1},ss::Td,verbose=false) where {Td<
         end
     end
 
-    if ~binarySolution
+    if binarySolution
+        verbose && print("A binary Lagarias-Odlyzko solution was found.\n")
+    else
         if maximum(a)<2^(n^2/2) && verbose
             density = n/maximum(log2.(a))
             @printf("The density (%4.2f) of 'a' is not as low as required\n", density)
@@ -347,4 +362,117 @@ function rationalapprox(x::AbstractArray{<:Real,1},M,Ti=BigInt,verbose=false)
         display([x round.(x*q)/q abs.(x-round.(x*q)/q)])
     end
     return p//q
+end
+
+
+"""
+    spigotBBPvec(Td::Type{Tr},s,b,n,K) where {Tr<:Number}
+
+This is an auxiliary function for `spigotBBP`. It calculates the numbers
+that `spigotBBP` uses to check for a BBP spigot infinite series.
+
+If you want to try to get BBP coefficients without the aid of the
+`spigotBBP` function, below is code you can play with.
+
+# Examples
+```jldoctest
+julia> vv=LLLplus.spigotBBPvec(Float64,1,16,8,20);
+julia> v=[vv;-pi];
+julia> b=1_000_000;
+julia> A=[I; b* v'];
+julia> B,T=lll(A);
+julia> B[1:end-2,1]'*vv -pi   # The error is small, near eps()
+8.881784197001252e-16
+
+julia> Td=BigFloat;
+julia> a=LLLplus.spigotBBPvec(Td,1,16,8,60);
+julia> av,_ = lagariasodlyzko(a,Td(pi),1_000_000);
+julia> a'*av-pi    # smaller error when using BigFloat, 60 terms
+0.0
+```
+"""
+function spigotBBPvec(Td::Type{Tr},s,b,n,K) where {Tr<:Number}
+    v = Vector{Td}(undef,n)
+    k = Td(0):K
+    for j =1:n
+        v[j]= sum(1 ./(b.^k .*(k.*n .+j).^s))
+    end
+    return v
+end
+"""
+    spigotBBP(α::Td,s,b,n,K,verbose=false) where {Td}
+
+Check for a BBP-style [1] infinite series for the constant `α`.  These are
+"spigot" formulas that can be used to generate (for example) the millionth
+digit of the constant `α` without learning the previous
+digits. Specifically, given the constant `α`, and parameters `b`, `n`, and
+`s`, look for a vector of numbers `a_1` through `a_n` that satisfies the
+following equation:
+
+``\\alpha= \\sum_{k=0}^\\infty \\frac{1}{b^k} \\left( \\frac{a_1}{(nk+1)^s} + \\ldots + \\frac{a_n}{(nk+n)^s} \\right)``
+
+Because it's hard to sum to infinity, the sum is stopped at K.
+If a formula is found, it is printed to the screen in LaTeX and the
+coefficents `a` are returned as a vector.  An online LaTeX viewer
+such as https://www.latex4technics.com/ may be helpful.
+
+This is not a robust tool, just a demo. For example, there may be a problem
+with s≥2.
+
+[1] Bailey, David, Peter Borwein, and Simon Plouffe. "On the rapid
+computation of various polylogarithmic constants." Mathematics of
+Computation 66.218 (1997): 903-913.
+https://www.ams.org/journals/mcom/1997-66-218/S0025-5718-97-00856-9/
+
+# Example
+```jldoctest
+julia> spigotBBP(BigFloat(pi),1,16,8,45,true);
+A solution was found w error -4.728672e-60. In LaTeX form it is
+\\alpha= \\sum_{k=0}^\\infty \\frac{1}{16^k} \\left(\\frac{4}{8k+1}-\\frac{2}{8k+4}-\\frac{1}{8k+5}-\\frac{1}{8k+6}\\right)
+```
+
+Other examples without output:
+```julia
+spigotBBP(Float64(pi),1,-4,4,22,true);
+spigotBBP(log(2),1,2,2,30,true);
+spigotBBP(9*log(3),1,9,2,30,true);
+spigotBBP(atan(2)*8,1,16,8,30,true);
+spigotBBP(8*sqrt(2)*log(1+sqrt(2)),1,16,8,25,true);
+```
+
+There is a formula for pi^2 which the following command should find, but it
+does not find it. It's no obvious what the problem is
+```julia
+spigotBBP(BigFloat(pi)*pi,2,64,6,25,true);
+```
+"""
+function spigotBBP(α::Td,s,b,n,K,verbose=false) where {Td}
+    v = spigotBBPvec(Td,s,b,n,K)
+    bN = 100_000_000
+    av,_ = lagariasodlyzko(v,α,bN);
+    if verbose && ~ismissing(av[1])
+        @printf("A solution was found w error %e. In LaTeX form it is\n",av'*v-α)
+        @printf("\\alpha= \\sum_{k=0}^\\infty \\frac{1}{%d^k} \\left(",b)
+        for ix = 1:length(av)
+            if abs(av[ix])>10*eps()
+                if sign(av[ix])==1
+                    ix>1 && @printf("+")
+                else
+                    @printf("-")
+                end
+                if s==1
+                    @printf("\\frac{%d}{%dk+%d}",abs(Int64(av[ix])),n,ix)
+                else
+                    @printf("\\frac{%d}{(%dk+%d)^%d}",abs(Int64(av[ix])),n,ix,s)
+                end
+            end
+        end
+        @printf("\\right)")
+    end
+    if ismissing(av[1])
+        verbose && @printf("A solution was found not found.\n")
+        return missing
+    else
+        return av
+    end
 end

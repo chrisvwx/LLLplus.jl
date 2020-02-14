@@ -5,7 +5,7 @@ Solve the problem `argmin_x ||z-Hx||` for integer x using the technique from
 the paper below, where H=QR and y=Q'*z. The input vector `y` is of length `n`,
 with `H` of dimension `n` by `n`, and the returned vector `x` of length `n`. If
 `infinite==Val{true}` then we search the (infinite) lattice, otherwise we
-search integers in `[-Umax,Umax]`.  cvp does not handle complex
+search integers in `[-Umax,Umax]`.  Note that `cvp` does not handle complex
 numbers.
 
 Uses alg from "Faster Recursions in Sphere Decoding" Arash Ghasemmehdi, Erik
@@ -135,8 +135,9 @@ end
 Find the shortest basis vector `b` for the lattice formed by the matrix
 `B`. This solves the 'shortest vector problem' (SVP). 
 
-We use the [`cvp`](@ref) function in the library, which is not necessarily
-the fastest SVP solver.  Roughly follows the CVP-to-SVP reduction in
+We call the [`cvp`](@ref) function in the library `n` times for an `n`-
+dimensional lattice, so this is definitely not the fastest SVP solver :-)
+Roughly follows the CVP-to-SVP reduction in
 http://web.eecs.umich.edu/~cpeikert/lic15/lec06.pdf
 
 # Examples

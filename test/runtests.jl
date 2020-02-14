@@ -90,7 +90,7 @@ println("Error Rate is $(errRate). It should be zero or very small.\n")
 
 println("Testing now with 200x200 matrix from latticechallenge.org.")
 println("The min norm of the input should be 30, min norm of the "*
-        "reduced bases should be smaller.")
+        "reduced bases is hopefully smaller :-)")
 mat = readdlm("challenge-200.mod",Int64) #run from parent directory
 mat = Matrix(mat');
 N = size(mat,2)
@@ -101,7 +101,7 @@ for ix=1:N
 end
 println("min norm of input is $(minimum(nrms))")
 
-@time (B,T) = lll(mat);
+@time B = lll(mat);
 nrms = zeros(N,1);
 for ix=1:N
     nrms[ix] = norm(B[:,ix]);
@@ -110,7 +110,7 @@ mlll=minimum(nrms)
 println("min norm of lll-reduced basis is $(mlll)")
 @test mlll<=30+1e-6
 
-@time (B,T) = seysen(mat);
+@time B,_ = seysen(mat);
 nrms = zeros(N,1)
 for ix=1:N
     nrms[ix] = norm(B[:,ix])
