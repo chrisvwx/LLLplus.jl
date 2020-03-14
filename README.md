@@ -5,10 +5,10 @@
 
 LLLplus includes
 [Lenstra-Lenstra-Lovász](https://en.wikipedia.org/wiki/Lenstra%E2%80%93Lenstra%E2%80%93Lov%C3%A1sz_lattice_basis_reduction_algorithm)
-(LLL), [Brun](https://en.wikipedia.org/wiki/Viggo_Brun), and Seysen lattice reduction; VBLAST matrix
-decomposition; and a
+(LLL), [Brun](https://en.wikipedia.org/wiki/Viggo_Brun), and Seysen lattice reduction; and [shortest vector problem](https://en.wikipedia.org/wiki/Lattice_problem#Shortest_vector_problem_.28SVP.29)
+(SVP) and
 [closest vector problem](https://en.wikipedia.org/wiki/Lattice_problem#Closest_vector_problem_.28CVP.29)
-(CVP) solver. These lattice reduction and related lattice tools are
+(CVP) solvers. These lattice reduction and related lattice tools are
 used in cryptography, digital communication, and integer programming.
 The historical and practical prominence of the LLL technique in
 lattice tools is the reason for its use in the name "LLLplus".
@@ -18,12 +18,12 @@ This package is experimental; see
 LLL [1] lattice reduction is a powerful tool that is widely used in
 cryptanalysis, in cryptographic system design, in digital
 communications, and to solve other integer problems.  LLL reduction is
-often used as an approximate solution to the
-[shortest vector problem](https://en.wikipedia.org/wiki/Lattice_problem#Shortest_vector_problem_.28SVP.29)
-(SVP).  We also include Gauss/Lagrange, Brun [2] and Seysen [3]
+often used as an approximate solution to the SVP.
+We also include Gauss/Lagrange, Brun [2] and Seysen [3]
 lattice reduction techniques. The LLL, Brun, and Seysen algorithms are
 based on [4]. The CVP solver is based on [5] and can handle lattices
-and bounded integer constellations.
+and bounded integer constellations. A slow SVP solver based on the CVP
+tool is included as well.
 
 We also include code to do a
 [Vertical-Bell Laboratories Layered Space-Time](https://en.wikipedia.org/wiki/Bell_Laboratories_Layered_Space-Time)
@@ -35,19 +35,20 @@ demostrates how these functions can be used in encoding and decoding
 multi-antenna signals.
 
 Another important application is in cryptanalysis; as an example of a
-cryptanalytic attack, see the `subsetsum` function.  Another important
-application is in integer programming, where the LLL algorithm has
+cryptanalytic attack, see the `subsetsum` function.  The LLL algorithm has
 been shown to solve the integer programming feasibility problem; see
 `integerfeasibility`. Lattice tools are often used to study and solve
 Diophantine problems; for example in  "simultaneous diophantine
 approximation" a vector of real numbers are approximated by rationals
 with a common deonminator. For a demo function, see `rationalapprox`.
+Finally, to see how the LLL can be used to find spigot formulas for
+irrationals, see `spigotBBP`.
 
 ### Examples
 
 Each function contains documentation and examples available via Julia's
 built-in documentation system, for example with `?lll`. Documentation
-of all the functions are available on
+for all functions is available on
 [pkg.julialang.org](https://pkg.julialang.org/docs/LLLplus/). A tutorial notebook is
 found in the [`docs`](docs/LLLplusTutorial.ipynb) directory or on
 [nbviewer](https://nbviewer.jupyter.org/github/christianpeel/LLLplus.jl/blob/master/docs/LLLplusTutorial.ipynb).
@@ -79,44 +80,61 @@ sum(abs.(u-uhat))
 
 ### Execution Time results
 
-The following performance results are obtained from the
-following command in the top-level LLLplus directory:
-`julia -e 'include("benchmark/perftest.jl")'`
-In the tests we time execution of the lattice-reduction functions,
-average the results over multiple random matrices, and show results as
-a function of the size of the matrix and of the data type. 
+In the first test we compare the `lll` function from LLLplus, the
+`l2avx` function in the `src\l2.jl` file in LLLplus, the
+`lll_with_transform` function from Nemo (which uses FLINT), and the
+`lll_reduction` function from fplll. Nemo and fplll are written by
+number theorists and are good benchmarks against which to compare.  We
+first show how the execution time varies as the basis (matrix) size
+varies over [4 8 16 32 64]. For each matrix size, 20 random bases
+are generated using fplll's `gen_qary` function with depth of 25
+bits, with the average execution time shown; the `eltype` is `Int64`
+except for NEMO, which uses GMP (its own `BigInt`); in all cases the
+`δ=.99`. The vertical axis shows
+execution time on a logarithmic scale; the x-axis is also
+logarithmic. The generally linear nature of the LLL curves supports
+the polynomial-time nature of the algorithm. The `LLLplus.lll`
+function is slower, while `l2avx` is similar to fplll. Though not
+shown, using bases from `gen_qary` with bit depth of 45 gives fplll
+a larger advantage. This figure was generated using code in
+`test/timeLLLs.jl`.
 
-We first show how the time varies with matrix size (1,2,4,...256); the
-vertical axis shows execution time on a logarithmic scale; the x-axis
-is also logarithmic. The generally linear nature of the LLL curve supports
-the polynomial-time nature of the algorithm. Each data point
-is the average of execution time of 40 runs of a lattice-reduction
-technique, where the matrices used were generated using 'randn' to
-emulate unit-variance Gaussian-distributed values.
+![Time vs basis size](docs/src/assets/timeVdim_25bitsInt64.png)
 
-![Time vs matrix size](docs/src/assets/perfVsNfloat64.png)
+One question that could arise when looking at the plot above is what
+the quality of the basis is. In the next plot we show execution time
+vs the norm of the first vector in the reduced basis, this first
+vector is typically the smallest; its norm is an rough indication of
+the quality of the reduced basis. We show results averaged over 20
+random bases from `gen_qary` with depth `25` bits, this time with the
+dimension fixed at `32`. The curve is created by varying the `δ`
+parameter from `.29` to `.99` in steps of `.2`; the larger times and
+smaller norms correspond to the largest `δ` values. Though the `l2avx`
+function is competitive with fplll in this case, in many other cases
+the fplll code is significantly faster.
 
-All the modules can handle a variety of data types. In the next figure
-we show execution time for several built-in datatypes (Int32, Int64,
-Int128, Float32, Float64, BitInt, and BigFloat) as well as type from
-external packages (Float128 from Quadmath.jl and Double64 from
-DoubleFloat.jl) which are used to generate 40 128x128 matrices, over
-which execution time for the lattice reduction techniques is averaged.
-The vertical axis is a logarithmic representation of execution time as
-in the previous figure.
+![Time vs reduction quality](docs/src/assets/timeVsmallest_25bitsInt64.png)
+
+Finally, we show execution time for several built-in
+datatypes (Int32, Int64, Int128, Float32, Float64, BitInt, and
+BigFloat) as well as type from external packages (Float128 from
+Quadmath.jl and Double64 from DoubleFloat.jl) which are used to
+generate 40 128x128 matrices, over which execution time for the
+lattice reduction techniques is averaged.  The vertical axis is a
+logarithmic representation of execution time as in the previous
+figure. This figure was generated using code in `test/perftest.jl`.
 
 ![Time vs data type](docs/src/assets/perfVsDataType.png)
 
 ### Notes
 
 There are certainly many improvements and additions that could be made
-to LLLplus, such as adding Block-Korkin-Zolotarev lattice reduction
+to LLLplus, such as adding Block-Korkin-Zolotarev (BKZ) lattice reduction
 with improvements as in [8]. Even so, it would be hard to compete with
 [fplll](https://github.com/fplll/fplll) on features. In fact, a Julia
-wrapper around the [fplll](https://github.com/fplll/fplll) or
-[Number Theory Library](http://www.shoup.net/ntl/) would be the most
-useful addition to lattice tools in Julia. These respected tools could
-be used directly and would provide funcionality not in LLLplus.
+wrapper around [fplll](https://github.com/fplll/fplll) would be the most
+useful addition to lattice tools in Julia; it would
+provide funcionality not in LLLplus such as BKZ reduction.
 
 The algorithm pseudocode in the monograph [7] and the survey paper [4]
 were very helpful in writing the lattice reduction tools in LLLplus

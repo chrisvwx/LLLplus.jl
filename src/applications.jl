@@ -416,13 +416,16 @@ If a formula is found, it is printed to the screen in LaTeX and the
 coefficents `a` are returned as a vector.  An online LaTeX viewer
 such as https://www.latex4technics.com/ may be helpful.
 
-This is not a robust tool, just a demo. For example, there may be a problem
-with s≥2.
+This is not a robust tool, just a demo. For example, there may be a 
+problem with s≥2. See [2] for derivation of the technique used, and to 
+check whether a formula you find is new.
 
-[1] Bailey, David, Peter Borwein, and Simon Plouffe. "On the rapid
+[1] David Bailey, Peter Borwein, and Simon Plouffe. "On the rapid
 computation of various polylogarithmic constants." Mathematics of
 Computation 66.218 (1997): 903-913.
 https://www.ams.org/journals/mcom/1997-66-218/S0025-5718-97-00856-9/
+[2] David Bailey, "A Compendium of BBP-Type Formulas for Mathematical
+Constants". https://www.davidhbailey.com//dhbpapers/bbp-formulas.pdf
 
 # Example
 ```jldoctest
@@ -441,7 +444,8 @@ spigotBBP(8*sqrt(2)*log(1+sqrt(2)),1,16,8,25,true);
 ```
 
 There is a formula for pi^2 which the following command should find, but it
-does not find it. It's no obvious what the problem is
+does not find it. In fact the technique doesn't seem to work at all for 
+s>2; It's not obvious what the problem is
 ```julia
 spigotBBP(BigFloat(pi)*pi,2,64,6,25,true);
 ```
@@ -467,10 +471,10 @@ function spigotBBP(α::Td,s,b,n,K,verbose=false) where {Td}
                 end
             end
         end
-        @printf("\\right)")
+        @printf("\\right)\n")
     end
     if ismissing(av[1])
-        verbose && @printf("A solution was found not found.\n")
+        verbose && @printf("A solution was not found.\n")
         return missing
     else
         return av
