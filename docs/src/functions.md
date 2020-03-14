@@ -9,7 +9,6 @@ end
 ```
 ```@docs
     lll
-    l2
     cvp
     svp
     brun

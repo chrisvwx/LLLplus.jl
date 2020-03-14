@@ -30,7 +30,7 @@ those used in lattice cryptography).
 function lrtest(Ns::Int,N::Array{Int,1},L::Array{Int,1},
                 dataType::Array{DataType,1},distType)
 
-lrAlgs = [l2, lll, seysen,]
+lrAlgs = [lll, seysen,]
 
 @printf("      Ns      N      L   dataType")
 for ax = 1:min(length(lrAlgs),6)
@@ -87,7 +87,8 @@ Nout = size(out,1);
 
 times = zeros(Nout);
 orthf = zeros(Nout);
-pltT = plot(legend=:topleft);
+plot(legend=:topleft,linewidth=5,size=(700,525),guidefontsize=14,
+     legendfontsize=14, xtickfontsize=10,ytickfontsize=14,titlefontsize=14)
 #pltO = plot(legend=:topleft);
 
 for a=1:length(out[1][2])
@@ -95,21 +96,17 @@ for a=1:length(out[1][2])
         times[k] = out[k][2][a];
         orthf[k] = out[k][3][a];
     end
-    plot!(pltT,xval,times,xscale=xscale,yscale=yscale,label=out[1][1][a],linewidth=3);
-#    plot!(pltO,xval,orthf,xscale=xscale,yscale=yscale,label=out[1][1][a],linewidth=3);
+    plot!(xval,times,xscale=xscale,yscale=yscale,label=out[1][1][a],linewidth=3);
+#    plot!(xval,times,xscale=xscale,yscale=yscale,label=out[1][1][a]);
     pIdx = pIdx==length(pColor) ? 1 : pIdx + 1;
 end
 
-plot!(pltT,xlabel=xlab,ylabel="execution time (sec)")
-#plot!(pltO,xlabel=xlab,ylabel="orthogonalization factor")
+plot!(xlabel=xlab,ylabel="execution time (sec)")
 
 if ~isempty(xtickStrs)
-    plot!(pltT,xticks=(xval,xtickStrs))
-#    plot!(pltO,xticks=(xval,xtickStrs))
+    plot!(xticks=(xval,xtickStrs))
 end
 
-display(pltT)
-#display(pltO)
 
 end
 
@@ -147,11 +144,11 @@ for ix = 1:Ns
     # Lattice-reduction algorithms
     #
     for ax = 1:length(lrAlgs)
-        if lrAlgs[ax]==l2
-            times[ax,ix] = @runtwice B = lrAlgs[ax](data)
-        else
+        # if lrAlgs[ax]==l2
+        #     times[ax,ix] = @runtwice B = lrAlgs[ax](data)
+        # else
             times[ax,ix] = @runtwice (B,T) = lrAlgs[ax](data)
-        end
+#        end
         detB = abs(det(B))
         # Hermite factor
         hermitef[ax,ix] = norm(B[:,1])/detB^(1/N)
