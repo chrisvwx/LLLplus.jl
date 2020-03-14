@@ -93,19 +93,20 @@ true
 """
 function islllreduced(B)
 # follows p 56 of Bremner
-    Td = eltype(B)
+    Td1 = eltype(B)
+    Td = real(Td1)
     Xs,M = gso(B)
-    isSizeReduced = all((M-I)[:]*2 .< one(Td))
+    isSizeReduced = all(abs.((M-I)[:]*2) .<= one(Td))
     n = size(B,2)
     xiSq = zeros(float(Td),n)
     for i=1:n
         xiSq[i] = Xs[:,i]'*Xs[:,i]
     end
-    deltas = zeros(float(Td),n-1)
+    deltas = zeros(float(Td1),n-1)
     for i=2:n
         deltas[i-1] = xiSq[i]/xiSq[i-1]+M[i-1,i]^2
     end
-    if isSizeReduced && minimum(deltas)>1/4
+    if isSizeReduced && minimum(abs.(deltas))>1/4
         return true
     else
         return false

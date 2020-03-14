@@ -11,7 +11,7 @@ using LinearAlgebra
 using Printf
 
 export
-    lll,l2,
+    lll,
     cvp,
     svp,
     brun,
@@ -27,7 +27,6 @@ export
     gen_qary_b,gen_qary!,
     dataTypeForGram,intTypeGivenBitsRequired
 
-include("l2.jl")           # l2 (cholseky) variant of LLL
 include("lll.jl")          # lll, gauss, sizereduction
 include("cvp.jl")          # cvp, svp
 include("brun.jl")

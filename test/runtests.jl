@@ -65,9 +65,6 @@ println("Testing VBLAST on same $(N)x$(N) complex matrix...")
 println("Testing Brun on real part of same $(N)x$(N) matrix...")
 @time (B,T) = brun(real.(H));
 @time (B,T) = brun(real.(H));
-println("Testing l2 on real part of same $(N)x$(N) matrix...")
-@time B = l2(real.(H));
-@time B = l2(real.(H));
 
 # Test sphere decoder
 Ns = 100000;

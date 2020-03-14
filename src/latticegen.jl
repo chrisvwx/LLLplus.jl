@@ -36,7 +36,7 @@ julia> Random.seed!(0); b=gen_qary_b(Int64,2,1,6)
 ```
 """
 function gen_qary_b(T, d::Int,k::Int,b::Int)
-    if big(2)^b-1>typemax(T)
+    if T!=BigInt && big(2)^b-1>typemax(T)
         error("Type $(T) can only handle b=$(log2(typemax(T)+1)) "*
               "bits, and you're asking for $b. Try again with "*
               "a different type or smaller bit depth b.")

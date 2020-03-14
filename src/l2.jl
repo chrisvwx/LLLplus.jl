@@ -1,5 +1,5 @@
 """
-    B = l2(H::AbstractArray{Td,2},TG::Type{Tg},δ=.99,η=.51) where                                                     {Td<:Number,Tg<:Number}
+    B = l2(H::AbstractArray{Td,2},TG::Type{Tg},δ=.75,η=.51) where {Td<:Number,Tg<:Number}
 
 Do L2 lattice reduction of matrix `H` using optional parameters `δ` and `η`,
 using a Gram matrix of type TG. The output is `B`, an LLL-reduced basis such
@@ -16,6 +16,8 @@ generally faster than `lll` on small bases, say of dimensions less than 80.
 
 # Examples
 ```jldoctest
+julia> using LLLplus
+julia> include("src/l2.jl")
 julia> H= [1 2; 3 4];B = l2(H)
 ┌ Warning: l2 is in a raw (alpha) state and may change. See the help text.
 └ @ LLLplus ~/shared/LLLplus/src/l2.jl:42
@@ -48,18 +50,16 @@ function l2(H::AbstractArray{Td,2},TG::Type{Tg}=Td,δ=.75,η=.51) where
         error("η must be between 1/2 and sqrt(δ).");
     end
     n,d = size(H)
-    Ti= getIntType(Td)
+    Ti= LLLplus.getIntType(Td)
     Tf = float(Td)
     
-    # Follows Stehle 
+    # Follows Stehle
     ϵ = .001  # ϵ = eps(Td) may be too small
     C = ϵ
     if Tf <: Complex
-        @error "`l2` does not handle complex data yet; try `lll`."
-        Tfe = Tf.types[1] # is this kosher? Julian?
-    else
-        Tfe = Tf
+        @error "`l2` does not handle complex data (yet); try `lll`."
     end
+    Tfe = real(Tf)
     l = precision(Tfe)
     left = d^2*( ((1+η)^2+ϵ)/(δ-ϵ^2) )^d * 2^(-l+10+C*d)
     right = minimum([ϵ η-.5 1-δ])
@@ -169,12 +169,173 @@ function lazysizereduction!(ηb,κ,B,G,r,μ,s,X,n,d,Tg)
                 G[d1,κ] += B[d2,d1]*B[d2,κ]
             end
         end
-        @inbounds for dx=1:d
+         for dx=1:d
             G[κ,dx] = G[dx,κ]
         end
     end
     @goto startCholesky
 end
+
+"""
+    B = l2avx(H::AbstractArray{Td,2},TG::Type{Tg},δ=.75,η=.51) where
+                         {Td<:Number,Tg<:Number}
+
+A version of the `l2` function with a few calls to the `@avx` macro
+from the `LoopVectorization.jl` package.  See the `l2` help text
+
+# Examples
+```julia
+julia> using LLLplus
+julia> using LoopVectorization
+julia> include("src/l2.jl")
+julia> H= [1 2; 3 4];B = l2avx(H)
+┌ Warning: l2avx is in a raw (alpha) state and may change. See the help text.
+└ @ LLLplus ~/shared/LLLplus/src/l2.jl:42
+2×2 Array{Int64,2}:
+ 1  -1
+ 1   1
+```
+"""
+function l2avx(H::AbstractArray{Td,2},TG::Type{Tg}=Td,δ=.75,η=.51) where
+    {Td<:Number,Tg<:Number}
+
+    @warn "l2avx is in a raw (alpha) state and may change. See the help text." maxlog=1
+    
+    if !(0.25 < δ < 1.0)
+        error("δ must be between 1/4 and 1.");
+    end
+    if !(0.5 < η < sqrt(δ))
+        error("η must be between 1/2 and sqrt(δ).");
+    end
+    n,d = size(H)
+    Ti= LLLplus.getIntType(Td)
+
+    Tf = float(Td)
+    
+    # Follows Stehle 
+    ϵ = .001  # ϵ = eps(Td) may be too small
+    C = ϵ
+    if Tf <: Complex
+        @error "`l2avx` does not handle complex data (yet); try `lll`."
+    end
+    Tfe = real(Tf)
+    l = precision(Tfe)
+    left = d^2*( ((1+η)^2+ϵ)/(δ-ϵ^2) )^d * 2^(-l+10+C*d)
+    right = minimum([ϵ η-.5 1-δ])
+    # if left>right
+    #     @warn "Precision of l=$l bits for $Tf is not sufficient "*
+    #           "to satisfy Stehle's requirement [survey book, ch 5, thm 2]."
+    # end
+    if l<1.6*d
+        @warn "Precision of l=$l bits does not even satisfy Stele's "*
+              "asymptotic requirement of l≥1.6d."
+    end
+
+    δ= Tfe(δ);
+    η= Tfe(η)
+    B = copy(H)
+    G = Tg.(B)'*B
+    ηb= (η+.5)/2
+    δb= (δ+1)/2
+
+    μ = Matrix{Tf}(I,n,d)
+    r = zeros(Tf,n,d) 
+    s = Vector{Tf}(undef,d)
+    X = Vector{Ti}(undef,d)
+
+    r[1,1] = G[1,1]
+
+    κ=2;
+    while κ<=d
+        lazysizereductionAVX!(ηb,κ,B,G,r,μ,s,X,n,d,Tg)
+
+        κp=κ
+        while κ>=2 && δb*real(r[κ-1,κ-1]) > real(s[κ-1])
+            κ-=1
+        end
+        for i=1:κ-1
+            μ[κ,i] = μ[κp,i]
+            r[κ,i] = r[κp,i]
+        end
+        r[κ,κ] = s[κ]
+
+        if κ!=κp
+            bκp = B[:,κp]
+            copyto!(B,n*κ+1,B,n*(κ-1)+1,n*length(κ:κp-1))
+            B[:,κ] .= bκp
+            
+            if κ<d
+                @avx for i=κ:κp
+                    for d1=1:d
+                        G[d1,i] = B[1,d1]*B[1,i]
+                        for d2=2:d
+                            G[d1,i] += B[d2,d1]*B[d2,i]
+                        end
+                    end
+                end
+                # maybe make G a `Hermitian` view of an underlying matrix,
+                # set values using G.data[...] above, and skip the loop
+                # below? see also discourse: https://bit.ly/36QguCG
+                
+                @inbounds for i=κ:κp
+                    for dx=1:d
+                        G[i,dx] = G[dx,i]
+                    end
+                end
+            end
+        end
+        κ+=1
+    end
+    return B
+end
+
+function lazysizereductionAVX!(ηb,κ,B,G,r,μ,s,X,n,d,Tg)
+
+    @label startCholesky
+    # update the cholesky factorization
+    i = κ
+    @inbounds for j = 1:i-1
+        r[i,j] = G[i,j]
+        for k = 1:j-1
+            r[i,j] -= μ[j,k]*r[i,k]
+        end
+        μ[i,j] = r[i,j]/r[j,j]
+    end
+    s[1] = G[i,i]
+    @inbounds for j = 2:i
+        s[j] = s[j-1]-μ[i,j-1]*r[i,j-1]
+    end
+    r[i,i] = s[i]
+
+    μκ = view(μ,κ,1:κ-1)
+    if maximum(abs.(μκ))≤ηb
+        return
+    else
+        @inbounds for i = κ-1:-1:1
+            X[i] = round(μ[κ,i])
+            for j=1:i-1
+                μ[κ,j]-=X[i]*μ[i,j]
+            end
+        end
+        @avx for nx=1:n
+            for i = 1:κ-1
+                B[nx,κ] -=X[i]*B[nx,i]
+            end
+        end
+        @avx for d1=1:d
+            G[d1,κ] = B[1,d1]*B[1,κ]
+            for d2=2:d
+                G[d1,κ] += B[d2,d1]*B[d2,κ]
+            end
+        end
+        for dx=1:d
+            G[κ,dx] = G[dx,κ]
+        end
+    end
+    @goto startCholesky
+end
+
+
 
 """
     dataTypeForGram(nbits,d)

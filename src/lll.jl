@@ -37,6 +37,9 @@ end
 if Td<:AbstractFloat
     δ= Td(δ)
 end
+if Td<:Rational
+    @warn "`lll` does not handle Rationals well; try `l2`."
+end
 
 B = copy(H);
 N,L = size(B);
@@ -174,6 +177,8 @@ getIntType(Td::Type{Tr}) where {Tr<:Float32} = Int32
 getIntType(Td::Type{Tr}) where {Tr<:Float16} = Int16
 getIntType(Td::Type{Tr}) where {Tr<:BigFloat} = BigInt
 getIntType(Td::Type{Complex{Tr}}) where Tr = Complex{getIntType(Tr)}
+# Rationals are not well supported yet
+getIntType(Td::Type{Rational{Tr}}) where Tr = Tr
 
 
 """
