@@ -29,10 +29,10 @@ julia> integerfeasibility(A,d)
 julia> A=[10 1.1 -9.1; 1 8 8]; d=A*xtrue;
 
 julia> integerfeasibility(A,d)
-3-element Array{Int64,1}:
- 0
- 2
- 9
+3-element Array{Float64,1}:
+ 0.0
+ 2.0
+ 9.0
 
 julia> n=20;m=30; A = rand(-10:10,n,m); xtrue = rand(0:10,m); d=A*xtrue;
 
@@ -86,18 +86,20 @@ problems. See the first example.
 # Examples
 ```jldoctest
 julia> a=[1.5;.5;0;.1;.2]; s=2.2; x,_=subsetsum(a,s,true); s-x'*a
+A binary Lagarias-Odlyzko solution was found.
+A solution was found via lagariasodlyzko
 0.0
 
 julia> a=[32771,65543,131101,262187,524387,1048759, # from Bremner p 117
           2097523,4195057,8390143,16780259,33560539,
           67121039,134242091,268484171,536968403];
 
-julia> s=891221976; x,_=subsetsum(a,s,true); s-x'*a
+julia> s=891221976; x,_=subsetsum(a,s,false); s-x'*a
 0.0
 
 julia> N=40;a=rand(1:2^BigInt(256),N);xtrue=rand(Bool,N); s=a'*xtrue; 
 
-julia> setprecision(BigFloat,300); x,_=subsetsum(a,s); s-x'*a
+julia> setprecision(BigFloat,300); x,_=subsetsum(a,s,false); s-x'*a
 0.0
 
 ```
@@ -262,10 +264,14 @@ julia> a=[32771,65543,131101,262187,524387,1048759, # from Bremner p 117
           67121039,134242091,268484171,536968403];
 
 julia> sM=891221976; x=mdsubsetsum(a,sM); sM-x'*a
+0
+
+julia> setprecision(BigFloat,300); Random.seed!(0);
 
 julia> N=40;a=rand(1:2^BigInt(256),N);xtrue=rand(Bool,N); s=a'*xtrue;
 
-julia> setprecision(BigFloat,300); x=mdsubsetsum(a,s); s-x'*a
+julia> x=mdsubsetsum(a,s); s-x'*a
+0
 ```
 """
 function mdsubsetsum(a::AbstractArray{Td,1},sM::Td,ratio=.5,Kpm=3) where {Td<:Number}
@@ -328,11 +334,13 @@ Introduction to the LLL Algorithm and Its Applications" CRC Press, 2012.
 # Examples
 ```jldoctest
 julia> x = [0.3912641745333527; 0.5455179974014548; 0.1908698210882469];
+
 julia> rationalapprox(x,1e4,Int64)
 3-element Array{Rational{Int64},1}:
  43//110
   6//11
  21//110
+
 ```
 """
 function rationalapprox(x::AbstractArray{<:Real,1},M,Ti=BigInt,verbose=false)
@@ -374,21 +382,20 @@ that `spigotBBP` uses to check for a BBP spigot infinite series.
 If you want to try to get BBP coefficients without the aid of the
 `spigotBBP` function, below is code you can play with.
 
-# Examples
+# Example
 ```jldoctest
 julia> vv=LLLplus.spigotBBPvec(Float64,1,16,8,20);
-julia> v=[vv;-pi];
-julia> b=1_000_000;
-julia> A=[I; b* v'];
-julia> B,T=lll(A);
-julia> B[1:end-2,1]'*vv -pi   # The error is small, near eps()
-8.881784197001252e-16
 
-julia> Td=BigFloat;
-julia> a=LLLplus.spigotBBPvec(Td,1,16,8,60);
-julia> av,_ = lagariasodlyzko(a,Td(pi),1_000_000);
-julia> a'*av-pi    # smaller error when using BigFloat, 60 terms
-0.0
+julia> v=[vv;-pi];
+
+julia> b=1_000_000;
+
+julia> A=[I; b* v'];
+
+julia> B,T=lll(A);
+
+julia> B[1:end-2,1]'*vv -pi <1e-14 # The error is small
+true
 ```
 """
 function spigotBBPvec(Td::Type{Tr},s,b,n,K) where {Tr<:Number}
@@ -424,6 +431,7 @@ check whether a formula you find is new.
 computation of various polylogarithmic constants." Mathematics of
 Computation 66.218 (1997): 903-913.
 https://www.ams.org/journals/mcom/1997-66-218/S0025-5718-97-00856-9/
+
 [2] David Bailey, "A Compendium of BBP-Type Formulas for Mathematical
 Constants". https://www.davidhbailey.com//dhbpapers/bbp-formulas.pdf
 

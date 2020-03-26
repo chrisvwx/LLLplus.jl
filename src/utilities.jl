@@ -130,8 +130,10 @@ true
 """
 function issizereduced(B)
     # to-do: replace gso with QR as on p 148 of LLL survey book
+    Td1 = eltype(B)
+    Td = real(Td1)
     Xs,M = gso(B)
-    return all((M-I)[:]*2 .< one(eltype(B)))
+    return all(abs.((M-I)[:]*2) .<= one(Td))
 end
 
 
@@ -143,7 +145,7 @@ This is not quite a QR decomposition.
 
 # Examples
 ```jldoctest
-julia> H = [1 2; 3 4]; Q,R = gso(H)
+julia> H = [1 2; 3 4]; Q,R = LLLplus.gso(H);
 
 ```
 """
@@ -174,7 +176,7 @@ Volume of fundamental parallelepiped of a lattice with basis B.
 
 # Examples
 ```jldoctest
-julia> B = [1 2; 3 4]; volume(B)
+julia> B = [1 2; 3 4]; LLLplus.volume(B)
 1.9999999999999964
 
 ```
