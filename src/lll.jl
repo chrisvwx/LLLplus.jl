@@ -197,8 +197,8 @@ Size reduction is the first part of LLL lattice reduction.
 ```jldoctest
 julia> H= [1 2; 3 4];B,_ = sizereduction(H); B
 2×2 Array{Int64,2}:
- 3   1
- 1   1
+ 1  1
+ 3  1
 
 julia> H= BigFloat.([1.5 2; 3 4]) .+ 2im; B,_= sizereduction(H); B
 2×2 Array{Complex{BigFloat},2}:

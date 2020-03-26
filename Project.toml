@@ -2,10 +2,11 @@ name = "LLLplus"
 uuid = "142c1900-a1c3-58ae-a66d-b187f9ca6423"
 keywords = ["lattice reduction", "lattice basis reduction", "shortest vector problem", "closest vector problem", "LLL", "Lenstra-Lenstra-Lovász", "Seysen", "Brun", "VBLAST", "subset-sum problem","Lagarias-Odlyzko","Bailey–Borwein–Plouffe formula"]
 license = "MIT"
-version = "1.2.7"
+version = "1.2.8"
 
 [deps]
 DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"

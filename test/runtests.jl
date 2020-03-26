@@ -8,6 +8,7 @@ using LLLplus
 using Test
 using LinearAlgebra
 using DelimitedFiles
+using Documenter
 
 # --------------
 # tests with small matrices
@@ -116,3 +117,10 @@ mSeysen = minimum(nrms)
 println("min norm of seysen-reduced basis is $(mSeysen)")
 @test mSeysen<=30+1e-6
 
+
+# --------------
+# doctests
+# --------------
+DocMeta.setdocmeta!(LLLplus, :DocTestSetup,
+                    :(using LLLplus, LinearAlgebra,Random); recursive=true)
+doctest(LLLplus)

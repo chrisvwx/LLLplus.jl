@@ -28,16 +28,16 @@ tool is included as well.
 We also include code to do a
 [Vertical-Bell Laboratories Layered Space-Time](https://en.wikipedia.org/wiki/Bell_Laboratories_Layered_Space-Time)
 (V-BLAST) [6] matrix decomposition which is used in digital
-communications. The LLL, Brun, Seysen, V-BLAST, and CVP functions are
-used to solve (exactly or approximately) CVP problems; the
+communications. The CVP, LLL, Brun, Seysen, and V-BLAST functions can
+be used to solve (exactly or approximately) CVP problems; the
 [MUMIMO.jl](https://github.com/christianpeel/MUMIMO.jl) package
-demostrates how these functions can be used in encoding and decoding
+demostrates how these functions can be used in decoding
 multi-antenna signals.
 
-Another important application is in cryptanalysis; as an example of a
+Another important application is in cryptanalysis; as an demo of a
 cryptanalytic attack, see the `subsetsum` function.  The LLL algorithm has
-been shown to solve the integer programming feasibility problem; see
-`integerfeasibility`. Lattice tools are often used to study and solve
+been shown to solve many integer programming feasibility problems; see
+`integerfeasibility` for a demo. Lattice tools are often used to study and solve
 Diophantine problems; for example in  "simultaneous diophantine
 approximation" a vector of real numbers are approximated by rationals
 with a common deonminator. For a demo function, see `rationalapprox`.

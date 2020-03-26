@@ -75,7 +75,7 @@ in the future.
 
 # Examples:
 ```jldoctest
-julia> X = algIIsmart([5. 8]', [1. 2; 0 4],[4,4])
+julia> X = LLLplus.algIIsmart([5. 8]', [1. 2; 0 4],[4,4])
 2×1 Array{Float64,2}:
  1.0
  2.0

@@ -76,7 +76,7 @@ small = zeros(4,Nnum,Nsamp);
 for nx=1:Nnum
     N = Nvec[nx]
     k = Int64(floor(N/2))
-    
+
     icxx"""b.resize($N,$N);""";
     icxx"""u.resize($N,$N);""";
 
@@ -93,7 +93,7 @@ for nx=1:Nnum
         # for ix = 1:N, jx = 1:N
         #      icxx"""b[$(ix-1)][$(jx-1)]= $(b[jx,ix]);"""
         # end
-        icxx"""b.gen_qary($k,$bits);""";  
+        icxx"""b.gen_qary($k,$bits);""";
         for ix = 1:N, jx = 1:N
             b[jx,ix] = icxx"""b[$(ix-1)][$(jx-1)].get_si();"""
         end
@@ -219,12 +219,12 @@ Gtype=dataTypeForGram(bits,N);
 for nx=1:Nδ
     δ = δv[nx]
     ctx = Nemo.lll_ctx(δ, η)
-    
+
     icxx"""o.delta = $(δ);""";
 
     for sx = 1:Nsamp
-        
-        icxx"""b.gen_qary($k,$bits);""";  
+
+        icxx"""b.gen_qary($k,$bits);""";
         for ix = 1:N, jx = 1:N
             b[jx,ix] = icxx"""b[$(ix-1)][$(jx-1)].get_si();"""
         end
