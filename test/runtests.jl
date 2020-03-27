@@ -120,7 +120,9 @@ println("min norm of seysen-reduced basis is $(mSeysen)")
 # --------------
 # doctests
 # --------------
-println("\nRunning doctests...")
-DocMeta.setdocmeta!(LLLplus, :DocTestSetup,
-                    :(using LLLplus, LinearAlgebra,Random); recursive=true)
-doctest(LLLplus)
+if VERSION >= v"1.1.0"
+    println("\nRunning doctests...")
+    DocMeta.setdocmeta!(LLLplus, :DocTestSetup,
+                        :(using LLLplus, LinearAlgebra,Random); recursive=true)
+    doctest(LLLplus)
+end
