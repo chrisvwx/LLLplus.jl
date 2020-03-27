@@ -1,6 +1,3 @@
-# to test code, run following in "test" directory
-# julia> include("runtests.jl")
-
 # --------------
 # Initialization
 # --------------
@@ -86,6 +83,8 @@ println("Error Rate is $(errRate). It should be zero or very small.\n")
 # test norm for matrix from http://www.latticechallenge.org/
 # --------------
 
+# we should replace this section with more useful tests
+
 println("Testing now with 200x200 matrix from latticechallenge.org.")
 println("The min norm of the input should be 30, min norm of the "*
         "reduced bases is hopefully smaller :-)")
@@ -121,6 +120,7 @@ println("min norm of seysen-reduced basis is $(mSeysen)")
 # --------------
 # doctests
 # --------------
+println("\nRunning doctests...")
 DocMeta.setdocmeta!(LLLplus, :DocTestSetup,
                     :(using LLLplus, LinearAlgebra,Random); recursive=true)
 doctest(LLLplus)

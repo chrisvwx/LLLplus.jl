@@ -55,7 +55,7 @@ for s = 1:m
     for t = 1:m
         if s != t
 	    x = 0.5*(Adual[t,s]/Adual[s,s]-A[t,s]/A[t,t]);
-            Λ[s,t] = roundf(x);
+            Λ[s,t] = round(x);
 	    AbsΛ   = abs(Λ[s,t])^2;
 	    if AbsΛ != 0
 	        zw = real(Λ[s,t])*real(x)+imag(Λ[s,t])*imag(x);
@@ -114,7 +114,7 @@ while do_reduction
                 # If you get an "InexactError:..." here, try a float type
                 # (or float+int type) with more precision. For some reason
                 # Seysen is more sensitive than LLL to bit precision.
-                Λ[ind1,ind2] = Ti(roundf(x));
+                Λ[ind1,ind2] = Ti(round(x));
 
                 AbsΛ = abs(Λ[ind1,ind2])^2;
                 if AbsΛ != 0

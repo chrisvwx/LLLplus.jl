@@ -38,7 +38,4 @@ include("latticegen.jl")
 
 include("hard_sphere.jl")  # may be deprecated in future
 
-roundf(r::Td) where {Td<:Complex} = round(real(r)) + im*round(imag(r));
-roundf(r) = round(r);
-
 end # LLLplus module
