@@ -118,7 +118,9 @@ the fplll code is significantly faster.
 Finally, we show execution time for several built-in
 datatypes (Int32, Int64, Int128, Float32, Float64, BitInt, and
 BigFloat) as well as type from external packages (Float128 from
-Quadmath.jl and Double64 from DoubleFloat.jl) which are used to
+[Quadmath.jl](https://github.com/JuliaMath/Quadmath.jl) and Double64
+from [DoubleFloat.jl](https://github.com/JuliaMath/DoubleFloats.jl))
+which are used to 
 generate 40 128x128 matrices, over which execution time for the
 lattice reduction techniques is averaged.  The vertical axis is a
 logarithmic representation of execution time as in the previous
