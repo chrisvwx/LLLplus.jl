@@ -1,8 +1,8 @@
 sudo: required
 language: julia
 julia:
-  - 0.7
   - 1.0
+  - 1.4
   - nightly
 notifications:
   email: false
