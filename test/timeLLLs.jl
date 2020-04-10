@@ -132,7 +132,7 @@ plot(Nvec,tave',label=permutedims(["lll (Julia) Int64",
                        legend=:topleft,
                        legendfontsize=14,
                        linewidth=5,size=(700,525))
-xaxis!("log10(N)", :log10,guidefontsize=14)
+xaxis!("Basis dimension", :log10,guidefontsize=14)
 yaxis!("time (sec)", :log10)
 plot!(xticks = (Nvec, [string(ix) for ix ∈ Nvec]),
       xtickfontsize=14,ytickfontsize=14)
