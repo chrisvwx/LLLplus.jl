@@ -140,14 +140,29 @@ dimensional lattice, so this is definitely not the fastest SVP solver :-)
 Roughly follows the CVP-to-SVP reduction in
 http://web.eecs.umich.edu/~cpeikert/lic15/lec06.pdf
 
+Also, this function is not always correct. For example `svp` does not return
+a shortest vector for the following basis:
+```
+B = [ 1    0    0    0
+      0    1    0    0
+    208  175  663    0
+    651  479    0  663];
+```
+One shortest vector for `B` is `[-16; 19; -3; 11]`, the function currently
+returns `[3; -11; 25; -1]`.
+
 # Examples
 ```jldoctest
 julia> H=[1 2; 3 4]; svp(H)
+┌ Warning: svp has a bug; see the help for the function
+└ @ LLLplus ~/shared/LLLplus/src/cvp.jl:174
 2-element Array{Int64,1}:
  -1
   1
 
 julia> H= BigFloat.([2.5 2; 3 4]); svp(H)
+┌ Warning: svp has a bug; see the help for the function
+└ @ LLLplus ~/shared/LLLplus/src/cvp.jl:174
 2-element Array{BigFloat,1}:
   0.50
  -1.0 
@@ -155,6 +170,9 @@ julia> H= BigFloat.([2.5 2; 3 4]); svp(H)
 ```
 """
 function svp(B::AbstractArray{Td,2}) where Td
+
+    @warn "svp has a bug; see the help for the function" maxlog=1
+
     m,n= size(B)
     V = zeros(Td,m,n)
     c = zeros(Td,n)
@@ -168,6 +186,7 @@ function svp(B::AbstractArray{Td,2}) where Td
         c[i] = V[:,i]'*V[:,i]
     end
     idx = sortperm(c)
+ V[:,idx[1]]
     return V[:,idx[1]]
 end
 

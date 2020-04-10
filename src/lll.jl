@@ -62,11 +62,8 @@ lx  = 2;
             # B[:,lx]   -= mu * B[:,k]
             # R[1:k,lx] -= mu * R[1:k,k]
             # T[:,lx]   -= mu * T[:,k]
-            # With broadcasts and views
-            # B[:,lx]   .-= mu .* view(B,:,k)
-            # R[1:k,lx] .-= mu .* view(R,1:k,k)
-            # T[:,lx]   .-= mu .* view(T,:,k)
-            # With loops and @simd
+
+            # Devectorized, @simd
             @simd for n=1:N; B[n,lx]-= mu * B[n,k]; end
             @simd for n=1:k; R[n,lx]-= mu * R[n,k]; end
             @simd for n=1:L; T[n,lx]-= mu * T[n,k]; end
