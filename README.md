@@ -59,22 +59,19 @@ package on random lattices.
 ```julia
 Pkg.add("LLLplus")
 using LLLplus
-# repeat the commands below to remove JIT compile time
 
-# Time the decomposition of a matrix with randn entries
+# do lattice reduction on a matrix with randn entries
 N = 100;
 H = randn(N,N);
-@time B,T = sizereduction(H);
-@time B,T = brun(H);
-@time B,T = lll(H);
-@time B,T = seysen(H);
-@time W,P,B = vblast(H);
+B,T = brun(H);
+B,T = lll(H);
+B,T = seysen(H);
 
 # check out the CVP solver
-@time Q,R=qr(H);
+Q,R=qr(H);
 u=Int.(rand(0:1e10,N));
 y=H*u+rand(N)/100;
-@time uhat=cvp(Q'*y,R);
+uhat=cvp(Q'*y,R);
 sum(abs.(u-uhat))
 ```
 
