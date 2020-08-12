@@ -27,8 +27,8 @@ O. Regev. Post-Quantum Cryptography. Chapter of Lattice-based Cryptography,
 147-191 (2009) and latticegen in https://github.com/fplll/fplll
 
 # Examples
-```jldoctest
-julia> Random.seed!(0); b=gen_qary_b(Int64,2,1,6)
+```
+julia> b=gen_qary_b(Int64,2,1,6)
 2×2 Array{Int64,2}:
  1   0
  7  32

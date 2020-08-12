@@ -1,29 +1,28 @@
 # LLLplus.jl
 
 [![Build Status](https://travis-ci.org/christianpeel/LLLplus.jl.svg?branch=master)](https://travis-ci.org/christianpeel/LLLplus.jl)
-[![](https://img.shields.io/badge/docs-devel-blue.svg)](https://pkg.julialang.org/docs/LLLplus/)
+[![](https://img.shields.io/badge/docs-devel-blue.svg)](https://christianpeel.github.io/LLLplus.jl/dev)
 
 LLLplus includes
 [Lenstra-Lenstra-Lovász](https://en.wikipedia.org/wiki/Lenstra%E2%80%93Lenstra%E2%80%93Lov%C3%A1sz_lattice_basis_reduction_algorithm)
-(LLL), [Brun](https://en.wikipedia.org/wiki/Viggo_Brun), and Seysen lattice reduction; and [shortest vector problem](https://en.wikipedia.org/wiki/Lattice_problem#Shortest_vector_problem_.28SVP.29)
-(SVP) and
+(LLL), [Brun](https://en.wikipedia.org/wiki/Viggo_Brun), and Seysen
+lattice reduction; and a
 [closest vector problem](https://en.wikipedia.org/wiki/Lattice_problem#Closest_vector_problem_.28CVP.29)
-(CVP) solvers. These lattice reduction and related lattice tools are
+(CVP) solver. These lattice reduction and related lattice tools are
 used in cryptography, digital communication, and integer programming.
 The historical and practical prominence of the LLL technique in
 lattice tools is the reason for its use in the name "LLLplus".
-This package is experimental; see
-[fplll](https://github.com/fplll/fplll) for a robust tool.
+This package is experimental and not a robust tool; use at your own
+risk :-)
 
 LLL [1] lattice reduction is a powerful tool that is widely used in
 cryptanalysis, in cryptographic system design, in digital
 communications, and to solve other integer problems.  LLL reduction is
-often used as an approximate solution to the SVP.
+often used as an approximate solution to the [shortest vector problem](https://en.wikipedia.org/wiki/Lattice_problem#Shortest_vector_problem_.28SVP.29).
 We also include Gauss/Lagrange, Brun [2] and Seysen [3]
 lattice reduction techniques. The LLL, Brun, and Seysen algorithms are
 based on [4]. The CVP solver is based on [5] and can handle lattices
-and bounded integer constellations. A slow SVP solver based on the CVP
-tool is included as well.
+and bounded integer constellations.
 
 We also include code to do a
 [Vertical-Bell Laboratories Layered Space-Time](https://en.wikipedia.org/wiki/Bell_Laboratories_Layered_Space-Time)
@@ -48,8 +47,7 @@ irrationals, see `spigotBBP`.
 
 Each function contains documentation and examples available via Julia's
 built-in documentation system, for example with `?lll`. Documentation
-for all functions is available on
-[pkg.julialang.org](https://pkg.julialang.org/docs/LLLplus/). A tutorial notebook is
+for all functions is [available](https://christianpeel.github.io/LLLplus.jl/dev). A tutorial notebook is
 found in the [`docs`](docs/LLLplusTutorial.ipynb) directory or on
 [nbviewer](https://nbviewer.jupyter.org/github/christianpeel/LLLplus.jl/blob/master/docs/LLLplusTutorial.ipynb).
 

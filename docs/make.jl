@@ -16,3 +16,6 @@ makedocs(
          strict = true,
 )
 
+deploydocs(
+    repo   = "github.com/christianpeel/LLLplus.jl.git"
+)
