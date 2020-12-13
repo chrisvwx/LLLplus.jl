@@ -8,9 +8,8 @@ finally `Q` and `R` which are a QR decomposition of `B`.  So `H = B*inv(T) =
 Q*R*inv(T)`.
 
 Follows D. Wuebben, et al, "Lattice Reduction - A Survey with Applications
-in Wireless Communications", IEEE Signal Processing Magazine, 2011. When
-comparing with academic lattice reduction papers, it is likely closest
-to the floating-point algorithm of C. P. Schnorr. "A more efficient
+in Wireless Communications", IEEE Signal Processing Magazine, Apr 2011. See
+also the floating-point algorithm of C. P. Schnorr. "A more efficient
 algorithm for lattice basis reduction". Journal of Algorithms, Vol 9, 1988.
 
 # Examples

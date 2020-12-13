@@ -1,14 +1,19 @@
 """
-    x=cvp(y,R,infinite=Val{true},Umax=1)
+    x=cvp(y,R)
 
 Solve the problem `argmin_x ||z-Hx||` for integer x using the technique from
 the paper below, where H=QR and y=Q'*z. The input vector `y` is of length `n`,
-with `H` of dimension `n` by `n`, and the returned vector `x` of length `n`. If
-`infinite==Val{true}` then we search the (infinite) lattice, otherwise we
-search integers in `[-Umax,Umax]`.  Note that `cvp` does not handle complex
-numbers.
+with `H` of dimension `n` by `n`, and the returned vector `x` of length
+`n`. 
 
-Uses alg from "Faster Recursions in Sphere Decoding" Arash Ghasemmehdi, Erik
+    x=cvp(y,R,infinite=Val(true),Umax=-1,Umax=-Umin,nxMax=Int(ceil(log2(n)*1e6)))
+
+If `infinite==Val(true)` then we search the (infinite) lattice, otherwise we
+search integers in `[Umin,Umax]`. When `nxMax` is included, it gives a
+maximum number of steps to take, otherwise a heuristic value is used. 
+Note that `cvp` does not handle complex numbers.
+
+Follows "Faster Recursions in Sphere Decoding" Arash Ghasemmehdi, Erik
 Agrell, IEEE Transactions on Information Theory, vol 57, issue 6 , June 2011.
 
 # Examples
@@ -17,6 +22,11 @@ julia> H=[1 2; 3 4]; Q,R=qr(H); uhat = cvp(Q'*[0,2],R)
 2-element Array{Float64,1}:
   2.0
  -1.0
+
+julia> uhat = cvp2(Q'*[0,2],R,Val(false),0,100)
+2-element Array{Float64,1}:
+ 1.0
+ 0.0
 
 julia> n=100;H=randn(n,n);Q,R=qr(H);
 
@@ -27,19 +37,18 @@ julia> uhat=cvp(Q'*y,R); sum(abs.(u-uhat))
 
 julia> n=500;H=randn(n,n);Q,R=qr(H);
 
-julia> u=Int.(rand(-1:1,n));y=H*u+rand(n)/10;
+julia> u=Int.(rand([-1,1],n));y=H*u+rand(n)/2;
 
-julia> uhat=cvp(Q'*y,R,Val{false},1); sum(abs.(u-uhat))
+julia> uhat=cvp(Q'*y,R,Val(false),-1,1); sum(abs.(u-uhat))
 0.0
 ```
 """
 function cvp(r::AbstractArray{Td,1},G::AbstractArray{Td,2},
-               infinite=Val{true},Umax=1) where {Td<:Number}
-    
-    roundGA(x) = roundFinite(x,Td(Umax))
-# nx=1
+             infinite=Val(true),Umin=-1,Umax=-Umin,
+             nxMax=typemax(Int)) where {Td<:Number}
+
+    roundGA(x) = roundFinite(x,Td(Umin),Td(Umax))
     n = length(r)
-# mxNx=Int(ceil(log2(n)*100000))
     C = Inf
     i = n+1
     d = ones(Int,n)*n
@@ -50,11 +59,16 @@ function cvp(r::AbstractArray{Td,1},G::AbstractArray{Td,2},
     u = NaN*zeros(Int,n)
     û = NaN*zeros(Int,n)
     Δ = zeros(Int,n)
+
+    if nxMax == typemax(Int)
+        nxMax=Int(ceil(log2(n)*1e6)) # heuristic
+    end
+    nx=1
     
     begin
         @label LOOP
 
-#        nx+=1
+        nx+=1
         while λ[i]<C
             if i != 1
                 i-=1
@@ -62,7 +76,7 @@ function cvp(r::AbstractArray{Td,1},G::AbstractArray{Td,2},
                     F[i,j-1] = F[i,j] - G[i,j]*u[j]
                 end
                 p[i] = F[i,i]/G[i,i]
-                if infinite==Val{true}
+                if infinite==Val(true)
                     u[i] = round(p[i])
                 else
                     u[i] = roundGA(p[i])
@@ -78,26 +92,25 @@ function cvp(r::AbstractArray{Td,1},G::AbstractArray{Td,2},
         m = i
 
         while λ[i]≥C
-#            if i==n || nx>mxNx
-            if i==n
-                # if nx>mxNx
-                #     @warn("terminated search after $(nx) iterations.")
-                # end
+            if i==n || nx>nxMax
+                if nx>nxMax
+                    @warn("terminated search after $(nx) iterations.")
+                end
                 return û
             else
                 i+=1
-                if infinite ≠ Val{true}
+                if infinite ≠ Val(true)
                     y = typemax(Td)
                 end
                 u[i]+=Δ[i]
                 Δ[i]=-Δ[i]-signGA(Δ[i])
-                if infinite ≠ Val{true}
-                    if -Umax ≤ u[i] ≤ Umax
+                if infinite ≠ Val(true)
+                    if Umin ≤ u[i] ≤ Umax
                         y = (p[i]-u[i])*G[i,i]
                     else
                         u[i]+=Δ[i]
                         Δ[i]=-Δ[i]-signGA(Δ[i])
-                        if -Umax ≤ u[i] ≤ Umax
+                        if Umin ≤ u[i] ≤ Umax
                             y = (p[i]-u[i])*G[i,i]
                         end
                     end
@@ -121,18 +134,23 @@ end
 
 signGA(x) = x<=0 ? -one(x) : one(x)
 
-function roundFinite(x,Umax)
+function roundFinite(x,Umin,Umax)
     y=round(x)
-    return  abs(y)>Umax ?  Umax*signGA(y) : y
+    if x<Umin
+        return Umin
+    elseif x>Umax
+        return Umax
+    else
+        return y
+    end
 end
-    
 
 
 
 """
     b = svp(B)
 
-Find the shortest basis vector `b` for the lattice formed by the matrix
+Try to find the shortest basis vector `b` for the lattice formed by the matrix
 `B`. This solves the 'shortest vector problem' (SVP). 
 
 We call the [`cvp`](@ref) function in the library `n` times for an `n`-
@@ -140,7 +158,7 @@ dimensional lattice, so this is definitely not the fastest SVP solver :-)
 Roughly follows the CVP-to-SVP reduction in
 http://web.eecs.umich.edu/~cpeikert/lic15/lec06.pdf
 
-Also, this function is not always correct. For example `svp` does not return
+Alas, this function is not always correct. For example `svp` does not return
 a shortest vector for the following basis:
 ```
 B = [ 1    0    0    0
@@ -182,7 +200,6 @@ function svp(B::AbstractArray{Td,2}) where Td
         c[i] = V[:,i]'*V[:,i]
     end
     idx = sortperm(c)
- V[:,idx[1]]
     return V[:,idx[1]]
 end
 

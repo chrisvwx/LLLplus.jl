@@ -57,7 +57,8 @@ function l2(H::AbstractArray{Td,2},TG::Type{Tg}=Td,δ=.75,η=.51) where
     ϵ = .001  # ϵ = eps(Td) may be too small
     C = ϵ
     if Tf <: Complex
-        @error "`l2` does not handle complex data (yet); try `lll`."
+        @error "`l2` does not handle complex data; try `lll`."
+        return
     end
     Tfe = real(Tf)
     l = precision(Tfe)
@@ -216,7 +217,8 @@ function l2avx(H::AbstractArray{Td,2},TG::Type{Tg}=Td,δ=.75,η=.51) where
     ϵ = .001  # ϵ = eps(Td) may be too small
     C = ϵ
     if Tf <: Complex
-        @error "`l2avx` does not handle complex data (yet); try `lll`."
+        @error "`l2avx` does not handle complex data; try `lll`."
+        return
     end
     Tfe = real(Tf)
     l = precision(Tfe)
