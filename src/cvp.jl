@@ -23,7 +23,7 @@ julia> H=[1 2; 3 4]; Q,R=qr(H); uhat = cvp(Q'*[0,2],R)
   2.0
  -1.0
 
-julia> uhat = cvp2(Q'*[0,2],R,Val(false),0,100)
+julia> uhat = cvp(Q'*[0,2],R,Val(false),0,100)
 2-element Array{Float64,1}:
  1.0
  0.0
@@ -133,6 +133,8 @@ function cvp(r::AbstractArray{Td,1},G::AbstractArray{Td,2},
 end
 
 signGA(x) = x<=0 ? -one(x) : one(x)
+# likely can replace signGA with sgns
+sgns(x) = x<=0 ? -1 : 1
 
 function roundFinite(x,Umin,Umax)
     y=round(x)
@@ -148,58 +150,120 @@ end
 
 
 """
-    b = svp(B)
+    x=svp(B)
 
-Try to find the shortest basis vector `b` for the lattice formed by the matrix
-`B`. This solves the 'shortest vector problem' (SVP). 
+Find the shortest basis vector `b` for the lattice formed by the matrix
+`B`. This solves the 'shortest vector problem' (SVP).
 
-We call the [`cvp`](@ref) function in the library `n` times for an `n`-
-dimensional lattice, so this is definitely not the fastest SVP solver :-)
-Roughly follows the CVP-to-SVP reduction in
-http://web.eecs.umich.edu/~cpeikert/lic15/lec06.pdf
-
-Alas, this function is not always correct. For example `svp` does not return
-a shortest vector for the following basis:
-```
-B = [ 1    0    0    0
-      0    1    0    0
-    208  175  663    0
-    651  479    0  663];
-```
-One shortest vector for `B` is `[-16; 19; -3; 11]`, the function currently
-returns `[3; -11; 25; -1]`.
+Follows "Algorithm SHORTESTVECTOR(G)" from "Closest Point Search in
+Lattices" by Erik Agrell, Thomas Eriksson, Alexander Vardy, and
+Kenneth Zeger in IEEE Transactions on Information Theory, vol. 48, no. 8,
+August 2002. 
 
 # Examples
-```julia-repl
+```jldoctest
 julia> H=[1 2; 3 4]; svp(H)
 2-element Array{Int64,1}:
  -1
-  1
+ -1
 
-julia> H= BigFloat.([2.5 2; 3 4]); svp(H)
-2-element Array{BigFloat,1}:
-  0.50
- -1.0 
+julia> H = [1 0 0 0;   0 1 0 0;   208 175 663 0;     651 479 0  663];
+
+julia> svp(H)
+4-element Array{Int64,1}:
+  16
+ -19
+   3
+ -11
 
 ```
 """
-function svp(B::AbstractArray{Td,2}) where Td
+function svp(G::AbstractArray{Td,2}) where {Td<:Number}
 
-    @warn "svp has a bug; see the help for the function" maxlog=1
-
-    m,n= size(B)
-    V = zeros(Td,m,n)
-    c = zeros(Td,n)
-
-    for i = 1:n
-        Bi = copy(B)
-        Bi[:,i] *=2
-        Q,R = qr(Bi)
-        vc = cvp(Q'*B[:,i],R)
-        V[:,i] = Bi*vc-B[:,i]
-        c[i] = V[:,i]'*V[:,i]
-    end
-    idx = sortperm(c)
-    return V[:,idx[1]]
+    m,n = size(G)
+    G2,_ = lll(G)
+    # if qr gave positive values on diagonal we'd use  Q,G3 = qr(G2)
+    G3 = cholesky(Hermitian(G2'*G2)).U
+    H3 = inv(G3)
+    Q = G2*H3
+    uhat = decodeSVPAgrell(H3)
+    yhat = G2*uhat # the "shortest vector"
+    return yhat
 end
+
+"""
+    x=decodeSVPAgrell(x,H)
+
+Internal function.
+
+Follows "Algorithm DECODE(G)" with "SHORTESTVECTOR" changes from the paper
+"Closest Point Search in Lattices" by Erik Agrell, Thomas Eriksson,
+Alexander Vardy, and Kenneth Zeger in IEEE Transactions on Information
+Theory, vol. 48, no. 8, August 2002.
+
+
+# Examples
+```jldoctest
+julia> H = inv([1.0 2; 0 4]);
+
+julia> uhat = LLLplus.decodeSVPAgrell(H)
+2-element Array{Int64,1}:
+ -1
+  0
+
+
+```
+"""
+function decodeSVPAgrell(H::AbstractArray{Td,2}) where {Td<:Number}
+
+    n = size(H,1)
+    bestdist=Inf
+    k=n
+    dist = zeros(n)
+    e = zeros(n,n)
+#    e[:,k] = H*x
+    u = zeros(Int,n)
+    û = zeros(Int,n)
+    u[k] = round(e[k,k])
+    y = (e[k,k]-u[k])/H[k,k]
+    Δ = NaN*zeros(n)
+    Δ[k] = sgns(y)
+    begin
+        @label LOOP
+        newdist = dist[k]+y*y
+        if newdist<bestdist
+            if k!=1
+                e[1:k-1,k-1]=e[1:k-1,k]-y*H[1:k-1,k]
+                k -=1
+                dist[k]=newdist
+                u[k] = round(e[k,k])
+                y = (e[k,k]-u[k])/H[k,k]
+                Δ[k] = sgns(y)
+            else
+                if !(newdist≈0.0)
+                    û[:] = u[:]
+                    bestdist=newdist
+                    k+=1
+                end
+                # û[:] = u[:]
+                # bestdist=newdist
+                # k+=1
+                u[k] += Δ[k]
+                y = (e[k,k]-u[k])/H[k,k]
+                Δ[k] = -Δ[k] - sgns(Δ[k])
+            end
+        else
+            if k==n
+                return û
+            else
+                k+=1
+                u[k]+= Δ[k]
+                y = (e[k,k]-u[k])/H[k,k]
+                Δ[k] = -Δ[k] - sgns(Δ[k])
+            end
+        end
+        @goto LOOP
+    end
+end
+
 
