@@ -6,42 +6,39 @@ CurrentModule = LLLplus
 
 LLLplus includes
 [Lenstra-Lenstra-Lovász](https://en.wikipedia.org/wiki/Lenstra%E2%80%93Lenstra%E2%80%93Lov%C3%A1sz_lattice_basis_reduction_algorithm)
-(LLL), [Brun](https://en.wikipedia.org/wiki/Viggo_Brun), and Seysen lattice reduction; and [shortest vector problem](https://en.wikipedia.org/wiki/Lattice_problem#Shortest_vector_problem_.28SVP.29)
-(SVP) and
-[closest vector problem](https://en.wikipedia.org/wiki/Lattice_problem#Closest_vector_problem_.28CVP.29)
-(CVP) solvers. These lattice reduction and related lattice tools are
+(LLL), [Brun](https://en.wikipedia.org/wiki/Viggo_Brun), and Seysen
+lattice reduction; and solvers for the
+[shortest vector problem](https://en.wikipedia.org/wiki/Lattice_problem#Shortest_vector_problem_(SVP))
+(SVP) and the [closest vector problem](https://en.wikipedia.org/wiki/Lattice_problem#Closest_vector_problem_.28CVP.29)
+(CVP). These tools are
 used in cryptography, digital communication, and integer programming.
-The historical and practical prominence of the LLL technique in
-lattice tools is the reason for its use in the name "LLLplus".
-This package is experimental; see
-[fplll](https://github.com/fplll/fplll) for a robust tool.
+This package is experimental and not a robust tool; use at your own
+risk :-)
 
 LLL [1] lattice reduction is a powerful tool that is widely used in
 cryptanalysis, in cryptographic system design, in digital
-communications, and to solve other integer problems.  LLL reduction is
+communications, and to solve other integer problems. The historical
+and practical prominence of the LLL technique in lattice tools is the
+reason for its use in the name "LLLplus". LLL reduction is
 often used as an approximate solution to the SVP.
-We also include Gauss/Lagrange, Brun [2] and Seysen [3]
+We also include Brun [2] and Seysen [3]
 lattice reduction techniques. The LLL, Brun, and Seysen algorithms are
 based on [4]. The CVP solver is based on [5] and can handle lattices
-and bounded integer constellations. A slow SVP solver based on the CVP
-tool is included as well.
+and bounded integer constellations while the SVP solver is based on [6].
 
-We also include code to do a
-[Vertical-Bell Laboratories Layered Space-Time](https://en.wikipedia.org/wiki/Bell_Laboratories_Layered_Space-Time)
-(V-BLAST) [6] matrix decomposition which is used in digital
-communications. The LLL, Brun, Seysen, V-BLAST, and CVP functions are
-used to solve (exactly or approximately) CVP problems; the
+One application of lattice tools is in cryptanalysis; as an demo of a
+cryptanalytic attack, see the `subsetsum` function.  The LLL algorithm
+has been shown to solve many integer programming feasibility problems;
+see `integerfeasibility` for a demo. Lattice tools are often used to
+study and solve Diophantine problems; for example in "simultaneous
+diophantine approximation" a vector of real numbers are approximated
+by rationals with a common deonminator. For a demo function, see
+`rationalapprox`.  The
 [MUMIMO.jl](https://github.com/christianpeel/MUMIMO.jl) package
-demostrates how these functions can be used in encoding and decoding
-multi-antenna signals.
-
-Another important application is in cryptanalysis; as an example of a
-cryptanalytic attack, see the `subsetsum` function.  The LLL algorithm has
-been shown to solve the integer programming feasibility problem; see
-`integerfeasibility`. Lattice tools are often used to study and solve
-Diophantine problems; for example in  "simultaneous diophantine
-approximation" a vector of real numbers are approximated by rationals
-with a common deonminator. For a demo function, see `rationalapprox`.
+demostrates how the `cvp`, `lll`, `brun`, `seysen`, and
+[`vblast`](https://en.wikipedia.org/wiki/Bell_Laboratories_Layered_Space-Time)
+functions can be used to solve (exactly or approximately) CVP problems
+and thereby decode multi-antenna signals.
 Finally, to see how the LLL can be used to find spigot formulas for
 irrationals, see `spigotBBP`.
 
@@ -49,8 +46,7 @@ irrationals, see `spigotBBP`.
 
 Each function contains documentation and examples available via Julia's
 built-in documentation system, for example with `?lll`. Documentation
-for all functions is available on
-[pkg.julialang.org](https://pkg.julialang.org/docs/LLLplus/). A tutorial notebook is
+for all functions is [available](https://christianpeel.github.io/LLLplus.jl/dev). A tutorial notebook is
 found in the `docs` directory or on
 [nbviewer](https://nbviewer.jupyter.org/github/christianpeel/LLLplus.jl/blob/master/docs/LLLplusTutorial.ipynb).
 
@@ -60,22 +56,19 @@ package on random lattices.
 ```julia
 Pkg.add("LLLplus")
 using LLLplus
-# repeat the commands below to remove JIT compile time
 
-# Time the decomposition of a matrix with randn entries
+# do lattice reduction on a matrix with randn entries
 N = 100;
 H = randn(N,N);
-@time B,T = sizereduction(H);
-@time B,T = brun(H);
-@time B,T = lll(H);
-@time B,T = seysen(H);
-@time W,P,B = vblast(H);
+B,T = brun(H);
+B,T = lll(H);
+B,T = seysen(H);
 
 # check out the CVP solver
-@time Q,R=qr(H);
+Q,R=qr(H);
 u=Int.(rand(0:1e10,N));
 y=H*u+rand(N)/100;
-@time uhat=cvp(Q'*y,R);
+uhat=cvp(Q'*y,R);
 sum(abs.(u-uhat))
 ```
 
@@ -111,15 +104,17 @@ random bases from `gen_qary` with depth `25` bits, this time with the
 dimension fixed at `32`. The curve is created by varying the `δ`
 parameter from `.29` to `.99` in steps of `.2`; the larger times and
 smaller norms correspond to the largest `δ` values. Though the `l2avx`
-function is competitive with fplll in this case, in many other cases
-the fplll code is significantly faster.
+function is competitive with fplll in this case, in most cases
+the fplll code is faster.
 
 ![Time vs reduction quality](assets/timeVsmallest_25bitsInt64.png)
 
 Finally, we show execution time for several built-in
 datatypes (Int32, Int64, Int128, Float32, Float64, BitInt, and
 BigFloat) as well as type from external packages (Float128 from
-Quadmath.jl and Double64 from DoubleFloat.jl) which are used to
+[Quadmath.jl](https://github.com/JuliaMath/Quadmath.jl) and Double64
+from [DoubleFloat.jl](https://github.com/JuliaMath/DoubleFloats.jl))
+which are used to 
 generate 40 128x128 matrices, over which execution time for the
 lattice reduction techniques is averaged.  The vertical axis is a
 logarithmic representation of execution time as in the previous
@@ -130,12 +125,10 @@ figure. This figure was generated using code in `test/perftest.jl`.
 ### Notes
 
 There are certainly many improvements and additions that could be made
-to LLLplus, such as adding Block-Korkin-Zolotarev (BKZ) lattice reduction
-with improvements as in [8]. Even so, it would be hard to compete with
+to LLLplus. Even so, it would be hard to compete with
 [fplll](https://github.com/fplll/fplll) on features. In fact, a Julia
 wrapper around [fplll](https://github.com/fplll/fplll) would be the most
-useful addition to lattice tools in Julia; it would
-provide funcionality not in LLLplus such as BKZ reduction.
+useful addition to lattice tools in Julia.
 
 The algorithm pseudocode in the monograph [7] and the survey paper [4]
 were very helpful in writing the lattice reduction tools in LLLplus
@@ -164,13 +157,12 @@ Skr. Vidensk. Selsk. Kristiana, Mat. Nat. Klasse, 1919.
 [5] A. Ghasemmehdi, E. Agrell, ["Faster Recursions in Sphere Decoding"](https://publications.lib.chalmers.se/records/fulltext/local_141586.pdf) IEEE
 Transactions on Information Theory, vol 57, issue 6 , June 2011.
 
-[6] P. W. Wolniansky, G. J. Foschini, G. D. Golden, R. A. Valenzuela, ["V-BLAST: An Architecture for Realizing Very High Data Rates Over the Rich-Scattering Wireless Channel"](http://ieeexplore.ieee.org/xpl/login.jsp?tp=&arnumber=738086). Proc. URSI
-ISSSE: 295–300, 1998. 
+[6] E. Agrell, T. Eriksson, A. Vardy, and K. Zeger, ["Closest Point Search in
+Lattices"](https://www.researchgate.net/publication/3080772_Closest_point_search_in_lattices_IEEE_Trans_Inf_Theory)
+IEEE Transactions on Information Theory, vol. 48, no. 8, August 2002.
 
 [7] M. R. Bremner, ["Lattice Basis Reduction: An Introduction to the LLL
  Algorithm and Its Applications"](https://www.amazon.com/Lattice-Basis-Reduction-Introduction-Applications/dp/1439807027) CRC Press, 2012.
-
-[8] Y. Chen, P. Q. Nguyen, ["BKZ 2.0: Better Lattice Security Estimates"](http://www.iacr.org/archive/asiacrypt2011/70730001/70730001.pdf). Proc. ASIACRYPT 2011.
 
 
 
