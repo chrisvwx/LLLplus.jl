@@ -1,3 +1,4 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+LLLplus = "142c1900-a1c3-58ae-a66d-b187f9ca6423"
 MacroTools = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"

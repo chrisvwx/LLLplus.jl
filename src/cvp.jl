@@ -4,13 +4,13 @@
 Solve the problem `argmin_x ||z-Hx||` for integer x using the technique from
 the paper below, where H=QR and y=Q'*z. The input vector `y` is of length `n`,
 with `H` of dimension `n` by `n`, and the returned vector `x` of length
-`n`. 
+`n`.
 
     x=cvp(y,R,infinite=Val(true),Umax=-1,Umax=-Umin,nxMax=Int(ceil(log2(n)*1e6)))
 
 If `infinite==Val(true)` then we search the (infinite) lattice, otherwise we
 search integers in `[Umin,Umax]`. When `nxMax` is included, it gives a
-maximum number of steps to take, otherwise a heuristic value is used. 
+maximum number of steps to take, otherwise a heuristic value is used.
 Note that `cvp` does not handle complex numbers.
 
 Follows "Faster Recursions in Sphere Decoding" Arash Ghasemmehdi, Erik
@@ -37,7 +37,7 @@ julia> uhat=cvp(Q'*y,R); sum(abs.(u-uhat))
 
 julia> n=500;H=randn(n,n);Q,R=qr(H);
 
-julia> u=Int.(rand([-1,1],n));y=H*u+rand(n)/2;
+julia> u=Int.(rand([-1,1],n));y=H*u+rand(n)/100;
 
 julia> uhat=cvp(Q'*y,R,Val(false),-1,1); sum(abs.(u-uhat))
 0.0
@@ -64,7 +64,7 @@ function cvp(r::AbstractArray{Td,1},G::AbstractArray{Td,2},
         nxMax=Int(ceil(log2(n)*1e6)) # heuristic
     end
     nx=1
-    
+
     begin
         @label LOOP
 
@@ -153,12 +153,13 @@ end
     x=svp(B)
 
 Find the shortest basis vector `b` for the lattice formed by the matrix
-`B`. This solves the 'shortest vector problem' (SVP).
+`B`. This solves the 'shortest vector problem' (SVP). Note that `svp`
+does not handle complex numbers.
 
 Follows "Algorithm SHORTESTVECTOR(G)" from "Closest Point Search in
 Lattices" by Erik Agrell, Thomas Eriksson, Alexander Vardy, and
 Kenneth Zeger in IEEE Transactions on Information Theory, vol. 48, no. 8,
-August 2002. 
+August 2002.
 
 # Examples
 ```jldoctest
@@ -181,14 +182,42 @@ julia> svp(H)
 function svp(G::AbstractArray{Td,2}) where {Td<:Number}
 
     m,n = size(G)
+    if n==1 return G[:,1];    end
+
     G2,_ = lll(G)
     # if qr gave positive values on diagonal we'd use  Q,G3 = qr(G2)
     G3 = cholesky(Hermitian(G2'*G2)).U
     H3 = inv(G3)
-    Q = G2*H3
+    #Q = G2*H3
     uhat = decodeSVPAgrell(H3)
     yhat = G2*uhat # the "shortest vector"
     return yhat
+end
+
+"""
+    z=svpu(B)
+
+Find the vector of integers z such that B*z is the shortest vector
+in the lattice with basis B.
+
+# Examples
+```jldoctest
+julia> H=[1 2; 3 4]; s=svp(H); u=LLLplus.svpu(H); [u s H*u]
+2×3 Array{Int64,2}:
+  1  -1  -1
+ -1  -1  -1
+
+```
+"""
+function svpu(G::AbstractArray{Td,2}) where {Td<:Number}
+    m,n = size(G)
+    if n==1 return [1]; end
+    G2,T = lll(G)
+    # if qr gave positive values on diagonal we'd use  Q,G3 = qr(G2)
+    G3 = cholesky(Hermitian(G2'*G2)).U
+    H3 = inv(G3)
+    uhat = decodeSVPAgrell(H3)
+    return T*uhat
 end
 
 """

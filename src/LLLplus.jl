@@ -14,6 +14,7 @@ export
     lll,
     cvp,
     svp,
+    hkz,ishkzreduced,
     brun,
     gauss,
     sizereduction,
@@ -29,6 +30,7 @@ export
 
 include("lll.jl")          # lll, gauss, sizereduction
 include("cvp.jl")          # cvp, svp
+include("hkz.jl")
 include("brun.jl")
 include("seysen.jl")
 include("vblast.jl")

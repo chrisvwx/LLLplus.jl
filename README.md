@@ -20,27 +20,24 @@ communications, and to solve other integer problems. The historical
 and practical prominence of the LLL technique in lattice tools is the
 reason for its use in the name "LLLplus". LLL reduction is
 often used as an approximate solution to the SVP.
-We also include Gauss/Lagrange, Brun [2] and Seysen [3]
+We also include Brun [2] and Seysen [3]
 lattice reduction techniques. The LLL, Brun, and Seysen algorithms are
 based on [4]. The CVP solver is based on [5] and can handle lattices
-and bounded integer constellations. The SVP solver is based on [6].
+and bounded integer constellations while the SVP solver is based on [6].
 
-We also include code to do a
-[Vertical-Bell Laboratories Layered Space-Time](https://en.wikipedia.org/wiki/Bell_Laboratories_Layered_Space-Time)
-(V-BLAST) matrix decomposition which is used in digital
-communications. The CVP, LLL, Brun, Seysen, and V-BLAST functions can
-be used to solve (exactly or approximately) CVP problems; the
+One application of lattice tools is in cryptanalysis; as an demo of a
+cryptanalytic attack, see the `subsetsum` function.  The LLL algorithm
+has been shown to solve many integer programming feasibility problems;
+see `integerfeasibility` for a demo. Lattice tools are often used to
+study and solve Diophantine problems; for example in "simultaneous
+diophantine approximation" a vector of real numbers are approximated
+by rationals with a common deonminator. For a demo function, see
+`rationalapprox`.  The
 [MUMIMO.jl](https://github.com/christianpeel/MUMIMO.jl) package
-demostrates how these functions can be used in decoding
-multi-antenna signals.
-
-Another important application is in cryptanalysis; as an demo of a
-cryptanalytic attack, see the `subsetsum` function.  The LLL algorithm has
-been shown to solve many integer programming feasibility problems; see
-`integerfeasibility` for a demo. Lattice tools are often used to study and solve
-Diophantine problems; for example in  "simultaneous diophantine
-approximation" a vector of real numbers are approximated by rationals
-with a common deonminator. For a demo function, see `rationalapprox`.
+demostrates how the `cvp`, `lll`, `brun`, `seysen`, and
+[`vblast`](https://en.wikipedia.org/wiki/Bell_Laboratories_Layered_Space-Time)
+functions can be used to solve (exactly or approximately) CVP problems
+and thereby decode multi-antenna signals.
 Finally, to see how the LLL can be used to find spigot formulas for
 irrationals, see `spigotBBP`.
 
