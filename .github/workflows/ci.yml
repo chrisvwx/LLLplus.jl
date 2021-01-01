@@ -21,7 +21,6 @@ jobs:
           - ubuntu-latest
         arch:
           - x64
-          - macOS-latest
     steps:
       - uses: actions/checkout@v2
       - uses: julia-actions/setup-julia@v1
@@ -59,8 +58,10 @@ jobs:
             Pkg.instantiate()'
       - run: |
           julia --project=docs -e '
-            using Documenter: doctest
+            using Documenter
             using LLLplus
+            DocMeta.setdocmeta!(LLLplus, :DocTestSetup,
+                      :(using LLLplus, LinearAlgebra,Random); recursive=true)
             doctest(LLLplus)'
       - run: julia --project=docs docs/make.jl
         env:
