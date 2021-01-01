@@ -179,6 +179,7 @@ getIntType(Td::Type{Rational{Tr}}) where Tr = Tr
 
 """
     B,T,Q,R = sizereduction(H)
+
 Do size reduction of matrix H.  The output is B, an size-reduced
 basis; T, a unimodular (det(T)=+/-1) transformation matrix such that B=
 H*T; Q and R such that B=Q*R and Q is orthonormal, and R is upper
