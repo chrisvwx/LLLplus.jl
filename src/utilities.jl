@@ -2,9 +2,10 @@
     orthogonalitydefect(B)
 
 Find the orthogonality defect of the matrix B defined, for example,
-on page 2 of Bennet 
+on page 2 of Bennet:
 
-[Bennet](http://users.eecs.northwestern.edu/~hbennett/publications/bases.pdf)
+"An Enumeration Technique for Lattice Basis Reduction" Huck Bennet, 2 Nov
+2018. https://web.eecs.umich.edu/~hdbco/publications/bases.pdf
 
 # Examples
 ```jldoctest
