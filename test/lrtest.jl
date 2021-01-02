@@ -30,7 +30,7 @@ those used in lattice cryptography).
 function lrtest(Ns::Int,N::Array{Int,1},L::Array{Int,1},
                 dataType::Array{DataType,1},distType)
 
-lrAlgs = [lll, seysen,]
+lrAlgs = [brun,lll, seysen,hkz,]
 
 @printf("      Ns      N      L   dataType")
 for ax = 1:min(length(lrAlgs),6)

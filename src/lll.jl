@@ -8,9 +8,12 @@ finally `Q` and `R` which are a QR decomposition of `B`.  So `H = B*inv(T) =
 Q*R*inv(T)`.
 
 Follows D. Wuebben, et al, "Lattice Reduction - A Survey with Applications
-in Wireless Communications", IEEE Signal Processing Magazine, Apr 2011. See
-also the floating-point algorithm of C. P. Schnorr. "A more efficient
-algorithm for lattice basis reduction". Journal of Algorithms, Vol 9, 1988.
+in Wireless Communications", IEEE Signal Processing Magazine, Apr 2011. 
+http://www.ant.uni-bremen.de/sixcms/media.php/102/10740/SPM_2011_Wuebben.pdf
+
+The LLL tecnique was originally described in "Factoring polynomials with rational
+coefficients" by A. K. Lenstra, H. W. Lenstra Jr. and L. Lovász, Mathematische
+Annalen 261, 1982. http://ftp.cs.elte.hu/~lovasz/scans/lll.pdf
 
 # Examples
 ```jldoctest

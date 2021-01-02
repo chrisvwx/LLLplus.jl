@@ -1,28 +1,25 @@
 """
-    x=hkz(B)
+    B,T=hkz(H)
 
-Do Hermite-Korkine-Zolotareff reduction of the basis B.
-HKZ reduction is sometimes called "Hermite-Korkine-Zolotareff" or
-"Korkine-Zolotareff" reduction. Note that `svp`
-does not handle complex numbers.
+Do Hermite-Korkine-Zolotarev (HKZ) reduction of the basis `H`, returning
+the reduced basis `B` and the unimodular rotation `T`. HKZ reduction is
+sometimes called "Hermite-Korkine-Zolotareff" or "Korkine-Zolotareff"
+reduction.
 
-This is the "HKZ-red" function for HKZ reduction in
-"Practical HKZ and Minkowski Lattice Reduction Algorithms" by
-Wen Zhang, Sanzheng Qiao, and Yimin Wei, 17 Aug. 2011.
+Based on "Practical HKZ and Minkowski Lattice Reduction Algorithms" by Wen
+Zhang, Sanzheng Qiao, and Yimin Wei, 17 Aug. 2011.
 http://www.cas.mcmaster.ca/~qiao/publications/ZQW11.pdf
 
 # Examples
 ```jldoctest
-julia> B=[1 2; 3 4];
+julia> H=[1 2; 3 4];
 
-julia> Z,_= hkz(B);
-
-julia> B*Z
+julia> B,T= hkz(H); B
 2×2 Array{Int64,2}:
   1  -1
  -1  -1
 
-julia> N=9; Bo=rand(0:10,N,N); Z,_=hkz(Bo); B=Bo*Z;
+julia> N=9; H=rand(0:10,N,N); B,_=hkz(H);
 
 julia> ishkzreduced(B)
 true
@@ -33,14 +30,59 @@ julia> A = [10.6347 -66.2715  9.3046 17.5349 24.9625 # From
                 0        0    0       0.0133 -0.0082 # p 1929.
                 0        0    0       0       0.0015];
 
-julia> Z,_= hkz(A); # our HKZ iplementation doesn't work well ...
+julia> B,_= hkz(A); # our HKZ doesn't work well on A ...
+
+julia> ishkzreduced(B) # ...because A is ill-conditioned
+false
+
+```
+"""
+function hkz(B::AbstractArray{Td,2}) where {Td<:Number}
+    Z,_ = hkz_red(B)
+    return B*Z,Z
+end
+
+
+"""
+    x=hkz_red(B)
+
+Do Hermite-Korkine-Zolotareff reduction of the basis B.
+
+This is the "HKZ-red" function for HKZ reduction in
+"Practical HKZ and Minkowski Lattice Reduction Algorithms" by
+Wen Zhang, Sanzheng Qiao, and Yimin Wei, 17 Aug. 2011.
+http://www.cas.mcmaster.ca/~qiao/publications/ZQW11.pdf
+
+# Examples
+```jldoctest
+julia> B=[1 2; 3 4];
+
+julia> Z,_= LLLplus.hkz_red(B);
+
+julia> B*Z
+2×2 Array{Int64,2}:
+  1  -1
+ -1  -1
+
+julia> N=9; Bo=rand(0:10,N,N); Z,_=LLLplus.hkz_red(Bo); B=Bo*Z;
+
+julia> ishkzreduced(B)
+true
+
+julia> A = [10.6347 -66.2715  9.3046 17.5349 24.9625 # From
+                0     8.6759 -4.7536 -3.9379 -2.3318 # TransIT, v65,
+                0        0    0.3876  0.1296 -0.2879 # n3, Mar 2019,
+                0        0    0       0.0133 -0.0082 # p 1929.
+                0        0    0       0       0.0015];
+
+julia> Z,_= LLLplus.hkz_red(A); # our HKZ doesn't work well on A ...
 
 julia> ishkzreduced(A*Z)  # ...because A is ill-conditioned
 false
 
 ```
 """
-function hkz(B::AbstractArray{Td,2}) where {Td<:Number}
+function hkz_red(B::AbstractArray{Td,2}) where {Td<:Number}
     m,n = size(B)
     Ti= getIntType(Td)
 
@@ -82,8 +124,8 @@ Wen Zhang, Sanzheng Qiao, and Yimin Wei, 17 Aug. 2011.
 http://www.cas.mcmaster.ca/~qiao/publications/ZQW11.pdf
 
 """
-function transform!(R::AbstractArray{Td,2},Z::AbstractArray{Ti,2},
-                    z::AbstractArray{Ti,1},k) where {Td<:Number,Ti<:Integer}
+function transform!(R::AbstractArray{Td,2},Z::AbstractArray{<:Integer,2},
+                    z::AbstractArray{<:Integer,1},k::Integer) where {Td<:Number}
     n = size(R,1)
     for j=n-k+1:-1:2
         if z[j]≠0
@@ -135,7 +177,7 @@ not. See the `hkz` function.
 julia> H= [1 2; 3 4];ishkzreduced(H)
 false
 
-julia> Z,_=hkz(H); ishkzreduced(H*Z)
+julia> B,_=hkz(H); ishkzreduced(B)
 true
 
 ```

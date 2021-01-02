@@ -10,6 +10,10 @@ Follows Seysen algorithm in "Lattice Reduction - A Survey with Applications
 in Wireless Communications" by D. Wuebben, et al, IEEE Signal Processing
 Magazine, 2011.
 
+Technique originally described in "Simultaneous reduction of a lattice basis
+and its reciprocal basis" by M. Seysen, Combinatorica, 1993.
+http://link.springer.com/article/10.1007%2FBF01202355
+
 # Examples
 ```jldoctest
 julia> H= [1 2; 3 4];B,T = seysen(H); B

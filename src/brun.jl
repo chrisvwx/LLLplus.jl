@@ -28,9 +28,10 @@ function brun(H::AbstractArray{Td,2}) where Td
     # get size
     K, M = size(H)
 
-    if rank(H) < K
-        error("Input basis does not have full row rank")
-    end 
+    #for BigInt, BigFloat, `rank` calls a generic SVD, which uses lotsa cycles.
+    # if rank(H) < K
+    #     error("Input basis does not have full row rank")
+    # end
 
     Ti= getIntType(Td)    
 
@@ -44,10 +45,10 @@ function brun(H::AbstractArray{Td,2}) where Td
     while doBrun
 
         # Calculation of Brun's update value
-        zw,s = findmax(mu)
+        _,s = findmax(mu)
         zw = copy(mu)
-        zw[s] = -typemax(zw[1])
-        zw,t = findmax(zw)
+        zw[s] = minimum(mu)[1]-one(Td) # previously zw[s] = -typemax(zw[1])
+        _,t = findmax(zw)
         r = round(mu[s]/mu[t])
         
         # basis update
@@ -66,8 +67,6 @@ function brun(H::AbstractArray{Td,2}) where Td
         else
             doBrun = false
         end
-
-    end # 
-
+    end
     return B, T
 end
