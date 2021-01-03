@@ -82,7 +82,7 @@ function cvp(r::AbstractArray{Td,1},G::AbstractArray{Td,2},
                     u[i] = roundGA(p[i])
                 end
                 y = (p[i]-u[i])*G[i,i]
-                Δ[i] = signGA(y)
+                Δ[i] = sgns(y)
                 λ[i] = λ[i+1]+y*y
             else
                 û .= u
@@ -103,13 +103,13 @@ function cvp(r::AbstractArray{Td,1},G::AbstractArray{Td,2},
                     y = typemax(Td)
                 end
                 u[i]+=Δ[i]
-                Δ[i]=-Δ[i]-signGA(Δ[i])
+                Δ[i]=-Δ[i]-sgns(Δ[i])
                 if infinite ≠ Val(true)
                     if Umin ≤ u[i] ≤ Umax
                         y = (p[i]-u[i])*G[i,i]
                     else
                         u[i]+=Δ[i]
-                        Δ[i]=-Δ[i]-signGA(Δ[i])
+                        Δ[i]=-Δ[i]-sgns(Δ[i])
                         if Umin ≤ u[i] ≤ Umax
                             y = (p[i]-u[i])*G[i,i]
                         end
@@ -132,9 +132,7 @@ function cvp(r::AbstractArray{Td,1},G::AbstractArray{Td,2},
     end
 end
 
-signGA(x) = x<=0 ? -one(x) : one(x)
-# likely can replace signGA with sgns
-sgns(x) = x<=0 ? -1 : 1
+sgns(x) = x<=0 ? -one(x) : one(x)
 
 function roundFinite(x,Umin,Umax)
     y=round(x)

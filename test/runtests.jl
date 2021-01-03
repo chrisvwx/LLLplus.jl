@@ -64,19 +64,15 @@ println("Testing Brun on real part of same $(N)x$(N) matrix...")
 @time (B,T) = brun(real.(H));
 @time (B,T) = brun(real.(H));
 
-# Test sphere decoder
-Ns = 100000;
-N = 3;
-println("\nTesting sphere decoder on $(Ns) samples of $(N)x$(N) BPSK system...")
-NN = randn(N,Ns)/sqrt(100);
-H = randn(N,N);
-C = [-1,1];
-Z = rand(1:2,N,Ns);
-X = C[Z];
-Y = H*X+NN;
-@time Xt = hardsphere(Y,H,2);
-@time Xt = hardsphere(Y,H,2);
-errRate = sum(abs.(X-Xt))/Ns;
+# Test CVP
+N=500;
+println("\nTesting cvp on $(N)x$(N) BPSK system...")
+H=randn(N,N);
+Q,R=qr(H);
+u=Int.(rand([-1,1],N));
+y=H*u+rand(N)/100;
+uhat=cvp(Q'*y,R,Val(false),-1,1);
+errRate = sum(abs.(u-uhat))
 println("Error Rate is $(errRate). It should be zero or very small.\n")
 
 # --------------
