@@ -46,7 +46,7 @@ end
 B = copy(H);
 N,L = size(B);
 Qt,R = qr(B);
-Q = Matrix(Qt); # A few cycles can be saved by skipping updates of the Q matrix.
+Q = Matrix(Qt); # A few cycles can be saved by removing Q and T
 
 Ti= getIntType(Td)
 T = Matrix{Ti}(I, L, L)

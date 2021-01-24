@@ -25,12 +25,12 @@ those used in lattice cryptography).
   # As function of Integer width
   lrtest(50,2.^[4;],[100;],[Int32,Int64,Int128,Float64,BigInt,BigFloat],"rand")
   # As function of N
-  lrtest(50,2.^[0:6;],[100;],[Float64],"rand")
+  lrtest(50,2 .^[0:6;],[100;],[Float64],"rand")
 """
 function lrtest(Ns::Int,N::Array{Int,1},L::Array{Int,1},
                 dataType::Array{DataType,1},distType)
 
-lrAlgs = [brun,lll, seysen,hkz,]
+lrAlgs = [hkz,lll,seysen, sizereduction,brun,]
 
 @printf("      Ns      N      L   dataType")
 for ax = 1:min(length(lrAlgs),6)

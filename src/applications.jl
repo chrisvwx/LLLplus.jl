@@ -252,6 +252,7 @@ values around the nominal k. This technique is related to that in
 robust tool, just a demo.
 
 [1] https://scholarworks.rit.edu/theses/64/
+
 [2] https://pdfs.semanticscholar.org/21a7/c2f9ff29507f1153aefcca04d1cd308e45c0.pdf
 
 # Examples
@@ -406,6 +407,7 @@ function spigotBBPvec(Td::Type{Tr},s,b,n,K) where {Tr<:Number}
     end
     return v
 end
+
 """
     spigotBBP(α::Td,s,b,n,K,verbose=false) where {Td}
 
