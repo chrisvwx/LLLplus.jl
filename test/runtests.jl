@@ -4,7 +4,6 @@
 using LLLplus
 using Test
 using LinearAlgebra
-using DelimitedFiles
 using Documenter
 
 # --------------
@@ -74,43 +73,6 @@ y=H*u+rand(N)/100;
 uhat=cvp(Q'*y,R,Val(false),-1,1);
 errRate = sum(abs.(u-uhat))
 println("Error Rate is $(errRate). It should be zero or very small.\n")
-
-# --------------
-# test norm for matrix from http://www.latticechallenge.org/
-# --------------
-
-# we should replace this section with more useful tests
-
-println("Testing now with 200x200 matrix from latticechallenge.org.")
-println("The min norm of the input should be 30, min norm of the "*
-        "reduced bases is hopefully smaller :-)")
-mat = readdlm("challenge-200.mod",Int64) #run from parent directory
-mat = Matrix(mat');
-N = size(mat,2)
-
-nrms = zeros(N,1);
-for ix=1:N
-    nrms[ix] = norm(mat[:,ix])
-end
-println("min norm of input is $(minimum(nrms))")
-
-@time B,_ = lll(mat);
-nrms = zeros(N,1);
-for ix=1:N
-    nrms[ix] = norm(B[:,ix]);
-end
-mlll=minimum(nrms)
-println("min norm of lll-reduced basis is $(mlll)")
-@test mlll<=30+1e-6
-
-@time B,_ = seysen(mat);
-nrms = zeros(N,1)
-for ix=1:N
-    nrms[ix] = norm(B[:,ix])
-end
-mSeysen = minimum(nrms)
-println("min norm of seysen-reduced basis is $(mSeysen)")
-@test mSeysen<=30+1e-6
 
 
 # --------------
