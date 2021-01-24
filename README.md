@@ -42,7 +42,10 @@ and thereby decode multi-antenna signals.
 Finally, to see how the LLL can be used to find spigot formulas for
 irrationals, see `spigotBBP`.
 
-### Examples
+
+<details>
+   <summary><b>Examples</b> (click for details)</summary>
+<p>
 
 Each function contains documentation and examples available via Julia's
 built-in documentation system, for example with `?lll`. Documentation
@@ -71,8 +74,12 @@ y=H*u+rand(N)/100;
 uhat=cvp(Q'*y,R);
 sum(abs.(u-uhat))
 ```
+</p>
+</details>
 
-### Execution Time results
+<details>
+   <summary><b>Execution Time results</b> (click for details)</summary>
+<p>
 
 In the first test we compare the `lll` function from LLLplus, the
 `l2avx` function in the `src\l2.jl` file in LLLplus, the
@@ -115,20 +122,19 @@ BigFloat) as well as type from external packages (Float128 from
 [Quadmath.jl](https://github.com/JuliaMath/Quadmath.jl) and Double64
 from [DoubleFloat.jl](https://github.com/JuliaMath/DoubleFloats.jl))
 which are used to 
-generate 40 128x128 matrices, over which execution time for the
+generate 60 16x16 matrices, over which execution time for the
 lattice reduction techniques is averaged.  The vertical axis is a
 logarithmic representation of execution time as in the previous
 figure. This figure was generated using code in `test/perftest.jl`.
 
 ![Time vs data type](docs/src/assets/perfVsDataType.png)
 
-### Notes
+</p>
+</details>
 
-There are certainly many improvements and additions that could be made
-to LLLplus. Even so, it would be hard to compete with
-[fplll](https://github.com/fplll/fplll) on features. In fact, a Julia
-wrapper around [fplll](https://github.com/fplll/fplll) would be the most
-useful addition to lattice tools in Julia.
+<details>
+   <summary><b>Notes</b> (click for details)</summary>
+<p>
 
 The algorithm pseudocode in a [survey paper by Wuebben](http://www.ant.uni-bremen.de/sixcms/media.php/102/10740/SPM_2011_Wuebben.pdf) and the
 [monograph by Bremner](https://www.amazon.com/Lattice-Basis-Reduction-Introduction-Applications/dp/1439807027) 

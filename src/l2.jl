@@ -1,3 +1,6 @@
+lll(H::AbstractArray{Rational{Td},2},δ=.75,η=.51) where {Td<:Integer} =
+    l2(H,Rational{Td},δ,η)
+
 """
     B = l2(H::AbstractArray{Td,2},TG::Type{Tg},δ=.75,η=.51) where {Td<:Number,Tg<:Number}
 
@@ -16,32 +19,30 @@ generally faster than `lll` on small bases, say of dimensions less than 80.
 
 # Examples
 ```jldoctest
-julia> using LLLplus
-julia> include("src/l2.jl")
-julia> H= [1 2; 3 4];B = l2(H)
+julia> H= [1 2; 3 4];B,_ = LLLplus.l2(H); B
 ┌ Warning: l2 is in a raw (alpha) state and may change. See the help text.
-└ @ LLLplus ~/shared/LLLplus/src/l2.jl:42
+└ @ LLLplus src/l2.jl:45
 2×2 Array{Int64,2}:
  1  -1
  1   1
 
-julia> H= [.5 2; 3 4]; B= l2(H)
+julia> H= [.5 2; 3 4]; B,_= LLLplus.l2(H); B
+┌ Warning: l2 is in a raw (alpha) state and may change. See the help text.
+└ @ LLLplus src/l2.jl:45
 2×2 Array{Float64,2}:
  1.5  -1.0
  1.0   2.0
 
-julia> H= BigFloat.([1.5 2; 3 4]) .+ 2im; B= l2(H);
-┌ Error: `l2` does not handle complex data yet; try `lll`.
-└ @ LLLplus ~/shared/LLLplus/src/l2.jl:50
-
-julia> N=30;H = randn(N,N); B = l2(H);
+julia> N=30;H = randn(N,N); B,T = LLLplus.l2(H);
+┌ Warning: l2 is in a raw (alpha) state and may change. See the help text.
+└ @ LLLplus src/l2.jl:45
 
 ```
 """
 function l2(H::AbstractArray{Td,2},TG::Type{Tg}=Td,δ=.75,η=.51) where
     {Td<:Number,Tg<:Number}
 
-    @warn "l2 is in a raw (alpha) state and may change. See the help text." maxlog=1
+    @warn "l2 is in a raw (alpha) state and may change. See the help text." maxlog=1 _file="src/l2.jl"
     
     if !(0.25 < δ < 1.0)
         error("δ must be between 1/4 and 1.");
@@ -128,7 +129,8 @@ function l2(H::AbstractArray{Td,2},TG::Type{Tg}=Td,δ=.75,η=.51) where
         end
         κ+=1
     end
-    return B
+    T = Ti.(round.(inv(H)*B))
+    return B,T
 end
 
 function lazysizereduction!(ηb,κ,B,G,r,μ,s,X,n,d,Tg)
@@ -176,7 +178,7 @@ function lazysizereduction!(ηb,κ,B,G,r,μ,s,X,n,d,Tg)
     end
     @goto startCholesky
 end
-
+#=
 """
     B = l2avx(H::AbstractArray{Td,2},TG::Type{Tg},δ=.75,η=.51) where
                          {Td<:Number,Tg<:Number}
@@ -188,7 +190,6 @@ from the `LoopVectorization.jl` package.  See the `l2` help text
 ```julia
 julia> using LLLplus
 julia> using LoopVectorization
-julia> include("src/l2.jl")
 julia> H= [1 2; 3 4];B = l2avx(H)
 ┌ Warning: l2avx is in a raw (alpha) state and may change. See the help text.
 └ @ LLLplus ~/shared/LLLplus/src/l2.jl:42
@@ -336,6 +337,7 @@ function lazysizereductionAVX!(ηb,κ,B,G,r,μ,s,X,n,d,Tg)
     end
     @goto startCholesky
 end
+=#
 
 
 

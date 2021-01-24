@@ -21,7 +21,8 @@ end
     integerfeasibility
     rationalapprox
     spigotBBP
-    hard_sphere
+    hkz
+    ishkzreduced
     issizereduced
     islllreduced
     orthogonalitydefect

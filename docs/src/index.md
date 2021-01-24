@@ -4,27 +4,28 @@
 CurrentModule = LLLplus
 ```
 
-LLLplus includes
+LLLplus provides
 [Lenstra-Lenstra-Lovász](https://en.wikipedia.org/wiki/Lenstra%E2%80%93Lenstra%E2%80%93Lov%C3%A1sz_lattice_basis_reduction_algorithm)
-(LLL), [Brun](https://en.wikipedia.org/wiki/Viggo_Brun), and Seysen
-lattice reduction; and solvers for the
+(LLL) lattice reduction, solvers for the
 [shortest vector problem](https://en.wikipedia.org/wiki/Lattice_problem#Shortest_vector_problem_(SVP))
 (SVP) and the [closest vector problem](https://en.wikipedia.org/wiki/Lattice_problem#Closest_vector_problem_.28CVP.29)
-(CVP). These tools are
+(CVP), and related algorithms. These tools are
 used in cryptography, digital communication, and integer programming.
 This package is experimental and not a robust tool; use at your own
 risk :-)
 
-LLL [1] lattice reduction is a powerful tool that is widely used in
+LLL lattice reduction is a powerful tool that is widely used in
 cryptanalysis, in cryptographic system design, in digital
 communications, and to solve other integer problems. The historical
 and practical prominence of the LLL technique in lattice tools is the
-reason for its use in the name "LLLplus". LLL reduction is
-often used as an approximate solution to the SVP.
-We also include Brun [2] and Seysen [3]
-lattice reduction techniques. The LLL, Brun, and Seysen algorithms are
-based on [4]. The CVP solver is based on [5] and can handle lattices
-and bounded integer constellations while the SVP solver is based on [6].
+reason for its use in the name "LLLplus". LLL reduction is often used
+as an approximate solution to the SVP.  We also include
+[Brun](https://archive.org/stream/skrifterutgitavv201chri#page/300/mode/2up)
+integer relations,
+[Seysen](http://link.springer.com/article/10.1007%2FBF01202355)
+lattice reduction, and
+[Hermite-Korkine-Zolotarev](http://www.cas.mcmaster.ca/~qiao/publications/ZQW11.pdf)
+lattice reduction techniques.
 
 One application of lattice tools is in cryptanalysis; as an demo of a
 cryptanalytic attack, see the `subsetsum` function.  The LLL algorithm
@@ -115,7 +116,7 @@ BigFloat) as well as type from external packages (Float128 from
 [Quadmath.jl](https://github.com/JuliaMath/Quadmath.jl) and Double64
 from [DoubleFloat.jl](https://github.com/JuliaMath/DoubleFloats.jl))
 which are used to 
-generate 40 128x128 matrices, over which execution time for the
+generate 60 16x16 matrices, over which execution time for the
 lattice reduction techniques is averaged.  The vertical axis is a
 logarithmic representation of execution time as in the previous
 figure. This figure was generated using code in `test/perftest.jl`.
@@ -124,14 +125,9 @@ figure. This figure was generated using code in `test/perftest.jl`.
 
 ### Notes
 
-There are certainly many improvements and additions that could be made
-to LLLplus. Even so, it would be hard to compete with
-[fplll](https://github.com/fplll/fplll) on features. In fact, a Julia
-wrapper around [fplll](https://github.com/fplll/fplll) would be the most
-useful addition to lattice tools in Julia.
-
-The algorithm pseudocode in the monograph [7] and the survey paper [4]
-were very helpful in writing the lattice reduction tools in LLLplus
+The algorithm pseudocode in a [survey paper by Wuebben](http://www.ant.uni-bremen.de/sixcms/media.php/102/10740/SPM_2011_Wuebben.pdf) and the
+[monograph by Bremner](https://www.amazon.com/Lattice-Basis-Reduction-Introduction-Applications/dp/1439807027) 
+were helpful in writing the lattice reduction tools in LLLplus
 and are a good resource for further study. If you are trying to break
 one of the [Lattice Challenge](http://www.latticechallenge.org)
 records or are looking for robust, well-proven lattice tools, look at
@@ -141,31 +137,3 @@ number-theoretic problems the
 it uses the [FLINT](http://flintlib.org/) C library to do LLL
 reduction on Nemo-specific data types.  Finally, no number theorists
 have worked on LLLplus; please treat the package as experimental.
-
-### References
-
-[1] A. K. Lenstra; H. W. Lenstra Jr.; L. Lovász, ["Factoring polynomials with rational coefficients"](http://ftp.cs.elte.hu/~lovasz/scans/lll.pdf). Mathematische Annalen 261, 1982.
-
-[2] V. Brun,
-["En generalisation av kjedebrøken I,"](https://archive.org/stream/skrifterutgitavv201chri#page/300/mode/2up)
-Skr. Vidensk. Selsk. Kristiana, Mat. Nat. Klasse, 1919.
-
-[3] M. Seysen, ["Simultaneous reduction of a lattice basis and its reciprocal basis"](http://link.springer.com/article/10.1007%2FBF01202355) Combinatorica, 1993.
-
-[4] D. Wuebben, D. Seethaler, J. Jalden, and G. Matz, ["Lattice Reduction - A Survey with Applications in Wireless Communications"](http://www.ant.uni-bremen.de/sixcms/media.php/102/10740/SPM_2011_Wuebben.pdf). IEEE Signal Processing Magazine, 2011.
-
-[5] A. Ghasemmehdi, E. Agrell, ["Faster Recursions in Sphere Decoding"](https://publications.lib.chalmers.se/records/fulltext/local_141586.pdf) IEEE
-Transactions on Information Theory, vol 57, issue 6 , June 2011.
-
-[6] E. Agrell, T. Eriksson, A. Vardy, and K. Zeger, ["Closest Point Search in
-Lattices"](https://www.researchgate.net/publication/3080772_Closest_point_search_in_lattices_IEEE_Trans_Inf_Theory)
-IEEE Transactions on Information Theory, vol. 48, no. 8, August 2002.
-
-[7] M. R. Bremner, ["Lattice Basis Reduction: An Introduction to the LLL
- Algorithm and Its Applications"](https://www.amazon.com/Lattice-Basis-Reduction-Introduction-Applications/dp/1439807027) CRC Press, 2012.
-
-
-
-## List of Functions
-```@index
-```

@@ -64,7 +64,7 @@ julia> B*Z
   1  -1
  -1  -1
 
-julia> N=9; Bo=rand(0:10,N,N); Z,_=LLLplus.hkz_red(Bo); B=Bo*Z;
+julia> N=10; Bo=rand(0:100,N,N); Z,_=LLLplus.hkz_red(Bo); B=Bo*Z;
 
 julia> ishkzreduced(B)
 true
