@@ -4,44 +4,28 @@
 CurrentModule = LLLplus
 ```
 
-LLLplus provides
+LLLplus provides lattice tools such as
 [Lenstra-Lenstra-Lovász](https://en.wikipedia.org/wiki/Lenstra%E2%80%93Lenstra%E2%80%93Lov%C3%A1sz_lattice_basis_reduction_algorithm)
-(LLL) lattice reduction, solvers for the
-[shortest vector problem](https://en.wikipedia.org/wiki/Lattice_problem#Shortest_vector_problem_(SVP))
-(SVP) and the [closest vector problem](https://en.wikipedia.org/wiki/Lattice_problem#Closest_vector_problem_.28CVP.29)
-(CVP), and related algorithms. These tools are
-used in cryptography, digital communication, and integer programming.
+(LLL) lattice reduction. This class of tools are of practical and
+theoretical use in cryptography, digital communication, and integer programming.
 This package is experimental and not a robust tool; use at your own
 risk :-)
 
-LLL lattice reduction is a powerful tool that is widely used in
-cryptanalysis, in cryptographic system design, in digital
-communications, and to solve other integer problems. The historical
-and practical prominence of the LLL technique in lattice tools is the
-reason for its use in the name "LLLplus". LLL reduction is often used
-as an approximate solution to the SVP.  We also include
-[Brun](https://archive.org/stream/skrifterutgitavv201chri#page/300/mode/2up)
-integer relations,
-[Seysen](http://link.springer.com/article/10.1007%2FBF01202355)
-lattice reduction, and
+LLLplus provides functions for LLL,
+[Seysen](http://link.springer.com/article/10.1007%2FBF01202355), and
 [Hermite-Korkine-Zolotarev](http://www.cas.mcmaster.ca/~qiao/publications/ZQW11.pdf)
-lattice reduction techniques.
+lattice reduction
+techniques. [Brun](https://archive.org/stream/skrifterutgitavv201chri#page/300/mode/2up)
+integer relations is included in the form of lattice
+reduction. Solvers for the [shortest
+vector](https://en.wikipedia.org/wiki/Lattice_problem#Shortest_vector_problem_(SVP))
+and the [closest
+vector](https://en.wikipedia.org/wiki/Lattice_problem#Closest_vector_problem_.28CVP.29)
+problems are also included; for more see the help text for the `lll`,
+`seysen`, `hkz`, `brun`, `svp`, and `cvp` functions. Several toy (demo)
+functions are also included; see the  `subsetsum`,
+`integerfeasibility`, `rationalapprox`, and  `spigotBBP` functions.
 
-One application of lattice tools is in cryptanalysis; as an demo of a
-cryptanalytic attack, see the `subsetsum` function.  The LLL algorithm
-has been shown to solve many integer programming feasibility problems;
-see `integerfeasibility` for a demo. Lattice tools are often used to
-study and solve Diophantine problems; for example in "simultaneous
-diophantine approximation" a vector of real numbers are approximated
-by rationals with a common deonminator. For a demo function, see
-`rationalapprox`.  The
-[MUMIMO.jl](https://github.com/christianpeel/MUMIMO.jl) package
-demostrates how the `cvp`, `lll`, `brun`, `seysen`, and
-[`vblast`](https://en.wikipedia.org/wiki/Bell_Laboratories_Layered_Space-Time)
-functions can be used to solve (exactly or approximately) CVP problems
-and thereby decode multi-antenna signals.
-Finally, to see how the LLL can be used to find spigot formulas for
-irrationals, see `spigotBBP`.
 
 ### Examples
 
@@ -125,9 +109,11 @@ figure. This figure was generated using code in `test/perftest.jl`.
 
 ### Notes
 
-The algorithm pseudocode in a [survey paper by Wuebben](http://www.ant.uni-bremen.de/sixcms/media.php/102/10740/SPM_2011_Wuebben.pdf) and the
+The 2020 [Simons Institute lattice](https://simons.berkeley.edu/programs/lattices2020)
+workshop, a
+[survey paper by Wuebben](http://www.ant.uni-bremen.de/sixcms/media.php/102/10740/SPM_2011_Wuebben.pdf), and the
 [monograph by Bremner](https://www.amazon.com/Lattice-Basis-Reduction-Introduction-Applications/dp/1439807027) 
-were helpful in writing the lattice reduction tools in LLLplus
+were helpful in writing the tools in LLLplus
 and are a good resource for further study. If you are trying to break
 one of the [Lattice Challenge](http://www.latticechallenge.org)
 records or are looking for robust, well-proven lattice tools, look at

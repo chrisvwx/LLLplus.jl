@@ -2,9 +2,9 @@
     B,T=hkz(H)
 
 Do Hermite-Korkine-Zolotarev (HKZ) reduction of the basis `H`, returning
-the reduced basis `B` and the unimodular rotation `T`. HKZ reduction is
-sometimes called "Hermite-Korkine-Zolotareff" or "Korkine-Zolotareff"
-reduction.
+the reduced basis `B` and the unimodular rotation `T` such that B = H*T.
+HKZ reduction is sometimes called "Hermite-Korkine-Zolotareff" or
+"Korkine-Zolotareff" reduction.
 
 Based on "Practical HKZ and Minkowski Lattice Reduction Algorithms" by Wen
 Zhang, Sanzheng Qiao, and Yimin Wei, 17 Aug. 2011.

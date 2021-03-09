@@ -1,10 +1,10 @@
 """
     x=cvp(y,R)
 
-Solve the problem `argmin_x ||z-Hx||` for integer x using the technique from
-the paper below, where H=QR and y=Q'*z. The input vector `y` is of length `n`,
-with `H` of dimension `n` by `n`, and the returned vector `x` of length
-`n`.
+Solve the problem `argmin_x ||y-Rx||` for integer x using the technique from
+the paper below. The input vector `y` is of length `n`, with upper
+triangular `R` of dimension `n` by `n`, and the returned vector `x` of
+length `n`.
 
     x=cvp(y,R,infinite=Val(true),Umax=-1,Umax=-Umin,nxMax=Int(ceil(log2(n)*1e6)))
 
@@ -292,5 +292,3 @@ function decodeSVPAgrell(H::AbstractArray{Td,2}) where {Td<:Number}
         @goto LOOP
     end
 end
-
-

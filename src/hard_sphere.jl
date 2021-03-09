@@ -67,11 +67,15 @@ hard_sphere(x...) = hardsphere(x...)
 """
     xh = algIIsmart(yp,R,Qc)
 
-Find the closest xh for yp=R*xh + w, where w is some unknown noise and x(i)
-is from the range [0,...,Qc(i)-1]. This implements the "Alg II-smart"
-hard-decision sphere decoder as in Damen, El Gamal, and Caire, Trans It
-03. This function is not exported from LLLplus at present and may disappear
-in the future. 
+Find the minimizing xh = argmin_x ||yp- R*x||, where `yp` is a length N
+vector, `R` is NxM, `xh` will be a length M vector, and x(i) is
+from the range [0,...,Qc(i)-1]. R is assumed to be upper triangular.
+
+This implements the "Alg II-smart" hard-decision sphere decoder as in "On
+Maximum-Likelihood Detection and the Search for the Closest Lattice Point,"
+M. O. Damen, H. El Gamal, and G. Caire, Transactions Information Theory,
+v49, Oct 2003. This function is not exported from LLLplus at present and may
+disappear in the future.
 
 # Examples:
 ```jldoctest
