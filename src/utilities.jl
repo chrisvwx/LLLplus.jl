@@ -12,7 +12,7 @@ on page 2 of Bennet:
 julia> H= [1 2; 3 4];B,T=lll(H);
 
 julia> [orthogonalitydefect(H) orthogonalitydefect(B)]
-1×2 Array{Float64,2}:
+1×2 Matrix{Float64}:
  7.07107  1.0
 
 ```

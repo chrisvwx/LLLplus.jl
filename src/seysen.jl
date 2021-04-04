@@ -17,12 +17,12 @@ http://link.springer.com/article/10.1007%2FBF01202355
 # Examples
 ```jldoctest
 julia> H= [1 2; 3 4];B,T = seysen(H); B
-2×2 Array{Int64,2}:
+2×2 Matrix{Int64}:
  -1  1
   1  1
 
 julia> H= BigFloat.([1.5 2; 3 4]) .+ 2im; B,_= seysen(H); B
-2×2 Array{Complex{BigFloat},2}:
+2×2 Matrix{Complex{BigFloat}}:
  0.0+1.0im  0.50+0.0im
  0.0+0.0im   1.0+0.0im
 

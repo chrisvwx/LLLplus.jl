@@ -21,7 +21,7 @@ Combinatorial Optimization, 6th International IPCO Conference, vol 1412, pp
 julia> A=[10 1 -9; 1 8 8]; xtrue=[0; 2; 9]; d=A*xtrue;
 
 julia> integerfeasibility(A,d)
-3-element Array{Int64,1}:
+3-element Vector{Int64}:
  0
  2
  9
@@ -29,7 +29,7 @@ julia> integerfeasibility(A,d)
 julia> A=[10 1.1 -9.1; 1 8 8]; d=A*xtrue;
 
 julia> integerfeasibility(A,d)
-3-element Array{Float64,1}:
+3-element Vector{Float64}:
  0.0
  2.0
  9.0
@@ -337,7 +337,7 @@ Introduction to the LLL Algorithm and Its Applications" CRC Press, 2012.
 julia> x = [0.3912641745333527; 0.5455179974014548; 0.1908698210882469];
 
 julia> rationalapprox(x,1e4,Int64)
-3-element Array{Rational{Int64},1}:
+3-element Vector{Rational{Int64}}:
  43//110
   6//11
  21//110

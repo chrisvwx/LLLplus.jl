@@ -19,12 +19,12 @@ Agrell, IEEE Transactions on Information Theory, vol 57, issue 6 , June 2011.
 # Examples
 ```jldoctest
 julia> H=[1 2; 3 4]; Q,R=qr(H); uhat = cvp(Q'*[0,2],R)
-2-element Array{Float64,1}:
+2-element Vector{Float64}:
   2.0
  -1.0
 
 julia> uhat = cvp(Q'*[0,2],R,Val(false),0,100)
-2-element Array{Float64,1}:
+2-element Vector{Float64}:
  1.0
  0.0
 
@@ -162,14 +162,14 @@ August 2002.
 # Examples
 ```jldoctest
 julia> H=[1 2; 3 4]; svp(H)
-2-element Array{Int64,1}:
+2-element Vector{Int64}:
  -1
  -1
 
 julia> H = [1 0 0 0;   0 1 0 0;   208 175 663 0;     651 479 0  663];
 
 julia> svp(H)
-4-element Array{Int64,1}:
+4-element Vector{Int64}:
   16
  -19
    3
@@ -201,7 +201,7 @@ in the lattice with basis B.
 # Examples
 ```jldoctest
 julia> H=[1 2; 3 4]; s=svp(H); u=LLLplus.svpu(H); [u s H*u]
-2×3 Array{Int64,2}:
+2×3 Matrix{Int64}:
   1  -1  -1
  -1  -1  -1
 
@@ -234,7 +234,7 @@ Theory, vol. 48, no. 8, August 2002.
 julia> H = inv([1.0 2; 0 4]);
 
 julia> uhat = LLLplus.decodeSVPAgrell(H)
-2-element Array{Int64,1}:
+2-element Vector{Int64}:
  -1
   0
 

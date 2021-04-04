@@ -15,12 +15,12 @@ is done, with the result that `W` will no longer have orthogonal rows and
 # Examples
 ```jldoctest
 julia> H= [1. 2; 3 4];W,_ = vblast(H); W
-2×2 Array{Float64,2}:
+2×2 Matrix{Float64}:
  1.5  -0.5
  0.1   0.3
 
 julia> H= BigFloat.([1.5 2; 3 4]) .+ 2im; W,_= vblast(H); W
-2×2 Array{Complex{BigFloat},2}:
+2×2 Matrix{Complex{BigFloat}}:
       -2.0+3.0im            2.0-1.5im     
  0.0779221-0.103896im  0.155844-0.103896im
 

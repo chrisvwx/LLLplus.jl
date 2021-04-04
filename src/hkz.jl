@@ -15,7 +15,7 @@ http://www.cas.mcmaster.ca/~qiao/publications/ZQW11.pdf
 julia> H=[1 2; 3 4];
 
 julia> B,T= hkz(H); B
-2×2 Array{Int64,2}:
+2×2 Matrix{Int64}:
   1  -1
  -1  -1
 
@@ -60,7 +60,7 @@ julia> B=[1 2; 3 4];
 julia> Z,_= LLLplus.hkz_red(B);
 
 julia> B*Z
-2×2 Array{Int64,2}:
+2×2 Matrix{Int64}:
   1  -1
  -1  -1
 

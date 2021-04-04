@@ -29,7 +29,7 @@ O. Regev. Post-Quantum Cryptography. Chapter of Lattice-based Cryptography,
 # Examples
 ```
 julia> b=gen_qary_b(Int64,2,1,6)
-2×2 Array{Int64,2}:
+2×2 Matrix{Int64}:
  1   0
  7  32
 
