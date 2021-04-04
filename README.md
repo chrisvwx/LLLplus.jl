@@ -5,12 +5,13 @@
 
 LLLplus provides lattice tools such as
 [Lenstra-Lenstra-Lovász](https://en.wikipedia.org/wiki/Lenstra%E2%80%93Lenstra%E2%80%93Lov%C3%A1sz_lattice_basis_reduction_algorithm)
-(LLL) lattice reduction. This class of tools are of practical and
-theoretical use in cryptography, digital communication, and integer programming.
+(LLL) lattice reduction which are of practical and
+theoretical use in cryptography, digital communication, integer
+programming, and more.
 This package is experimental and not a robust tool; use at your own
 risk :-)
 
-LLLplus provides functions for LLL,
+LLLplus has functions for LLL,
 [Seysen](http://link.springer.com/article/10.1007%2FBF01202355), and
 [Hermite-Korkine-Zolotarev](http://www.cas.mcmaster.ca/~qiao/publications/ZQW11.pdf)
 lattice reduction
@@ -30,7 +31,7 @@ functions are also included; see the  `subsetsum`,
 <p>
 
 Each function contains documentation and examples available via Julia's
-built-in documentation system, for example with `?lll`. Documentation
+built-in documentation system (try `?lll` or `@doc(lll)`). Documentation
 for all functions is [available](https://christianpeel.github.io/LLLplus.jl/dev). A tutorial notebook is
 found in the [`docs`](docs/LLLplusTutorial.ipynb) directory or on
 [nbviewer](https://nbviewer.jupyter.org/github/christianpeel/LLLplus.jl/blob/master/docs/LLLplusTutorial.ipynb).
@@ -43,11 +44,12 @@ Pkg.add("LLLplus")
 using LLLplus
 
 # do lattice reduction on a matrix with randn entries
-N = 100;
+N = 40;
 H = randn(N,N);
 B,T = brun(H);
 B,T = lll(H);
 B,T = seysen(H);
+B,T = hkz(H);
 
 # check out the CVP solver
 Q,R=qr(H);
@@ -63,28 +65,32 @@ sum(abs.(u-uhat))
    <summary><b>Execution Time results</b> (click for details)</summary>
 <p>
 
-In the first test we compare the `lll` function from LLLplus, the
+In the first test we compare several LLL functions: the `lll` function from LLLplus, the
 `l2avx` function in the `src\l2.jl` file in LLLplus, the
-`lll_with_transform` function from Nemo (which uses FLINT), and the
-`lll_reduction` function from fplll. Nemo and fplll are written by
-number theorists and are good benchmarks against which to compare.  We
-first show how the execution time varies as the basis (matrix) size
-varies over [4 8 16 32 64]. For each matrix size, 20 random bases
-are generated using fplll's `gen_qary` function with depth of 25
-bits, with the average execution time shown; the `eltype` is `Int64`
-except for NEMO, which uses GMP (its own `BigInt`); in all cases the
-`δ=.99`. The vertical axis shows
-execution time on a logarithmic scale; the x-axis is also
-logarithmic. The generally linear nature of the LLL curves supports
-the polynomial-time nature of the algorithm. The `LLLplus.lll`
-function is slower, while `l2avx` is similar to fplll. Though not
-shown, using bases from `gen_qary` with bit depth of 45 gives fplll
-a larger advantage. This figure was generated using code in
-`test/timeLLLs.jl`.
+`lll_with_transform` function from
+[Nemo.jl](https://github.com/Nemocas/Nemo.jl) (which uses FLINT), and
+the `lll_reduction` function from
+[fplll](https://github.com/fplll/fplll).  Nemo is written by number
+theorists, while fplll is written
+by lattice cryptanalysis academics; they are good benchmarks against which to compare.
+We first show how the execution time varies as the basis (matrix) size
+varies over [4 8 16 32 64]. For each matrix size, 20 random bases are
+generated using fplll's `gen_qary` function with depth of 25 bits,
+with the average execution time shown; the `eltype` is `Int64` except
+for NEMO, which can only use GMP (its own `BigInt`); in all cases the
+`δ=.99`. The vertical axis shows execution time on a logarithmic
+scale; the x-axis is also logarithmic. The generally linear nature of
+the LLL curves supports the polynomial-time nature of the
+algorithm. The `lll` function is slower, while `l2avx` is similar to
+fplll. Though not shown, using bases from `gen_qary` with bit depth of
+45 gives fplll a larger advantage. Though the LLLplus functions are
+not always the fastest, they are in the same ballpark as the C and
+C++ tools; if this package gets more users, we'll spend more time on
+speed :-)  This figure was generated using code in `test/timeLLLs.jl`.
 
 ![Time vs basis size](docs/src/assets/timeVdim_25bitsInt64.png)
 
-One question that could arise when looking at the plot above is what
+One additional question that could arise when looking at the plot above is what
 the quality of the basis is. In the next plot we show execution time
 vs the norm of the first vector in the reduced basis, this first
 vector is typically the smallest; its norm is an rough indication of

@@ -22,14 +22,14 @@ generally faster than `lll` on small bases, say of dimensions less than 80.
 julia> H= [1 2; 3 4];B,_ = LLLplus.l2(H); B
 ┌ Warning: l2 is in a raw (alpha) state and may change. See the help text.
 └ @ LLLplus src/l2.jl:45
-2×2 Array{Int64,2}:
+2×2 Matrix{Int64}:
  1  -1
  1   1
 
 julia> H= [.5 2; 3 4]; B,_= LLLplus.l2(H); B
 ┌ Warning: l2 is in a raw (alpha) state and may change. See the help text.
 └ @ LLLplus src/l2.jl:45
-2×2 Array{Float64,2}:
+2×2 Matrix{Float64}:
  1.5  -1.0
  1.0   2.0
 
@@ -193,7 +193,7 @@ julia> using LoopVectorization
 julia> H= [1 2; 3 4];B = l2avx(H)
 ┌ Warning: l2avx is in a raw (alpha) state and may change. See the help text.
 └ @ LLLplus ~/shared/LLLplus/src/l2.jl:42
-2×2 Array{Int64,2}:
+2×2 Matrix{Int64}:
  1  -1
  1   1
 ```

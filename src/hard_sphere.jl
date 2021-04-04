@@ -25,7 +25,7 @@ X=hardsphere(Y,H,Nc)
 # Examples:
 ```jldoctest
 julia> X = hardsphere([1. 1]', [1. 2; 3 4],2)
-2×1 Array{Int64,2}:
+2×1 Matrix{Int64}:
  -1
   1
 
@@ -80,7 +80,7 @@ disappear in the future.
 # Examples:
 ```jldoctest
 julia> X = LLLplus.algIIsmart([5. 8]', [1. 2; 0 4],[4,4])
-2×1 Array{Float64,2}:
+2×1 Matrix{Float64}:
  1.0
  2.0
 

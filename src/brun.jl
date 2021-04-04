@@ -17,7 +17,7 @@ Signal Processing Magazine, March 2011
 # Examples
 ```jldoctest
 julia> H=[1 2; 3 4]; B,T=brun(H); T
-2×2 Array{Int64,2}:
+2×2 Matrix{Int64}:
   3  -1
  -2   1
 

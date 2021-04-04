@@ -18,12 +18,12 @@ Annalen 261, 1982. http://ftp.cs.elte.hu/~lovasz/scans/lll.pdf
 # Examples
 ```jldoctest
 julia> H= [1 2; 3 4];B,_ = lll(H); B
-2×2 Array{Int64,2}:
+2×2 Matrix{Int64}:
  1  -1
  1   1
 
 julia> H= BigFloat.([1.5 2; 3 4]) .+ 2im; B,_= lll(H); B
-2×2 Array{Complex{BigFloat},2}:
+2×2 Matrix{Complex{BigFloat}}:
  0.50+0.0im  0.0+1.0im
   1.0+0.0im  0.0+0.0im
 
@@ -114,7 +114,7 @@ Algorithm and Its Applications" by Murray R. Bremner, CRC Press, 2012.
 # Examples
 ```jldoctest
 julia> H = [1 2; 3 3]; B = gauss(H)
-2×2 Array{Float64,2}:
+2×2 Matrix{Float64}:
  1.0  0.0
  0.0  3.0
 
@@ -196,12 +196,12 @@ Size reduction is the first part of LLL lattice reduction.
 # Examples
 ```jldoctest
 julia> H= [1 2; 3 4];B,_ = sizereduction(H); B
-2×2 Array{Int64,2}:
+2×2 Matrix{Int64}:
  1  1
  3  1
 
 julia> H= BigFloat.([1.5 2; 3 4]) .+ 2im; B,_= sizereduction(H); B
-2×2 Array{Complex{BigFloat},2}:
+2×2 Matrix{Complex{BigFloat}}:
  1.5+2.0im  0.50+0.0im
  3.0+2.0im   1.0+0.0im
 
