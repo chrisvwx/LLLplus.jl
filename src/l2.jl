@@ -40,7 +40,7 @@ julia> N=30;H = randn(N,N); B,T = LLLplus.l2(H);
 ```
 """
 function l2(H::AbstractArray{Td,2},TG::Type{Tg}=Td,δ=.75,η=.51) where
-    {Td<:Number,Tg<:Number}
+    {Td<:Any,Tg<:Any}
 
     @warn "l2 is in a raw (alpha) state and may change. See the help text." maxlog=1 _file="src/l2.jl"
     
