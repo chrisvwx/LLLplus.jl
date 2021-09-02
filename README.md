@@ -1,6 +1,6 @@
 # LLLplus.jl
 
-[![Build Status](https://travis-ci.org/christianpeel/LLLplus.jl.svg?branch=master)](https://travis-ci.org/christianpeel/LLLplus.jl)
+[![Build Status](https://github.com/christianpeel/LLLplus.jl/workflows/CI/badge.svg)](https://github.com/christianpeel/LLLplus.jl/actions)
 [![](https://img.shields.io/badge/docs-devel-blue.svg)](https://christianpeel.github.io/LLLplus.jl/dev)
 
 LLLplus provides lattice tools such as
@@ -129,7 +129,7 @@ workshop, a
 [survey paper by Wuebben](http://www.ant.uni-bremen.de/sixcms/media.php/102/10740/SPM_2011_Wuebben.pdf), and the
 [monograph by Bremner](https://www.amazon.com/Lattice-Basis-Reduction-Introduction-Applications/dp/1439807027) 
 were helpful in writing the tools in LLLplus
-and are a good resource for further study. If you are trying to break
+and are good resources for further study. If you are trying to break
 one of the [Lattice Challenge](http://www.latticechallenge.org)
 records or are looking for robust, well-proven lattice tools, look at
 [fplll](https://github.com/fplll/fplll). Also, for many

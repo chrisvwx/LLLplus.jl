@@ -32,6 +32,7 @@ include("lll.jl")          # lll, gauss, sizereduction
 include("l2.jl")           # lll on Rational{Integer} with `l2`
 include("cvp.jl")          # cvp, svp
 include("hkz.jl")
+include("bkz.jl")
 include("brun.jl")
 include("seysen.jl")
 include("vblast.jl")

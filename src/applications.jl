@@ -1,13 +1,15 @@
 """
-    integerfeasibility(A,d,nullVecs=false)
+    integerfeasibility(A,d)
 
 Given a linear system `Ax=d`, return an integer vector `x` which satisfies the
-system.  This is the *integer programming feasibility problem*.
+system.
 
-If `nullVecs==true`, then as well as returning a solution `x`, also return a
-matrix `xNull` of vectors in the null space of `A` which could be added to the
-`x` vector to find a solution which satisfies a constraint such as `0 .≤ x
-.≤ u`; see the paper below.  
+    integerfeasibility(A,d,true)
+
+If the third argument is present and is `true`, then as well as returning a
+solution `x`, also return a matrix `xNull` of vectors in the null space of
+`A` which could be added to the `x` vector to find a solution which
+satisfies a constraint such as `0 .≤ x .≤ u`; see the paper below.
 
 This is not a robust tool, just a demo.
 
@@ -275,7 +277,8 @@ julia> x=mdsubsetsum(a,s); s-x'*a
 0
 ```
 """
-function mdsubsetsum(a::AbstractArray{Td,1},sM::Td,ratio=.5,Kpm=3) where {Td<:Number}
+function mdsubsetsum(a::AbstractArray{Td,1},sM::Td,ratio=.5,Kpm=3,
+                     verbose=false) where {Td<:Number}
 
     Ti = getIntType(Td)
     n = Ti(length(a))
@@ -306,7 +309,7 @@ function mdsubsetsum(a::AbstractArray{Td,1},sM::Td,ratio=.5,Kpm=3) where {Td<:Nu
             end
         end
     end
-    @warn "Solution not found"
+    verbose && print("Solution not found")
     return missing
 end
 
