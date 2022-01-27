@@ -259,6 +259,8 @@ robust tool, just a demo.
 
 # Examples
 ```jldoctest
+julia> using Random, LLLplus
+
 julia> a=[1.5;.5;0;.1;.2]; s=2.2; x=mdsubsetsum(a,s); s-x'*a
 0.0
 
