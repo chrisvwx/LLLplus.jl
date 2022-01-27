@@ -202,7 +202,7 @@ julia> H= [1 2; 3 4];B,_ = sizereduction(H); B
 
 julia> H= BigFloat.([1.5 2; 3 4]) .+ 2im; B,_= sizereduction(H); B
 2×2 Matrix{Complex{BigFloat}}:
- 1.5+2.0im  0.50+0.0im
+ 1.5+2.0im   0.5+0.0im
  3.0+2.0im   1.0+0.0im
 
 julia> N=100;H = randn(N,N); B,T = sizereduction(H);
