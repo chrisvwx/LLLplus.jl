@@ -23,8 +23,8 @@ julia> H= [1 2; 3 4];B,T = seysen(H); B
 
 julia> H= BigFloat.([1.5 2; 3 4]) .+ 2im; B,_= seysen(H); B
 2×2 Matrix{Complex{BigFloat}}:
- 0.0+1.0im  0.50+0.0im
- 0.0+0.0im   1.0+0.0im
+ 0.0+1.0im  0.5+0.0im
+ 0.0+0.0im  1.0+0.0im
 
 ```
 """
