@@ -52,7 +52,7 @@ B,T = seysen(H);
 B,T = hkz(H);
 
 # check out the CVP solver
-Q,R=qr(H);
+Q,Rtmp=qr(H); R = UpperTriangular(Rtmp);
 u=Int.(rand(0:1e10,N));
 y=H*u+rand(N)/100;
 uhat=cvp(Q'*y,R);
@@ -79,12 +79,11 @@ generated using fplll's `gen_qary` function with depth of 25 bits,
 with the average execution time shown; the `eltype` is `Int64` except
 for NEMO, which can only use GMP (its own `BigInt`); in all cases the
 `δ=.99`. The vertical axis shows execution time on a logarithmic
-scale; the x-axis is also logarithmic. The generally linear nature of
-the LLL curves supports the polynomial-time nature of the
-algorithm. The `lll` function is slower, while `l2avx` is similar to
+scale; the x-axis is also logarithmic.
+The `lll` function is slower, while `l2avx` is similar to
 fplll. Though not shown, using bases from `gen_qary` with bit depth of
 45 gives fplll a larger advantage. Though the LLLplus functions are
-not always the fastest, they are in the same ballpark as the C and
+not the fastest, they are in the same ballpark as the C and
 C++ tools; if this package gets more users, we'll spend more time on
 speed :-)  This figure was generated using code in `test/timeLLLs.jl`.
 

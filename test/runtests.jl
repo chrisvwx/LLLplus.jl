@@ -69,7 +69,7 @@ end
     N=500;
     println("\nTesting cvp on $(N)x$(N) BPSK system...")
     H=randn(N,N);
-    Q,R=qr(H);
+    Q,Rtmp=qr(H); R=UpperTriangular(Rtmp);
     u=Int.(rand([-1,1],N));
     y=H*u+rand(N)/100;
     uhat=cvp(Q'*y,R,Val(false),-1,1);
