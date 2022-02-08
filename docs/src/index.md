@@ -50,7 +50,7 @@ B,T = lll(H);
 B,T = seysen(H);
 
 # check out the CVP solver
-Q,R=qr(H);
+Q,Rtmp=qr(H); R=UpperTriangular(Rtmp);
 u=Int.(rand(0:1e10,N));
 y=H*u+rand(N)/100;
 uhat=cvp(Q'*y,R);

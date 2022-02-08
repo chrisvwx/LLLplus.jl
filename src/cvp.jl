@@ -1,12 +1,12 @@
 """
-    x=cvp(y,R)
+    x=cvp(y,R::UpperTriangular)
 
 Solve the problem `argmin_x ||y-Rx||` for integer x using the technique from
 the paper below. The input vector `y` is of length `n`, with upper
 triangular `R` of dimension `n` by `n`, and the returned vector `x` of
 length `n`.
 
-    x=cvp(y,R,infinite=Val(true),Umax=-1,Umax=-Umin,nxMax=Int(ceil(log2(n)*1e6)))
+    x=cvp(y,R,infinite=Val(true),Umin=-1,Umax=-Umin,nxMax=Int(ceil(log2(n)*1e6)))
 
 If `infinite==Val(true)` then we search the (infinite) lattice, otherwise we
 search integers in `[Umin,Umax]`. When `nxMax` is included, it gives a
@@ -18,24 +18,24 @@ Agrell, IEEE Transactions on Information Theory, vol 57, issue 6 , June 2011.
 
 # Examples
 ```jldoctest
-julia> H=[1 2; 3 4]; Q,R=qr(H); uhat = cvp(Q'*[0,2],R)
+julia> H=[1 2; 3 4]; Q,R=qr(H); uhat = cvp(Q'*[0,2],UpperTriangular(R))
 2-element Vector{Float64}:
   2.0
  -1.0
 
-julia> uhat = cvp(Q'*[0,2],R,Val(false),0,100)
+julia> uhat = cvp(Q'*[0,2],UpperTriangular(R),Val(false),0,100)
 2-element Vector{Float64}:
  1.0
  0.0
 
-julia> n=100;H=randn(n,n);Q,R=qr(H);
+julia> n=100;H=randn(n,n); Q,Rt=qr(H); R=UpperTriangular(Rt);
 
 julia> u=Int.(rand(0:1e10,n));y=H*u+rand(n)/100;
 
 julia> uhat=cvp(Q'*y,R); sum(abs.(u-uhat))
 0.0
 
-julia> n=500;H=randn(n,n);Q,R=qr(H);
+julia> n=500;H=randn(n,n); Q,Rt=qr(H); R=UpperTriangular(Rt);
 
 julia> u=Int.(rand([-1,1],n));y=H*u+rand(n)/100;
 
@@ -43,7 +43,7 @@ julia> uhat=cvp(Q'*y,R,Val(false),-1,1); sum(abs.(u-uhat))
 0.0
 ```
 """
-function cvp(r::AbstractArray{Td,1},G::AbstractArray{Td,2},
+function cvp(r::AbstractArray{Td,1},G::UpperTriangular{Td,Array{Td,2}},
              infinite=Val(true),Umin=-1,Umax=-Umin,
              nxMax=typemax(Int)) where {Td<:Number}
 
