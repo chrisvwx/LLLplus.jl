@@ -23,7 +23,7 @@ and the [closest
 vector](https://en.wikipedia.org/wiki/Lattice_problem#Closest_vector_problem_.28CVP.29)
 problems are also included; for more see the help text for the `lll`,
 `seysen`, `hkz`, `brun`, `svp`, and `cvp` functions. Several toy (demo)
-functions are also included; see the  `subsetsum`,
+functions are also included; see the  `subsetsum`, `minimalpolynomial`,
 `integerfeasibility`, `rationalapprox`, and  `spigotBBP` functions.
 
 <details>

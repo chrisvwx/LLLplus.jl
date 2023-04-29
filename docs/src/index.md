@@ -6,12 +6,13 @@ CurrentModule = LLLplus
 
 LLLplus provides lattice tools such as
 [Lenstra-Lenstra-Lovász](https://en.wikipedia.org/wiki/Lenstra%E2%80%93Lenstra%E2%80%93Lov%C3%A1sz_lattice_basis_reduction_algorithm)
-(LLL) lattice reduction. This class of tools are of practical and
-theoretical use in cryptography, digital communication, and integer programming.
+(LLL) lattice reduction which are of practical and
+theoretical use in cryptography, digital communication, integer
+programming, and more.
 This package is experimental and not a robust tool; use at your own
 risk :-)
 
-LLLplus provides functions for LLL,
+LLLplus has functions for LLL,
 [Seysen](http://link.springer.com/article/10.1007%2FBF01202355), and
 [Hermite-Korkine-Zolotarev](http://www.cas.mcmaster.ca/~qiao/publications/ZQW11.pdf)
 lattice reduction
@@ -23,14 +24,14 @@ and the [closest
 vector](https://en.wikipedia.org/wiki/Lattice_problem#Closest_vector_problem_.28CVP.29)
 problems are also included; for more see the help text for the `lll`,
 `seysen`, `hkz`, `brun`, `svp`, and `cvp` functions. Several toy (demo)
-functions are also included; see the  `subsetsum`,
+functions are also included; see the  `subsetsum`, `minimalpolynomial`,
 `integerfeasibility`, `rationalapprox`, and  `spigotBBP` functions.
 
 
 ### Examples
 
 Each function contains documentation and examples available via Julia's
-built-in documentation system, for example with `?lll`. Documentation
+built-in documentation system (try `?lll` or `@doc(lll)`). Documentation
 for all functions is [available](https://christianpeel.github.io/LLLplus.jl/dev). A tutorial notebook is
 found in the `docs` directory or on
 [nbviewer](https://nbviewer.jupyter.org/github/christianpeel/LLLplus.jl/blob/master/docs/LLLplusTutorial.ipynb).
@@ -43,14 +44,15 @@ Pkg.add("LLLplus")
 using LLLplus
 
 # do lattice reduction on a matrix with randn entries
-N = 100;
+N = 40;
 H = randn(N,N);
 B,T = brun(H);
 B,T = lll(H);
 B,T = seysen(H);
+B,T = hkz(H);
 
 # check out the CVP solver
-Q,Rtmp=qr(H); R=UpperTriangular(Rtmp);
+Q,Rtmp=qr(H); R = UpperTriangular(Rtmp);
 u=Int.(rand(0:1e10,N));
 y=H*u+rand(N)/100;
 uhat=cvp(Q'*y,R);
@@ -59,11 +61,12 @@ sum(abs.(u-uhat))
 
 ### Execution Time results
 
-In the first test we compare the `lll` function from LLLplus, the
+In the first test we compare several LLL functions: the `lll` function from LLLplus, the
 `l2avx` function in the `src\l2.jl` file in LLLplus, the
 `lll_with_transform` function from Nemo (which uses FLINT), and the
-`lll_reduction` function from fplll. Nemo and fplll are written by
-number theorists and are good benchmarks against which to compare.  We
+`lll_reduction` function from fplll. Nemo is written by number
+theorists, while fplll is written
+by lattice cryptanalysis academics; they are good benchmarks against which to compare.  We
 first show how the execution time varies as the basis (matrix) size
 varies over [4 8 16 32 64]. For each matrix size, 20 random bases
 are generated using fplll's `gen_qary` function with depth of 25
@@ -80,7 +83,7 @@ a larger advantage. This figure was generated using code in
 
 ![Time vs basis size](assets/timeVdim_25bitsInt64.png)
 
-One question that could arise when looking at the plot above is what
+One additional question that could arise when looking at the plot above is what
 the quality of the basis is. In the next plot we show execution time
 vs the norm of the first vector in the reduced basis, this first
 vector is typically the smallest; its norm is an rough indication of
@@ -114,7 +117,7 @@ workshop, a
 [survey paper by Wuebben](http://www.ant.uni-bremen.de/sixcms/media.php/102/10740/SPM_2011_Wuebben.pdf), and the
 [monograph by Bremner](https://www.amazon.com/Lattice-Basis-Reduction-Introduction-Applications/dp/1439807027) 
 were helpful in writing the tools in LLLplus
-and are a good resource for further study. If you are trying to break
+and are good resources for further study. If you are trying to break
 one of the [Lattice Challenge](http://www.latticechallenge.org)
 records or are looking for robust, well-proven lattice tools, look at
 [fplll](https://github.com/fplll/fplll). Also, for many

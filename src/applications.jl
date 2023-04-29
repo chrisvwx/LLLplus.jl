@@ -326,7 +326,7 @@ approximation satisfies `max(abs.(x*q-round.(x*q)))≤sqrt(5)*2^(n/4 -
 5)*M^(-1/n)`; this equation comes from the paper below.  The LLL algorithm
 reduction is used to find the solution. The approximation vector is returned.
 This is also known as "simultaneous diophantine approximation"; see for
-example the title of the Hanrot paper below.
+example the Hanrot paper below.
 
 This is not a robust tool, just a demo.
 
@@ -494,4 +494,87 @@ function spigotBBP(α::Td,s,b,n,K,verbose=false) where {Td}
     else
         return av
     end
+end
+
+
+"""
+    minimalpolynomial(d,β::Td,p,verbose=false) where {Td<:Number}
+
+Find the minimal polynomial for some element 'α' of a field given the degree
+'d' of the polynomial, an approximation 'β' of 'α', and the number of
+significant (decimal) digits of precision 'p' in 'β'. Returns two things, a
+function, and a Bool indicating whether we think a true minimal polynomial
+was found.  The ouptut function takes a single argument of the same type as
+'β', and evaluates the estimated minimal polynomial over that argument.
+
+Follows technique in the following paper: "A Gentle Tutorial for
+Lattice-Based Cryptanalysis" by Joseph Surin and Shaanan Cohney,
+https://eprint.iacr.org/2023/032
+
+# Example
+```jldoctest
+julia> minimalpolynomial(3,8.70997594,8,true);
+Inputs:
+  d=3, β=8.709976, Td=Float64, p=8
+Output:
+  f(x) = x^3 - 21x^2 + 147x^1 + -348
+
+julia> f,success = minimalpolynomial(3,8.70997594,9); success
+false
+
+```
+"""
+function minimalpolynomial(d,β::Td,p,verbose=false) where {Td<:Number}
+    Ti = getIntType(Td)
+    B = zeros(Ti,d+1,d+1)
+    for ix = 1:d+1
+        B[1,ix] = floor(10^p*β^(ix-1))
+    end
+    B[2:d+1,1:d] = Matrix{Ti}(I,d,d)
+    Bp,_ = lll(B)
+    a = Bp[2:d+1,1]
+
+    # create f(x)
+    function ff(x::Td)
+        s = zero(Td)
+        for ix = 1:d
+            s += a[ix] * x^(ix-1)
+        end
+        s += x^d
+        return s
+    end
+
+    # compare f(β) to β
+    f = ff(β)
+    success = true
+    if abs(β/f) < 10^p
+        success = false
+    end
+
+    if verbose
+        @printf("Inputs:\n  d=%d, β=%f, Td=%s, p=%d\n",d,β,Td,p)
+        @printf("Output:\n")
+        @printf("  f(x) = x^%d",d)
+        for ix = d:-1:2
+            @printf(" %c %dx^%d",a[ix]<0 ? '-' : '+', abs(a[ix]),ix-1)
+        end
+        @printf(" + %d\n",a[1])
+        if ~success
+            @printf("The results look off\n")
+            @printf("  For a high-precision β, we expect f(β)≈0, here f(β) = %f\n",f)
+            @printf("  We expected to see abs(β/f(β)) > 10^%d, but instead saw ",p)
+            @printf("abs(β/f(β)) = %f\n",abs(β/f))
+            @printf("  We expected abs(β/f)/10^p>1, here abs(β/f)/10^%d = %f\n",
+                    p,abs(β/f)/10^p)
+            @printf("  Maybe β did not have %d digits of precision.\n",p)
+            @printf("  or the minimal polynomial does not have degree %d.\n",d)
+            x = abs.(Bp[:,2:end])[:]
+            aveB = sum(x)/length(x)
+            ratio = Bp[1,1]/aveB
+            @printf("  When succesful, we expect the ratio between the first element of\n")
+            @printf("  the shortest vector and the average of elements in other vectors\n")
+            @printf("  to be small or less than 1. Here the ratio was %f \n",ratio)
+        end
+    end
+    return ff,success
 end

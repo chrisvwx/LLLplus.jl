@@ -23,6 +23,7 @@ export
     subsetsum,lagariasodlyzko,mdsubsetsum,
     integerfeasibility,
     rationalapprox,spigotBBP,
+    minimalpolynomial,
     hardsphere, hard_sphere,
     issizereduced,islllreduced,orthogonalitydefect,hermitefactor,seysencond,
     gen_qary_b,gen_qary!,
@@ -36,7 +37,7 @@ include("bkz.jl")
 include("brun.jl")
 include("seysen.jl")
 include("vblast.jl")
-include("applications.jl") # subsetsum, integerfeasibility, rationalapprox
+include("applications.jl")
 include("utilities.jl")
 include("latticegen.jl")
 

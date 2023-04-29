@@ -12,9 +12,7 @@
   algorithm used in this function as the "sphere-decoder" because of its use
   in decoding digital signals and for the use of a multi-dimensional sphere
   to constrain search complexity. This function uses only hard-decision
-  decoding, hence the term "hardsphere".  To complete the vocabulary lesson,
-  the problem that number theorists call the "closest vector problem" is
-  labeled "integer least squares" by many GPS researchers.
+  decoding, hence the term "hardsphere".
 
 X=hardsphere(Y,H,Nc)
 

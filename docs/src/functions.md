@@ -21,6 +21,7 @@ end
     integerfeasibility
     rationalapprox
     spigotBBP
+    minimalpolynomial
     hkz
     ishkzreduced
     issizereduced
