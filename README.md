@@ -4,14 +4,13 @@
 [![](https://img.shields.io/badge/docs-devel-blue.svg)](https://christianpeel.github.io/LLLplus.jl/dev)
 
 LLLplus provides lattice tools such as
-[Lenstra-Lenstra-Lovász](https://en.wikipedia.org/wiki/Lenstra%E2%80%93Lenstra%E2%80%93Lov%C3%A1sz_lattice_basis_reduction_algorithm)
-(LLL) lattice reduction which are of practical and
+Lenstra-Lenstra-Lovász (LLL) lattice reduction which are of practical and
 theoretical use in cryptography, digital communication, integer
 programming, and more.
 This package is experimental and not a robust tool; use at your own
 risk :-)
 
-LLLplus has functions for LLL,
+LLLplus has functions for [LLL](https://en.wikipedia.org/wiki/Lenstra%E2%80%93Lenstra%E2%80%93Lov%C3%A1sz_lattice_basis_reduction_algorithm),
 [Seysen](http://link.springer.com/article/10.1007%2FBF01202355), and
 [Hermite-Korkine-Zolotarev](http://www.cas.mcmaster.ca/~qiao/publications/ZQW11.pdf)
 lattice reduction

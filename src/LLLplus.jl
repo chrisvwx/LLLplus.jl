@@ -23,7 +23,7 @@ export
     subsetsum,lagariasodlyzko,mdsubsetsum,
     integerfeasibility,
     rationalapprox,spigotBBP,
-    minimalpolynomial,
+    minimalpolynomial,partitionintwo,
     hardsphere, hard_sphere,
     issizereduced,islllreduced,orthogonalitydefect,hermitefactor,seysencond,
     gen_qary_b,gen_qary!,

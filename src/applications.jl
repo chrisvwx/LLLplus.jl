@@ -121,7 +121,7 @@ function subsetsum(a::AbstractArray{Td,1},ss::Td,verbose=false) where {Td<:Numbe
             return xlo,binarylo
         end
     end
-    return missing.*Bp[:,1]
+    return missing
 end
 
 
@@ -577,4 +577,48 @@ function minimalpolynomial(d,β::Td,p,verbose=false) where {Td<:Number}
         end
     end
     return ff,success
+end
+
+
+"""
+    x = partitionintwo(a)
+
+For a vector of integers `a`, check if the set `a` can be separated into two
+sets that each have the same sum. I.e. try to find a binary vector `x` such
+that for `y = .~ Bool.(x)` then `x'*a= y'*a. If no such partition is found,
+`missing` is returned, otherwise `x` and `y` are returned.
+
+# Examples
+```jldoctest
+julia> a = [3,1,1,2,2,1]; # from wikipedia page for Partition Problem
+
+julia> x,y=partitionintwo(a); [x y]
+6×2 BitMatrix:
+ 1  0
+ 0  1
+ 0  1
+ 0  1
+ 1  0
+ 0  1
+
+```
+"""
+function partitionintwo(a::AbstractArray{Td,1}) where {Td<:Number}
+    s = Td(sum(a)/2)
+
+    x,_ = subsetsum(a,s)
+    x = Bool.(x)
+    if ismissing(x[1])
+        return missing
+    else
+        y = .~ Bool.(x)
+        sx = x'*a
+        sy = y'*a
+
+        if sx==sy
+            return x,y
+        else
+            return missing
+        end
+    end
 end
