@@ -5,14 +5,13 @@ CurrentModule = LLLplus
 ```
 
 LLLplus provides lattice tools such as
-[Lenstra-Lenstra-Lovász](https://en.wikipedia.org/wiki/Lenstra%E2%80%93Lenstra%E2%80%93Lov%C3%A1sz_lattice_basis_reduction_algorithm)
-(LLL) lattice reduction which are of practical and
+Lenstra-Lenstra-Lovász (LLL) lattice reduction which are of practical and
 theoretical use in cryptography, digital communication, integer
 programming, and more.
 This package is experimental and not a robust tool; use at your own
 risk :-)
 
-LLLplus has functions for LLL,
+LLLplus has functions for [LLL](https://en.wikipedia.org/wiki/Lenstra%E2%80%93Lenstra%E2%80%93Lov%C3%A1sz_lattice_basis_reduction_algorithm),
 [Seysen](http://link.springer.com/article/10.1007%2FBF01202355), and
 [Hermite-Korkine-Zolotarev](http://www.cas.mcmaster.ca/~qiao/publications/ZQW11.pdf)
 lattice reduction
@@ -46,10 +45,10 @@ using LLLplus
 # do lattice reduction on a matrix with randn entries
 N = 40;
 H = randn(N,N);
-B,T = brun(H);
-B,T = lll(H);
-B,T = seysen(H);
-B,T = hkz(H);
+Bbrun,_ = brun(H);
+Blll,_ = lll(H);
+Bseysen,_ = seysen(H);
+Bhkz,_ = hkz(H);
 
 # check out the CVP solver
 Q,Rtmp=qr(H); R = UpperTriangular(Rtmp);
@@ -61,52 +60,18 @@ sum(abs.(u-uhat))
 
 ### Execution Time results
 
-In the first test we compare several LLL functions: the `lll` function from LLLplus, the
-`l2avx` function in the `src\l2.jl` file in LLLplus, the
-`lll_with_transform` function from Nemo (which uses FLINT), and the
-`lll_reduction` function from fplll. Nemo is written by number
-theorists, while fplll is written
-by lattice cryptanalysis academics; they are good benchmarks against which to compare.  We
-first show how the execution time varies as the basis (matrix) size
-varies over [4 8 16 32 64]. For each matrix size, 20 random bases
-are generated using fplll's `gen_qary` function with depth of 25
-bits, with the average execution time shown; the `eltype` is `Int64`
-except for NEMO, which uses GMP (its own `BigInt`); in all cases the
-`δ=.99`. The vertical axis shows
-execution time on a logarithmic scale; the x-axis is also
-logarithmic. The generally linear nature of the LLL curves supports
-the polynomial-time nature of the algorithm. The `LLLplus.lll`
-function is slower, while `l2avx` is similar to fplll. Though not
-shown, using bases from `gen_qary` with bit depth of 45 gives fplll
-a larger advantage. This figure was generated using code in
-`test/timeLLLs.jl`.
-
-![Time vs basis size](assets/timeVdim_25bitsInt64.png)
-
-One additional question that could arise when looking at the plot above is what
-the quality of the basis is. In the next plot we show execution time
-vs the norm of the first vector in the reduced basis, this first
-vector is typically the smallest; its norm is an rough indication of
-the quality of the reduced basis. We show results averaged over 20
-random bases from `gen_qary` with depth `25` bits, this time with the
-dimension fixed at `32`. The curve is created by varying the `δ`
-parameter from `.29` to `.99` in steps of `.2`; the larger times and
-smaller norms correspond to the largest `δ` values. Though the `l2avx`
-function is competitive with fplll in this case, in most cases
-the fplll code is faster.
-
-![Time vs reduction quality](assets/timeVsmallest_25bitsInt64.png)
-
-Finally, we show execution time for several built-in
-datatypes (Int32, Int64, Int128, Float32, Float64, BitInt, and
-BigFloat) as well as type from external packages (Float128 from
+To give a flavor of the behavior of the functions in LLLplus,
+we show execution time for several built-in datatypes (Int32,
+Int64, Int128, Float32, Float64, BitInt, and BigFloat) as well as type
+from external packages (Float128 from
 [Quadmath.jl](https://github.com/JuliaMath/Quadmath.jl) and Double64
 from [DoubleFloat.jl](https://github.com/JuliaMath/DoubleFloats.jl))
-which are used to 
-generate 60 16x16 matrices, over which execution time for the
-lattice reduction techniques is averaged.  The vertical axis is a
-logarithmic representation of execution time as in the previous
-figure. This figure was generated using code in `test/perftest.jl`.
+which are used to generate 100 16x16 matrices with elements uniformly
+distributed over `-100` to `100`. The figure shows average execution
+time when using these matrices as input lattice bases for several
+functions from LLLplus. See `test/perftest.jl` for the code to
+regenerate the figure and for another line of code that generates a
+figure of execution time versus basis dimension.
 
 ![Time vs data type](assets/perfVsDataType.png)
 

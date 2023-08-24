@@ -22,6 +22,7 @@ end
     rationalapprox
     spigotBBP
     minimalpolynomial
+    partitionintwo
     hkz
     ishkzreduced
     issizereduced

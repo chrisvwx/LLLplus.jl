@@ -30,7 +30,7 @@ those used in lattice cryptography).
 function lrtest(Ns::Int,N::Array{Int,1},L::Array{Int,1},
                 dataType::Array{DataType,1},distType)
 
-lrAlgs = [hkz,lll,seysen, sizereduction,brun,]
+lrAlgs = [seysen,lll, sizereduction,brun,]
 
 @printf("      Ns      N      L   dataType")
 for ax = 1:min(length(lrAlgs),6)
@@ -48,6 +48,7 @@ if length(N)>1
     yscale=:log10;
     xval = N;
     xlab = "Matrix Size";
+    xtickStrs = [string(ix) for ix ∈ N]
     tstr = @sprintf("Ns=%d,Type=%s,dist=%s",
                     Ns,string(dataType[1]),distType);
 elseif length(L)>1

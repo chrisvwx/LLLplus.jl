@@ -180,28 +180,28 @@ function lazysizereduction!(ηb,κ,B,G,r,μ,s,X,n,d,Tg)
 end
 #=
 """
-    B = l2avx(H::AbstractArray{Td,2},TG::Type{Tg},δ=.75,η=.51) where
+    B = l2turbo(H::AbstractArray{Td,2},TG::Type{Tg},δ=.75,η=.51) where
                          {Td<:Number,Tg<:Number}
 
-A version of the `l2` function with a few calls to the `@avx` macro
+A version of the `l2` function with a few calls to the `@turbo` macro
 from the `LoopVectorization.jl` package.  See the `l2` help text
 
 # Examples
 ```julia
 julia> using LLLplus
 julia> using LoopVectorization
-julia> H= [1 2; 3 4];B = l2avx(H)
-┌ Warning: l2avx is in a raw (alpha) state and may change. See the help text.
+julia> H= [1 2; 3 4];B = l2turbo(H)
+┌ Warning: l2turbo is in a raw (alpha) state and may change. See the help text.
 └ @ LLLplus ~/shared/LLLplus/src/l2.jl:42
 2×2 Matrix{Int64}:
  1  -1
  1   1
 ```
 """
-function l2avx(H::AbstractArray{Td,2},TG::Type{Tg}=Td,δ=.75,η=.51) where
+function l2turbo(H::AbstractArray{Td,2},TG::Type{Tg}=Td,δ=.75,η=.51) where
     {Td<:Number,Tg<:Number}
 
-    @warn "l2avx is in a raw (alpha) state and may change. See the help text." maxlog=1
+    @warn "l2turbo is in a raw (alpha) state and may change. See the help text." maxlog=1
     
     if !(0.25 < δ < 1.0)
         error("δ must be between 1/4 and 1.");
@@ -218,7 +218,7 @@ function l2avx(H::AbstractArray{Td,2},TG::Type{Tg}=Td,δ=.75,η=.51) where
     ϵ = .001  # ϵ = eps(Td) may be too small
     C = ϵ
     if Tf <: Complex
-        @error "`l2avx` does not handle complex data; try `lll`."
+        @error "`l2turbo` does not handle complex data; try `lll`."
         return
     end
     Tfe = real(Tf)
@@ -268,7 +268,7 @@ function l2avx(H::AbstractArray{Td,2},TG::Type{Tg}=Td,δ=.75,η=.51) where
             B[:,κ] .= bκp
             
             if κ<d
-                @avx for i=κ:κp
+                @turbo for i=κ:κp
                     for d1=1:d
                         G[d1,i] = B[1,d1]*B[1,i]
                         for d2=2:d
@@ -320,12 +320,12 @@ function lazysizereductionAVX!(ηb,κ,B,G,r,μ,s,X,n,d,Tg)
                 μ[κ,j]-=X[i]*μ[i,j]
             end
         end
-        @avx for nx=1:n
+        @turbo for nx=1:n
             for i = 1:κ-1
                 B[nx,κ] -=X[i]*B[nx,i]
             end
         end
-        @avx for d1=1:d
+        @turbo for d1=1:d
             G[d1,κ] = B[1,d1]*B[1,κ]
             for d2=2:d
                 G[d1,κ] += B[d2,d1]*B[d2,κ]
