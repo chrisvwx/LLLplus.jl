@@ -17,5 +17,5 @@ makedocs(
 )
 
 deploydocs(
-    repo   = "github.com/christianpeel/LLLplus.jl.git"
+    repo   = "github.com/chrisvwx/LLLplus.jl.git"
 )

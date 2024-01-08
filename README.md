@@ -1,7 +1,7 @@
 # LLLplus.jl
 
-[![Build Status](https://github.com/christianpeel/LLLplus.jl/workflows/CI/badge.svg)](https://github.com/christianpeel/LLLplus.jl/actions)
-[![](https://img.shields.io/badge/docs-devel-blue.svg)](https://christianpeel.github.io/LLLplus.jl/dev)
+[![Build Status](https://github.com/chrisvwx/LLLplus.jl/workflows/CI/badge.svg)](https://github.com/chrisvwx/LLLplus.jl/actions)
+[![](https://img.shields.io/badge/docs-devel-blue.svg)](https://chrisvwx.github.io/LLLplus.jl/dev)
 
 LLLplus provides lattice tools such as Lenstra-Lenstra-Lovász (LLL)
 lattice reduction which are of practical and theoretical use in
@@ -30,9 +30,9 @@ functions are also included; see the  `subsetsum`, `minimalpolynomial`,
 
 Each function contains documentation and examples available via Julia's
 built-in documentation system (try `?lll` or `@doc(lll)`). Documentation
-for all functions is [available](https://christianpeel.github.io/LLLplus.jl/dev). A tutorial notebook is
+for all functions is [available](https://chrisvwx.github.io/LLLplus.jl/dev). A tutorial notebook is
 found in the [`docs`](docs/LLLplusTutorial.ipynb) directory or on
-[nbviewer](https://nbviewer.jupyter.org/github/christianpeel/LLLplus.jl/blob/master/docs/LLLplusTutorial.ipynb).
+[nbviewer](https://nbviewer.jupyter.org/github/chrisvwx/LLLplus.jl/blob/master/docs/LLLplusTutorial.ipynb).
 
 Here are a few examples of using the functions in the
 package on random lattices.

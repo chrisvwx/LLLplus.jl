@@ -31,9 +31,9 @@ functions are also included; see the  `subsetsum`, `minimalpolynomial`,
 
 Each function contains documentation and examples available via Julia's
 built-in documentation system (try `?lll` or `@doc(lll)`). Documentation
-for all functions is [available](https://christianpeel.github.io/LLLplus.jl/dev). A tutorial notebook is
+for all functions is [available](https://chrisvwx.github.io/LLLplus.jl/dev). A tutorial notebook is
 found in the `docs` directory or on
-[nbviewer](https://nbviewer.jupyter.org/github/christianpeel/LLLplus.jl/blob/master/docs/LLLplusTutorial.ipynb).
+[nbviewer](https://nbviewer.jupyter.org/github/chrisvwx/LLLplus.jl/blob/master/docs/LLLplusTutorial.ipynb).
 
 Here are a few examples of using the functions in the
 package on random lattices.
