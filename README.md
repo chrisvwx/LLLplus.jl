@@ -7,7 +7,7 @@ LLLplus provides lattice tools such as Lenstra-Lenstra-Lovász (LLL)
 lattice reduction which are of practical and theoretical use in
 cryptography, digital communication, integer programming, and more.
 This package is experimental and not a robust tool; use at your own
-risk :-)
+risk  :-)
 
 LLLplus has functions for [LLL](https://en.wikipedia.org/wiki/Lenstra%E2%80%93Lenstra%E2%80%93Lov%C3%A1sz_lattice_basis_reduction_algorithm),
 [Seysen](http://link.springer.com/article/10.1007%2FBF01202355), and

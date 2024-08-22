@@ -163,14 +163,14 @@ This function does not work; see the second example below.
 
 # Examples
 ```jldoctest
-julia> H=[1 2; 3 4]; svp(H)
+julia> H=[1 2; 3 4]; LLLplus.svp(H)
 2-element Vector{Int64}:
  -1
  -1
 
 julia> H = [1 0 0 0;   0 1 0 0;   208 175 663 0;     651 479 0  663];
 
-julia> svp(H)
+julia> LLLplus.svp(H)
 4-element Vector{Int64}:
   16
  -19
