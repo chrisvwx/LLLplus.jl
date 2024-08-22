@@ -159,6 +159,8 @@ Lattices" by Erik Agrell, Thomas Eriksson, Alexander Vardy, and
 Kenneth Zeger in IEEE Transactions on Information Theory, vol. 48, no. 8,
 August 2002.
 
+This function does not work; see the second example below.
+
 # Examples
 ```jldoctest
 julia> H=[1 2; 3 4]; svp(H)
@@ -178,6 +180,8 @@ julia> svp(H)
 ```
 """
 function svp(G::AbstractArray{Td,2}) where {Td<:Number}
+
+    @warn("This function appears broken; see the example...")
 
     m,n = size(G)
     if n==1 return G[:,1];    end

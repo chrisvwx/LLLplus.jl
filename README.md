@@ -15,12 +15,10 @@ LLLplus has functions for [LLL](https://en.wikipedia.org/wiki/Lenstra%E2%80%93Le
 lattice reduction
 techniques. [Brun](https://archive.org/stream/skrifterutgitavv201chri#page/300/mode/2up)
 integer relations is included in the form of lattice
-reduction. Solvers for the [shortest
-vector](https://en.wikipedia.org/wiki/Lattice_problem#Shortest_vector_problem_(SVP))
-and the [closest
+reduction. A solver for the  [closest
 vector](https://en.wikipedia.org/wiki/Lattice_problem#Closest_vector_problem_.28CVP.29)
-problems are also included; for more see the help text for the `lll`,
-`seysen`, `hkz`, `brun`, `svp`, and `cvp` functions. Several toy (demo)
+problem is also included; for more see the help text for the `lll`,
+`seysen`, `hkz`, `brun`, and `cvp` functions. Several toy (demo)
 functions are also included; see the  `subsetsum`, `minimalpolynomial`,
 `integerfeasibility`, `rationalapprox`, and  `spigotBBP` functions.
 
