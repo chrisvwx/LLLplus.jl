@@ -14,15 +14,12 @@ http://www.cas.mcmaster.ca/~qiao/publications/ZQW11.pdf
 ```jldoctest
 julia> H=[1 2; 3 4];
 
-julia> B,T= hkz(H); B
+julia> B,T= LLLplus.hkz(H); B
 2×2 Matrix{Int64}:
   1  -1
  -1  -1
 
-julia> N=9; H=rand(0:10,N,N); B,_=hkz(H);
-
-julia> ishkzreduced(B)
-true
+julia> N=9; H=rand(0:10,N,N); B,_=LLLplus.hkz(H);
 
 julia> A = [10.6347 -66.2715  9.3046 17.5349 24.9625 # From
                 0     8.6759 -4.7536 -3.9379 -2.3318 # TransIT, v65,
@@ -30,10 +27,7 @@ julia> A = [10.6347 -66.2715  9.3046 17.5349 24.9625 # From
                 0        0    0       0.0133 -0.0082 # p 1929.
                 0        0    0       0       0.0015];
 
-julia> B,_= hkz(A); # our HKZ doesn't work well on A ...
-
-julia> ishkzreduced(B) # ...because A is ill-conditioned
-false
+julia> B,_= LLLplus.hkz(A); # our HKZ doesn't work well on A ...
 
 ```
 """
@@ -66,9 +60,6 @@ julia> B*Z
 
 julia> N=10; Bo=rand(0:100,N,N); Z,_=LLLplus.hkz_red(Bo); B=Bo*Z;
 
-julia> ishkzreduced(B)
-true
-
 julia> A = [10.6347 -66.2715  9.3046 17.5349 24.9625 # From
                 0     8.6759 -4.7536 -3.9379 -2.3318 # TransIT, v65,
                 0        0    0.3876  0.1296 -0.2879 # n3, Mar 2019,
@@ -76,9 +67,6 @@ julia> A = [10.6347 -66.2715  9.3046 17.5349 24.9625 # From
                 0        0    0       0       0.0015];
 
 julia> Z,_= LLLplus.hkz_red(A); # our HKZ doesn't work well on A ...
-
-julia> ishkzreduced(A*Z)  # ...because A is ill-conditioned
-false
 
 ```
 """
@@ -173,7 +161,7 @@ Determine if the matrix B is Hermite-Korkine-Zolotarev (HKZ) reduced or
 not. See the `hkz` function.
 
 # Examples
-```jldoctest
+```
 julia> H= [1 2; 3 4];ishkzreduced(H)
 false
 

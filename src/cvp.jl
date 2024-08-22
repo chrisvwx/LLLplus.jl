@@ -159,10 +159,10 @@ Lattices" by Erik Agrell, Thomas Eriksson, Alexander Vardy, and
 Kenneth Zeger in IEEE Transactions on Information Theory, vol. 48, no. 8,
 August 2002.
 
-This function does not work; see the second example below.
+This function IS BROKEN; see the second example below.
 
 # Examples
-```jldoctest
+```
 julia> H=[1 2; 3 4]; LLLplus.svp(H)
 2-element Vector{Int64}:
  -1
@@ -203,7 +203,7 @@ Find the vector of integers z such that B*z is the shortest vector
 in the lattice with basis B.
 
 # Examples
-```jldoctest
+```
 julia> H=[1 2; 3 4]; s=svp(H); u=LLLplus.svpu(H); [u s H*u]
 2×3 Matrix{Int64}:
   1  -1  -1

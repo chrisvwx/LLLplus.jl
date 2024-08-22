@@ -13,7 +13,6 @@ using Printf
 export
     lll,
     cvp,
-    hkz,ishkzreduced,
     brun,
     gauss,
     sizereduction,

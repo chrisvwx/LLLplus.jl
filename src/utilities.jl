@@ -177,8 +177,8 @@ Volume of fundamental parallelepiped of a lattice with basis B.
 
 # Examples
 ```jldoctest
-julia> B = [1 2; 3 4]; LLLplus.volume(B)
-1.9999999999999964
+julia> B = [1 2; 3 4]; round(LLLplus.volume(B)*10000)/10000
+2.0
 
 ```
 """

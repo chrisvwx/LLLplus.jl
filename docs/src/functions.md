@@ -10,7 +10,6 @@ end
 ```@docs
     lll
     cvp
-    svp
     brun
     gauss
     seysen
