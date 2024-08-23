@@ -22,8 +22,6 @@ end
     spigotBBP
     minimalpolynomial
     partitionintwo
-    hkz
-    ishkzreduced
     issizereduced
     islllreduced
     orthogonalitydefect
