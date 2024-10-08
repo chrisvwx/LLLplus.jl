@@ -28,7 +28,7 @@ julia> H= BigFloat.([1.5 2; 3 4]) .+ 2im; B,_= seysen(H); B
 
 ```
 """
-function seysen(H::Array{Td,2}) where {Td}
+function seysen(H::AbstractMatrix{Td}) where {Td}
 
 if Td<:BigInt || Td<:BigFloat
     Ti= Td<:Complex ? Complex{BigInt} : BigInt
@@ -43,7 +43,7 @@ end
 n,m = size(H); # m-dimensional lattice in an n-dimensional space
 
 # initialization, outputs
-B      = copy(H);    # reduced lattice basis
+B      = copy!(similar(H), H) # reduced lattice basis
 num_it = 0;          # number of iterations
 T      = Matrix{Ti}(I, m, m)  # unimodular matrix
 A      = (H'*H)*1.0;          # Gram matrix of H
