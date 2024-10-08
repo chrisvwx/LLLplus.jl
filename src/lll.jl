@@ -43,7 +43,7 @@ if Td<:Rational
     @warn "`lll` does not handle Rationals well; try `l2`."
 end
 
-B = copy(H);
+B = copy!(similar(H), H)
 N,L = size(B);
 Qt,R = qr(B);
 Q = Matrix(Qt); # A few cycles can be saved by removing Q and T
@@ -210,7 +210,7 @@ julia> N=100;H = randn(N,N); B,T = sizereduction(H);
 ```
 """
 function sizereduction(H::Array{Td,2}) where {Td}
-    B = copy(H);
+    B = copy!(similar(H), H)
     L = size(B,2);
     Q,R = qr(B);
 

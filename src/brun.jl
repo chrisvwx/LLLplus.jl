@@ -37,16 +37,16 @@ function brun(H::AbstractArray{Td,2}) where Td
 
     grammian = H'*H
     metric_vec = sqrt.(abs.(diag(grammian')))
-    mu  = grammian[:,1] # initialize mu with an arbitrary column of the Grammian
+    mu = copy!(similar(grammian[:,1]), @view grammian[:,1]) # initialize mu with an arbitrary column of the Grammian
     T = Matrix{Ti}(I, K, K)   # unimodular transformation matrix 
-    B = copy(H) 
+    B = copy!(similar(H), H)
 
     doBrun = true
     while doBrun
 
         # Calculation of Brun's update value
         _,s = findmax(mu)
-        zw = copy(mu)
+        zw = copy!(similar(mu), mu)
         zw[s] = minimum(mu)[1]-one(Td) # previously zw[s] = -typemax(zw[1])
         _,t = findmax(zw)
         r = round(mu[s]/mu[t])
