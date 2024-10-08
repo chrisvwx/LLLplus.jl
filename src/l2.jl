@@ -76,7 +76,7 @@ function l2(H::AbstractArray{Td,2},TG::Type{Tg}=Td,δ=.75,η=.51) where
 
     δ= Tfe(δ);
     η= Tfe(η)
-    B = copy(H)
+    B = copy!(similar(H), H)
     G = Tg.(B)'*B
     ηb= (η+.5)/2
     δb= (δ+1)/2
@@ -236,7 +236,7 @@ function l2turbo(H::AbstractArray{Td,2},TG::Type{Tg}=Td,δ=.75,η=.51) where
 
     δ= Tfe(δ);
     η= Tfe(η)
-    B = copy(H)
+    B = copy!(similar(H), H)
     G = Tg.(B)'*B
     ηb= (η+.5)/2
     δb= (δ+1)/2
