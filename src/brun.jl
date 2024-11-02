@@ -37,7 +37,7 @@ function brun(H::AbstractArray{Td,2}) where Td
 
     grammian = H'*H
     metric_vec = sqrt.(abs.(diag(grammian')))
-    mu = copy!(similar(grammian[:,1]), @view grammian[:,1]) # initialize mu with an arbitrary column of the Grammian
+    mu = copy!(similar(grammian, size(grammian, 2)), @view grammian[:,1]) # initialize mu with an arbitrary column of the Grammian
     T = Matrix{Ti}(I, K, K)   # unimodular transformation matrix 
     B = copy!(similar(H), H)
 
