@@ -10,9 +10,9 @@ macro runtwice(ex)
 end
 
 """
-    lrtest(Ns::Int, N::Array{Int,1}, L::Array{Int,1}, dataType::Array{DataType,1}, distType)
+    lrtest(Ns::Int, N::Vector{Int}, L::Vector{Int}, dataType::Vector{DataType}, distType)
 
-Monte-Carlo evaluation of lattice reduction techniques. NxN matrices of
+Evaluation of lattice reduction techniques. NxN matrices of
 dataType are decomposed with each LR technique, with execution time,
 memory, orthogonality defect, and Hermite factor shown.  Accepted
 datatypes include Integer types such as Int8; FloatingPoint types such
@@ -27,8 +27,8 @@ those used in lattice cryptography).
   # As function of N
   lrtest(50,2 .^[0:6;],[100;],[Float64],"rand")
 """
-function lrtest(Ns::Int,N::Array{Int,1},L::Array{Int,1},
-                dataType::Array{DataType,1},distType)
+function lrtest(Ns::Int,N::Vector{Int},L::Vector{Int},
+                dataType::Vector{DataType},distType)
 
 lrAlgs = [seysen,lll, sizereduction,brun,]
 

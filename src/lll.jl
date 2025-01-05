@@ -58,7 +58,7 @@ lx  = 2;
     # reduce lx-th column of B
     for k=lx-1:-1:1
         rk = R[k,lx]/R[k,k]
-        mu = round(rk)
+        mu = Ti(round(rk))
         if abs(mu)>zeroTi
             # Vectorized, easy-to-read
             # B[:,lx]   -= mu * B[:,k]
@@ -221,7 +221,7 @@ function sizereduction(H::Array{Td,2}) where {Td}
         # reduce lx-th column of B
         for k=lx-1:-1:1
             rk = R[k,lx]/R[k,k]
-            mu = round(rk)
+            mu = Ti(round(rk))
             if abs(mu)>0
                 # B[:,lx]   -= mu * B[:,k]
                 # R[1:k,lx] -= mu * R[1:k,k]

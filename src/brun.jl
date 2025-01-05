@@ -49,7 +49,7 @@ function brun(H::AbstractArray{Td,2}) where Td
         zw = copy!(similar(mu), mu)
         zw[s] = minimum(mu)[1]-one(Td) # previously zw[s] = -typemax(zw[1])
         _,t = findmax(zw)
-        r = round(mu[s]/mu[t])
+        r = Ti(round(mu[s]/mu[t]))
         
         # basis update
         updated_vec = B[:,s] .- r'*B[:,t]

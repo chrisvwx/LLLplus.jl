@@ -169,10 +169,10 @@ function lagariasodlyzko(a::AbstractArray{Td,1},ss::Td,b=0,
 
     Ti = getIntType(Td)
     if ss<sum(a)/2
-        flag=true
+        flipflag=true
         s = sum(a)-ss
     else
-        flag = false
+        flipflag = false
         s = ss
     end
     if b≤0  # b is the "B" parameter defined at bottom of page 2
@@ -210,12 +210,12 @@ function lagariasodlyzko(a::AbstractArray{Td,1},ss::Td,b=0,
         if !(any(x.<0)|any(x.>1))
             
             binarySolution= true
-            xr = flag ? mod.(x .+ 1,2) : x
+            xr = flipflag ? mod.(x .+ 1,2) : x
         end
         x = -x
         if !(any(x.<0)|any(x.>1))
             binarySolution= true
-            xr = flag ? mod.(x .+ 1,2) : x
+            xr = flipflag ? mod.(x .+ 1,2) : x
         end
     end
 

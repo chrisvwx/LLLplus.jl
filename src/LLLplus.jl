@@ -25,10 +25,10 @@ export
     hardsphere, hard_sphere,
     issizereduced,islllreduced,orthogonalitydefect,hermitefactor,seysencond,
     gen_qary_b,gen_qary!,
-    dataTypeForGram,intTypeGivenBitsRequired
+    intTypeGivenBitsRequired
 
 include("lll.jl")          # lll, gauss, sizereduction
-include("l2.jl")           # lll on Rational{Integer} with `l2`
+include("l2.jl")           # l2 is too fragile to export
 include("cvp.jl")          # cvp, svp
 include("hkz.jl")
 include("bkz.jl")
