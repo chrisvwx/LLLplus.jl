@@ -26,7 +26,7 @@ These bases correspond to the SIS/LWE q-ary lattices; see D. Micciancio and
 O. Regev. Post-Quantum Cryptography. Chapter of Lattice-based Cryptography,
 147-191 (2009) and latticegen in https://github.com/fplll/fplll
 
-# Examples
+# Example
 ```
 julia> b=gen_qary_b(Int64,2,1,6)
 2×2 Matrix{Int64}:
@@ -45,4 +45,34 @@ function gen_qary_b(T, d::Int,k::Int,b::Int)
     matrix = Matrix{T}(undef,d,d)
     gen_qary!(matrix,k,q)
     return matrix
+end
+
+"""
+    b=full_rank_rand(S,m,n)
+
+Generate a full-rank `m` x `n` random matrix where the elements are taken
+from and have the same type as those in the set S.
+
+This generally returns the same results as `rand(S,m,n)`. The only
+difference is when the set `S` is small, and `m` and `n` are also small,
+making it easy for `rand(S,m,n)` to return a less-than-full-rank matrix.
+
+# Example
+```
+julia> b=full_rank_rand(0:1,2,2)
+2×2 Matrix{Int64}:
+ 1  1
+ 0  1
+
+```
+"""
+function full_rank_rand(S,m,n)
+    rnk = 0
+    fullrank = min(m,n)
+    B = zeros(typeof(S[1]),m,n)
+    while rnk<fullrank
+        B .= rand(S,m,n)
+        rnk=rank(B)
+    end
+    return B
 end

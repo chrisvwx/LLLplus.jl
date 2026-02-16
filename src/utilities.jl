@@ -5,7 +5,7 @@ Find the orthogonality defect of the matrix B defined, for example,
 on page 2 of Bennet:
 
 "An Enumeration Technique for Lattice Basis Reduction" Huck Bennet, 2 Nov
-2018. https://web.eecs.umich.edu/~hdbco/publications/bases.pdf
+2018. https://home.cs.colorado.edu/~hbennett/publications/bases.pdf
 
 # Examples
 ```jldoctest
@@ -51,7 +51,7 @@ hermitefactor(B) = sqrt(B[:,1]'*B[:,1])/abs(det(B))
 
 Seysen condition number as on, for example, page 3 of Bennet 
 
-[Bennet](http://users.eecs.northwestern.edu/~hbennett/publications/bases.pdf)
+[Bennet](https://home.cs.colorado.edu/~hbennett/publications/bases.pdf)
 
 # Examples
 ```jldoctest

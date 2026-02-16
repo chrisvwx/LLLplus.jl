@@ -1,7 +1,8 @@
 """
     B,T,Q,R = lll(H,δ=3/4)
 
-Do Lenstra–Lenstra–Lovász lattice reduction of matrix `H` using optional
+Do Lenstra–Lenstra–Lovász lattice reduction of the basis defined by the
+columns of `H` using optional
 parameter `δ`.  The output is `B`, an LLL-reduced basis; `T`, a unimodular
 (meaning `det(T)=+/-1`) transformation matrix such that `B= H*T`; and
 finally `Q` and `R` which are a QR decomposition of `B`.  So `H = B*inv(T) =

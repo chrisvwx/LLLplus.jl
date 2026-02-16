@@ -1,8 +1,8 @@
 """
     integerfeasibility(A,d)
 
-Given a linear system `Ax=d`, return an integer vector `x` which satisfies the
-system.
+Given matrix `A` and vector `d`, return an integer vector `x` which satisfies the
+system `Ax=d`.
 
     integerfeasibility(A,d,true)
 
@@ -46,8 +46,8 @@ julia> sum(abs.(xtrue - integerfeasibility(A,d) ))
 function integerfeasibility(A::AbstractArray{Td,2},
                             d::AbstractArray{Td,1}, flag=false) where {Td<:Number}
     m,n=size(A)
-    # N1=10^3
-    # N2=10^4
+    # N1=10^4
+    # N2=10^5
     N1=10^4
     N2=10^5
     B = [[I           zeros(Td,n,1)];
@@ -55,7 +55,6 @@ function integerfeasibility(A::AbstractArray{Td,2},
          N2*A          -N2*d]
 
     Bhat,_ = lll(B)
-    #Bhat = l2(B)  # doesn't work?
 
     # the columns are not always sorted. A sort here helps sometimes.
 
@@ -97,28 +96,34 @@ julia> a=[32771,65543,131101,262187,524387,1048759, # from Bremner p 117
           67121039,134242091,268484171,536968403];
 
 julia> s=891221976; x,_=subsetsum(a,s,false); s-x'*a
-0.0
+0
 
-julia> N=40;a=rand(1:2^BigInt(256),N);xtrue=rand(Bool,N); s=a'*xtrue; 
+julia> N=40;a=rand(1:2^BigInt(256),N);xtrue=rand(Bool,N); s=a'*xtrue;
 
 julia> setprecision(BigFloat,300); x,_=subsetsum(a,s,false); s-x'*a
-0.0
+0
 
 ```
 """
 function subsetsum(a::AbstractArray{Td,1},ss::Td,verbose=false) where {Td<:Number}
 
-    xlo,binarylo = lagariasodlyzko(a,ss,0,verbose);
+    xlo,binarylo = lagariasodlyzko(a,ss,0,true,verbose);
     if binarylo===true && ~any(ismissing.(xlo))
         verbose && print("A solution was found via lagariasodlyzko\n")
         return xlo,binarylo
     else
-        x = mdsubsetsum(a,ss,.5,1)
-        if ~ismissing(x)
-            verbose && print("A solution was found via mdsubsetsum\n")
-            return x,true
-        elseif binarylo===false
+        xlo,binarylo = lagariasodlyzko(a,ss,0,false,verbose);
+        if binarylo===true && ~any(ismissing.(xlo))
+            verbose && print("A solution was found via lagariasodlyzko\n")
             return xlo,binarylo
+        else
+            x = mdsubsetsum(a,ss,.5,1)
+            if ~ismissing(x)
+                verbose && print("A solution was found via mdsubsetsum\n")
+                return x,true
+            elseif binarylo===false
+                return xlo,binarylo
+            end
         end
     end
     return missing
@@ -152,23 +157,23 @@ julia> a=[32771,65543,131101,262187,524387,1048759, # from Bremner p 117
           67121039,134242091,268484171,536968403];
 
 julia> s=891221976; x,_=lagariasodlyzko(a,s); s-x'*a
-0.0
+0
 
 julia> N=40;a=rand(1:2^BigInt(256),N);xtrue=rand(Bool,N); s=a'*xtrue; 
 
 julia> setprecision(BigFloat,300); x,_=lagariasodlyzko(a,s); s-x'*a
-0.0
+0
 
 ```
 """
-function lagariasodlyzko(a::AbstractArray{Td,1},ss::Td,b=0,
+function lagariasodlyzko(a::AbstractArray{Td,1},ss::Td,b=0,enableFlip=true,
                          verbose=false) where {Td<:Number}
     # page numbers below refer to lecture note above
 
     n = length(a)
 
     Ti = getIntType(Td)
-    if ss<sum(a)/2
+    if ss<sum(a)/2 && enableFlip
         flipflag=true
         s = sum(a)-ss
     else
@@ -177,7 +182,7 @@ function lagariasodlyzko(a::AbstractArray{Td,1},ss::Td,b=0,
     end
     if b≤0  # b is the "B" parameter defined at bottom of page 2
         nt = Ti(n)
-        b = ceil(sqrt(nt*2^nt))
+        b = Ti(ceil(sqrt(nt*2^nt)))
     end
     # BB is the 'B' matrix defined also at bottom of page 2
     BB = [Matrix{Ti}(I,n,n+1); -b*a' b*s]
@@ -224,7 +229,7 @@ function lagariasodlyzko(a::AbstractArray{Td,1},ss::Td,b=0,
     else
         if maximum(a)<2^(n^2/2) && verbose
             density = n/maximum(log2.(a))
-            @printf("The density (%4.2f) of 'a' is not as low as required\n", density)
+            @printf("The density (%4.2f) of 'a' is not as low as required ", density)
             @printf("(%4.2f) for Lagarias-Odlyzko to work. \n",2/n)
         end
 
@@ -245,7 +250,7 @@ end
     x = mdsubsetsum(a,sM,ratio=.5,Kpm=3)
 
 For a vector of integers `a`, and an integer `sM`, try to find a binary
-vector `x` such that `x'*a=s` using the technique from "Multidimensional
+vector `x` such that `x'*a=sM` using the technique from "Multidimensional
 subset sum problem" [1][2]. A major goal of the technique is to solve
 problems in which there are about 50% ones in `x`; other ratios of ones to zeros
 can be specified in `ratio`.  The thesis also suggests searching `Kpm=3`

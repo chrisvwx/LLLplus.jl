@@ -1,29 +1,89 @@
 """
-    x=cvp(y,R::UpperTriangular)
+    u=cvp(y,R,...)
 
-Solve the problem `argmin_x ||y-Rx||` for integer x using the technique from
+This function is deprecated and will likely have its return value change in
+the future; please use `cvpRu` if you want to keep the previous return
+API.
+
+"CVP" stands for "closest vector problem."  Unfortunately, at present this
+function does not return the closest vector to `y` in the lattice `R`, but
+the integer vector `u` such that multiplying the basis `R` by this integer
+vector (i.e. `Ru`) gives the closest vector. To avoid confusion, in the
+future the return value will be changed to be `Ru`, i.e. the closest vector.
+
+Switch to the function `cvpu` to get `u` as the return value, and the
+function `cvpRu` to get the closest vector.
+
+"""
+function cvp(r::AbstractArray{Td,1},R::AbstractArray{Td,2},
+              infinite=Val(true),Umin=-1,Umax=-Umin,
+              nxMax=typemax(Int)) where {Td<:Number}
+    @warn("The return value for cvp will likely change in the "*
+          "future. See the help text.")
+    return cvpRu(r,R,infinite,Umin,Umax,nxMax)
+end
+
+"""
+    u=cvpu(y,H::AbstractArray{Td,2})
+
+Solve the problem `argmin_u ||y-Hu||` for integer `u` using `cvpRu`. The
+input vector `y` is of length `n`, with `H` of dimension `n` by `n`, and the
+returned vector `u` of length `n`.
+
+    u=cvpu(y,R,...)
+
+See `cvpRu` for details of additional arguments.
+
+# Examples
+```jldoctest
+julia> H=[1 2; 3 4]; uhat = cvpu([0,2],H)
+2-element Vector{Float64}:
+  2.0
+ -1.0
+
+julia> n=100;H=randn(n,n);
+
+julia> u=Int.(rand(0:1e10,n));y=H*u+rand(n)/100;
+
+julia> uhat=cvpu(y,H); sum(abs.(u-uhat))
+0.0
+
+```
+"""
+function cvpu(r::AbstractArray{Td,1},H::AbstractArray{Td,2},
+              infinite=Val(true),Umin=-1,Umax=-Umin,
+              nxMax=typemax(Int)) where {Td<:Number}
+    Q,R=qr(H);
+    return cvpRu(Q'*r,UpperTriangular(R),infinite,Umin,Umax,nxMax)
+end
+
+
+"""
+    u=cvpRu(y,R::UpperTriangular)
+
+Solve the problem `argmin_u ||y-Ru||` for integer `u` using the technique from
 the paper below. The input vector `y` is of length `n`, with upper
-triangular `R` of dimension `n` by `n`, and the returned vector `x` of
+triangular `R` of dimension `n` by `n`, and the returned vector `u` of
 length `n`.
 
-    x=cvp(y,R,infinite=Val(true),Umin=-1,Umax=-Umin,nxMax=Int(ceil(log2(n)*1e6)))
+    u=cvpRu(y,R,infinite=Val(true),Umin=-1,Umax=-Umin,nxMax=Int(ceil(log2(n)*1e6)))
 
 If `infinite==Val(true)` then we search the (infinite) lattice, otherwise we
 search integers in `[Umin,Umax]`. When `nxMax` is included, it gives a
 maximum number of steps to take, otherwise a heuristic value is used.
-Note that `cvp` does not handle complex numbers.
+Note that `cvpRu` does not handle complex numbers.
 
 Follows "Faster Recursions in Sphere Decoding" Arash Ghasemmehdi, Erik
 Agrell, IEEE Transactions on Information Theory, vol 57, issue 6 , June 2011.
 
 # Examples
 ```jldoctest
-julia> H=[1 2; 3 4]; Q,R=qr(H); uhat = cvp(Q'*[0,2],UpperTriangular(R))
+julia> H=[1 2; 3 4]; Q,R=qr(H); uhat = cvpRu(Q'*[0,2],UpperTriangular(R))
 2-element Vector{Float64}:
   2.0
  -1.0
 
-julia> uhat = cvp(Q'*[0,2],UpperTriangular(R),Val(false),0,100)
+julia> uhat = cvpRu(Q'*[0,2],UpperTriangular(R),Val(false),0,100)
 2-element Vector{Float64}:
  1.0
  0.0
@@ -32,18 +92,18 @@ julia> n=100;H=randn(n,n); Q,Rt=qr(H); R=UpperTriangular(Rt);
 
 julia> u=Int.(rand(0:1e10,n));y=H*u+rand(n)/100;
 
-julia> uhat=cvp(Q'*y,R); sum(abs.(u-uhat))
+julia> uhat=cvpRu(Q'*y,R); sum(abs.(u-uhat))
 0.0
 
 julia> n=500;H=randn(n,n); Q,Rt=qr(H); R=UpperTriangular(Rt);
 
 julia> u=Int.(rand([-1,1],n));y=H*u+rand(n)/100;
 
-julia> uhat=cvp(Q'*y,R,Val(false),-1,1); sum(abs.(u-uhat))
+julia> uhat=cvpRu(Q'*y,R,Val(false),-1,1); sum(abs.(u-uhat))
 0.0
 ```
 """
-function cvp(r::AbstractArray{Td,1},G::UpperTriangular{Td,Array{Td,2}},
+function cvpRu(r::AbstractArray{Td,1},G::UpperTriangular{Td,Array{Td,2}},
              infinite=Val(true),Umin=-1,Umax=-Umin,
              nxMax=typemax(Int)) where {Td<:Number}
 
@@ -159,8 +219,6 @@ Lattices" by Erik Agrell, Thomas Eriksson, Alexander Vardy, and
 Kenneth Zeger in IEEE Transactions on Information Theory, vol. 48, no. 8,
 August 2002.
 
-This function IS BROKEN; see the second example below.
-
 # Examples
 ```
 julia> H=[1 2; 3 4]; LLLplus.svp(H)
@@ -241,7 +299,6 @@ julia> uhat = LLLplus.decodeSVPAgrell(H)
 2-element Vector{Int64}:
  -1
   0
-
 
 ```
 """

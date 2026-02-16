@@ -12,7 +12,7 @@ using Printf
 
 export
     lll,
-    cvp,
+    cvp,cvpu,cvpRu,
     brun,
     gauss,
     sizereduction,
@@ -24,7 +24,7 @@ export
     minimalpolynomial,partitionintwo,
     hardsphere, hard_sphere,
     issizereduced,islllreduced,orthogonalitydefect,hermitefactor,seysencond,
-    gen_qary_b,gen_qary!,
+    gen_qary_b,gen_qary!, full_rank_rand,
     intTypeGivenBitsRequired
 
 include("lll.jl")          # lll, gauss, sizereduction
