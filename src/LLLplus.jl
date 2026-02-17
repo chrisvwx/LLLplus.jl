@@ -13,6 +13,7 @@ using Printf
 export
     lll,
     cvp,cvpu,cvpRu,
+    svp,svpu,
     brun,
     gauss,
     sizereduction,

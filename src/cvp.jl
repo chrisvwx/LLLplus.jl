@@ -214,7 +214,7 @@ Find the shortest basis vector `b` for the lattice formed by the matrix
 `B`. This solves the 'shortest vector problem' (SVP). Note that `svp`
 does not handle complex numbers.
 
-Follows "Algorithm SHORTESTVECTOR(G)" from "Closest Point Search in
+Follows "Algorithm SHORTESTVECTOR()" from "Closest Point Search in
 Lattices" by Erik Agrell, Thomas Eriksson, Alexander Vardy, and
 Kenneth Zeger in IEEE Transactions on Information Theory, vol. 48, no. 8,
 August 2002.
@@ -238,8 +238,6 @@ julia> LLLplus.svp(H)
 ```
 """
 function svp(G::AbstractArray{Td,2}) where {Td<:Number}
-
-    @warn("This function appears broken; see the example...")
 
     m,n = size(G)
     if n==1 return G[:,1];    end

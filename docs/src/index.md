@@ -4,12 +4,11 @@
 CurrentModule = LLLplus
 ```
 
-LLLplus provides lattice tools such as
-Lenstra-Lenstra-Lovász (LLL) lattice reduction which are of practical and
-theoretical use in cryptography, digital communication, integer
-programming, and more.
+LLLplus provides lattice tools such as Lenstra-Lenstra-Lovász (LLL)
+lattice reduction which are of practical and theoretical use in
+cryptography, digital communication, integer programming, and more.
 This package is experimental and not a robust tool; use at your own
-risk :-)
+risk  :-)
 
 LLLplus has functions for [LLL](https://en.wikipedia.org/wiki/Lenstra%E2%80%93Lenstra%E2%80%93Lov%C3%A1sz_lattice_basis_reduction_algorithm),
 [Seysen](http://link.springer.com/article/10.1007%2FBF01202355), and
@@ -17,12 +16,10 @@ LLLplus has functions for [LLL](https://en.wikipedia.org/wiki/Lenstra%E2%80%93Le
 lattice reduction
 techniques. [Brun](https://archive.org/stream/skrifterutgitavv201chri#page/300/mode/2up)
 integer relations is included in the form of lattice
-reduction. Solvers for the [shortest
-vector](https://en.wikipedia.org/wiki/Lattice_problem#Shortest_vector_problem_(SVP))
-and the [closest
-vector](https://en.wikipedia.org/wiki/Lattice_problem#Closest_vector_problem_.28CVP.29)
+reduction. Solvers for the  [closest vector](https://en.wikipedia.org/wiki/Lattice_problem#Closest_vector_problem_(CVP))
+and [shortest vector](https://en.wikipedia.org/wiki/Lattice_problem#Shortest_vector_problem_(SVP))
 problems are also included; for more see the help text for the `lll`,
-`seysen`, `hkz`, `brun`, `svp`, and `cvp` functions. Several toy (demo)
+`seysen`, `hkz`, `brun`, `cvp` and `svp` functions. Several toy (demo)
 functions are also included; see the  `subsetsum`, `minimalpolynomial`,
 `integerfeasibility`, `rationalapprox`, and  `spigotBBP` functions.
 
@@ -49,6 +46,7 @@ Bbrun,_ = brun(H);
 Blll,_ = lll(H);
 Bseysen,_ = seysen(H);
 Bhkz,_ = hkz(H);
+s = svp(H);
 
 # check out the CVP solver
 Q,Rtmp=qr(H); R = UpperTriangular(Rtmp);
@@ -89,5 +87,6 @@ records or are looking for robust, well-proven lattice tools, look at
 number-theoretic problems the
 [Nemo.jl](https://github.com/Nemocas/Nemo.jl) package is appropriate;
 it uses the [FLINT](http://flintlib.org/) C library to do LLL
-reduction on Nemo-specific data types.  Finally, no number theorists
+reduction on Nemo-specific data types.  Finally, no lattice gurus
+or computer scientists
 have worked on LLLplus; please treat the package as experimental.

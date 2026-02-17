@@ -15,10 +15,10 @@ LLLplus has functions for [LLL](https://en.wikipedia.org/wiki/Lenstra%E2%80%93Le
 lattice reduction
 techniques. [Brun](https://archive.org/stream/skrifterutgitavv201chri#page/300/mode/2up)
 integer relations is included in the form of lattice
-reduction. A solver for the  [closest
-vector](https://en.wikipedia.org/wiki/Lattice_problem#Closest_vector_problem_.28CVP.29)
-problem is also included; for more see the help text for the `lll`,
-`seysen`, `hkz`, `brun`, and `cvp` functions. Several toy (demo)
+reduction. Solvers for the  [closest vector](https://en.wikipedia.org/wiki/Lattice_problem#Closest_vector_problem_(CVP))
+and [shortest vector](https://en.wikipedia.org/wiki/Lattice_problem#Shortest_vector_problem_(SVP))
+problems are also included; for more see the help text for the `lll`,
+`seysen`, `hkz`, `brun`, `cvp` and `svp` functions. Several toy (demo)
 functions are also included; see the  `subsetsum`, `minimalpolynomial`,
 `integerfeasibility`, `rationalapprox`, and  `spigotBBP` functions.
 
@@ -46,6 +46,7 @@ Bbrun,_ = brun(H);
 Blll,_ = lll(H);
 Bseysen,_ = seysen(H);
 Bhkz,_ = hkz(H);
+s = svp(H);
 
 # check out the CVP solver
 Q,Rtmp=qr(H); R = UpperTriangular(Rtmp);
@@ -95,6 +96,6 @@ records or are looking for robust, well-proven lattice tools, look at
 number-theoretic problems the
 [Nemo.jl](https://github.com/Nemocas/Nemo.jl) package is appropriate;
 it uses the [FLINT](http://flintlib.org/) C library to do LLL
-reduction on Nemo-specific data types.  Finally, no number theorists
+reduction on Nemo-specific data types.  Finally, no lattice gurus
 or computer scientists
 have worked on LLLplus; please treat the package as experimental.

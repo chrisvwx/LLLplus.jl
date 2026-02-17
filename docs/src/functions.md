@@ -10,6 +10,9 @@ end
 ```@docs
     lll
     cvp
+    cvpu
+    svp
+    svpu
     brun
     gauss
     seysen

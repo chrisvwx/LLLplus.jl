@@ -8,6 +8,19 @@ BKZ was originaly described in "A hierarchy of polynomial time basis
 reduction algorithms" by Claus Peter Schnorr, Theoretical Computer Science,
 1987. This function is not well tested and could be wrong or otherwise
 different from Schnorr's BKZ.
+
+Unfortunately I have forgotten from what paper or source I go the BKZ
+algorithm implemented below.
+
+This function appears to give reduced bases than are significantly worse
+than those of fplll's BKZ.
+# Examples
+```
+julia> H = latticegen_qary_b(24,12,10,1);
+
+julia> B=LLLplus.bkz(H,2);
+
+```
 """
 function bkz(H::AbstractArray{Td,2},K) where {Td<:Number}
     m,n = size(H)

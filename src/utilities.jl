@@ -4,8 +4,8 @@
 Find the orthogonality defect of the matrix B defined, for example,
 on page 2 of Bennet:
 
-"An Enumeration Technique for Lattice Basis Reduction" Huck Bennet, 2 Nov
-2018. https://home.cs.colorado.edu/~hbennett/publications/bases.pdf
+"An Enumeration Technique for Lattice Basis Reduction" Huck Bennet, 2 Nov 2018.
+https://home.cs.colorado.edu/~hbennett/publications/bases.pdf
 
 # Examples
 ```jldoctest
